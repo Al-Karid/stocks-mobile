@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import React from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 
@@ -7,12 +8,15 @@ const portfolios = [
 ];
 
 type PortfolioProps = {
+  id: number;
   name: string;
 };
 
-const PortfolioItem: React.FC<PortfolioProps> = ({ name }) => (
+const PortfolioItem: React.FC<PortfolioProps> = ({ id, name }) => (
   <View style={styles.card}>
-    <Text style={styles.title}>{name}</Text>
+    <Link href={`/details/${id}`} asChild>
+      <Text style={styles.title}>{name}</Text>
+    </Link>
   </View>
 );
 
@@ -21,7 +25,7 @@ export default function PortfolioList() {
     <FlatList
       data={portfolios}
       keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => <PortfolioItem name={item.name} />}
+      renderItem={({ item }) => <PortfolioItem id={item.id} name={item.name} />}
       contentContainerStyle={styles.container}
     />
   );

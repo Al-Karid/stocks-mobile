@@ -4,7 +4,7 @@ export default function PortfolioLayout() {
   return (
       <Stack>
         <Stack.Screen name="index" options={{ title: "Home" }} />
-        <Stack.Screen name="details" />
+        <Stack.Screen name="details" options={{ title: "Details"}} />
       </Stack>
   );
 }
