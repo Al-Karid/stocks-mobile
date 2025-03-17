@@ -7,54 +7,99 @@ interface PortfolioHoldingProps {
 export default function PortfolioHolding({ item }: PortfolioHoldingProps) {
   return (
     <View style={styles.holdingCard}>
-      <Text style={styles.holdingTitle}>{item.symbol}</Text>
-      <Text style={styles.holdingText}>Quantity: {item.quantity}</Text>
-      <Text style={styles.holdingText}>
-        Buy Price: {item.averagePurchasePrice} FCFA
-      </Text>
-      <Text style={styles.holdingText}>
-        Current Price: {item.currentPrice} FCFA
-      </Text>
-      <Text
+      {/* Left Section - Stock Info */}
+      <View style={styles.infoContainer}>
+        <Text style={styles.holdingTitle}>{item.symbol}</Text>
+        <Text style={styles.holdingText}>Quantity: {item.quantity}</Text>
+        <Text style={styles.holdingText}>
+          Buy Price: {item.averagePurchasePrice} FCFA
+        </Text>
+        <Text style={styles.holdingText}>
+          Current Price: {item.currentPrice} FCFA
+        </Text>
+      </View>
+
+      {/* Separator */}
+      <View style={styles.separator} />
+
+      {/* Right Section - Performance */}
+      <View
         style={[
-          styles.performance,
-          { color: item.performence >= 0 ? "green" : "red" },
+          styles.performanceContainer,
+          item.performence >= 0 ? styles.positiveBackground : styles.negativeBackground,
         ]}
       >
-        Performance: {item.performence.toFixed(2)}%
-      </Text>
+        {/* <Text style={styles.arrow}>{item.performence >= 0 ? "▲" : "▼"}</Text> */}
+        <Text style={styles.performanceText}>{item.performence.toFixed(2)}%</Text>
+        <Text style={styles.currentPrice}>{item.currentPrice*100}</Text>
+        <Text>FCFA</Text>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   holdingCard: {
+    flexDirection: "row",
     backgroundColor: "#fff",
-    padding: 20,
-    margin: 2,
-    marginVertical: 10,
-    borderRadius: 10,
+    marginVertical: 8,
+    borderRadius: 12,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
     overflow: "hidden",
   },
+  infoContainer: {
+    flex: 1,
+    padding: 16,
+    justifyContent: "center",
+  },
   holdingTitle: {
-    fontSize: 18,
     fontWeight: "bold",
+    fontSize: 18,
     color: "#333",
-    marginBottom: 5,
+    marginBottom: 8,
   },
   holdingText: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#555",
     marginBottom: 2,
   },
-  performance: {
-    fontSize: 18,
+  separator: {
+    width: 1.5,
+    backgroundColor: "#E0E0E0",
+    marginVertical: 10,
+  },
+  performanceContainer: {
+    width: 130,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+  positiveBackground: {
+    backgroundColor: "#A0C878", // Light green background
+  },
+  negativeBackground: {
+    backgroundColor: "#F37199", // Light red background
+  },
+  arrow: {
+    fontSize: 20,
     fontWeight: "bold",
-    marginTop: 8,
+  },
+  performanceText: {
+    fontSize: 16,
+    color: "#fff",
+    fontWeight: "700",
+    marginVertical: 4,
+  },
+  currentPrice: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#333",
+    marginTop: 4,
   },
 });

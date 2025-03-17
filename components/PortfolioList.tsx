@@ -1,6 +1,6 @@
 import { Link } from "expo-router";
 import React from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import { View, Text, FlatList, StyleSheet, Pressable } from "react-native";
 
 const portfolios = [
   { id: 1, updatedAt: null, userId: 1, name: "NASDAQ", holdings: [] },
@@ -15,7 +15,9 @@ type PortfolioProps = {
 const PortfolioItem: React.FC<PortfolioProps> = ({ id, name }) => (
   <View style={styles.card}>
     <Link href={`/details/${id}`} asChild>
-      <Text style={styles.title}>{name}</Text>
+      <Pressable>
+        <Text style={styles.title}>{name}</Text>
+      </Pressable>
     </Link>
   </View>
 );
