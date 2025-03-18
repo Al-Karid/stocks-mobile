@@ -1,33 +1,48 @@
-import PortfolioList from "@/components/PortfolioList";
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Modal, TextInput, Button } from "react-native";
+import { View, Text, TouchableOpacity, Modal, TextInput, Button, FlatList } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import PortfolioList from "@/components/PortfolioList";
 import { HapticButton } from "@/components/HapticButton";
 
 export default function Index() {
+  
+  const [portfolios, setPortfolios] = useState<Portfolio[]>([
+    { id: 1, updatedAt: null, userId: 1, name: "BRVM", holdings: [] },
+    { id: 2, updatedAt: null, userId: 1, name: "NASDAQ", holdings: [] },
+  ]);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [portfolioName, setPortfolioName] = useState("");
 
-  const handleAddPortfolio = () => {
-    setModalVisible(true);
-  };
-
+  // Function to handle adding a new portfolio
   const handleSavePortfolio = () => {
-    console.log("New portfolio added:", portfolioName);
-    setModalVisible(false);
+    if (portfolioName.trim() === "") return; // Prevent empty names
+
+    const newPortfolio = {
+      id: portfolios.length + 1, // Generate a new ID (should ideally come from DB)
+      updatedAt: new Date().toISOString(),
+      userId: 1,
+      name: portfolioName.trim(),
+      holdings: [],
+    };
+
+    setPortfolios([...portfolios, newPortfolio]); // Update state with new portfolio
     setPortfolioName(""); // Reset input field
+    setModalVisible(false); // Close modal
   };
 
   return (
     <View style={{ flex: 1, padding: 20, backgroundColor: "white" }}>
+      {/* Header */}
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
         <Text style={{ fontSize: 32, fontWeight: "bold", marginBottom: 10 }}>Portfolio</Text>
-        <HapticButton onPress={handleAddPortfolio}>
+        <HapticButton onPress={() => setModalVisible(true)}>
           <FontAwesome name="plus" size={18} color="#3D3D3D" />
         </HapticButton>
       </View>
 
-      <PortfolioList />
+      {/* Portfolio List */}
+      <PortfolioList portfolios={portfolios} />
 
       {/* Modal for Adding Portfolio */}
       <Modal
@@ -43,7 +58,13 @@ export default function Index() {
               placeholder="Enter portfolio name"
               value={portfolioName}
               onChangeText={setPortfolioName}
-              style={{ borderWidth: 1, borderColor: "#ccc", padding: 10, borderRadius: 5, marginBottom: 10 }}
+              style={{
+                borderWidth: 1,
+                borderColor: "#ccc",
+                padding: 10,
+                borderRadius: 5,
+                marginBottom: 10,
+              }}
             />
             <Button title="Save" onPress={handleSavePortfolio} />
             <TouchableOpacity onPress={() => setModalVisible(false)} style={{ marginTop: 10 }}>

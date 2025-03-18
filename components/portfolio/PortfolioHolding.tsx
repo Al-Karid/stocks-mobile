@@ -1,40 +1,67 @@
-import { View, StyleSheet, Text } from "react-native";
+import React from "react";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Swipeable } from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
+
+interface Holding {
+  symbol: string;
+  quantity: number;
+  averagePurchasePrice: number;
+  currentPrice: number;
+  performence: number;
+}
 
 interface PortfolioHoldingProps {
   item: Holding;
 }
 
 export default function PortfolioHolding({ item }: PortfolioHoldingProps) {
+  const navigation = useNavigation();
+
+  // Function to render hidden "Settings" button on swipe
+  const renderRightActions = () => (
+    <TouchableOpacity
+      style={styles.settingsButton}
+      // onPress={() => navigation.navigate("HoldingSettings", { item })}
+    >
+      <Text style={styles.settingsText}>≡</Text>
+    </TouchableOpacity>
+  );
+
   return (
-    <View style={styles.holdingCard}>
-      {/* Left Section - Stock Info */}
-      <View style={styles.infoContainer}>
-        <Text style={styles.holdingTitle}>{item.symbol}</Text>
-        <Text style={styles.holdingText}>Quantity: {item.quantity}</Text>
-        <Text style={styles.holdingText}>
-          Buy Price: {item.averagePurchasePrice} FCFA
-        </Text>
-        <Text style={styles.holdingText}>
-          Current Price: {item.currentPrice} FCFA
-        </Text>
-      </View>
+    <Swipeable renderRightActions={renderRightActions}>
+      <View style={styles.holdingCard}>
+        {/* Left Section - Stock Info */}
+        <View style={styles.infoContainer}>
+          <Text style={styles.holdingTitle}>{item.symbol}</Text>
+          <Text style={styles.holdingText}>Quantity: {item.quantity}</Text>
+          <Text style={styles.holdingText}>
+            Buy Price: {item.averagePurchasePrice} FCFA
+          </Text>
+          <Text style={styles.holdingText}>
+            Current Price: {item.currentPrice} FCFA
+          </Text>
+        </View>
 
-      {/* Separator */}
-      <View style={styles.separator} />
+        {/* Separator */}
+        <View style={styles.separator} />
 
-      {/* Right Section - Performance */}
-      <View
-        style={[
-          styles.performanceContainer,
-          item.performence >= 0 ? styles.positiveBackground : styles.negativeBackground,
-        ]}
-      >
-        {/* <Text style={styles.arrow}>{item.performence >= 0 ? "▲" : "▼"}</Text> */}
-        <Text style={styles.performanceText}>{item.performence.toFixed(2)}%</Text>
-        <Text style={styles.currentPrice}>{item.currentPrice*100}</Text>
-        <Text>FCFA</Text>
+        {/* Right Section - Performance */}
+        <View
+          style={[
+            styles.performanceContainer,
+            item.performence >= 0
+              ? styles.positiveBackground
+              : styles.negativeBackground,
+          ]}
+        >
+          <Text style={styles.performanceText}>
+            {item.performence.toFixed(2)}%
+          </Text>
+          <Text style={styles.currentPrice}>{item.currentPrice} FCFA</Text>
+        </View>
       </View>
-    </View>
+    </Swipeable>
   );
 }
 
@@ -86,10 +113,6 @@ const styles = StyleSheet.create({
   negativeBackground: {
     backgroundColor: "#F37199", // Light red background
   },
-  arrow: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
   performanceText: {
     fontSize: 16,
     color: "#fff",
@@ -101,5 +124,20 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#333",
     marginTop: 4,
+  },
+  // Styles for swipeable settings button
+  settingsButton: {
+    backgroundColor: "#9AA6B2", // iOS blue
+    justifyContent: "center",
+    alignItems: "center",
+    width: 120,
+    marginVertical: 8,
+    borderRadius: 12,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+  settingsText: {
+    color: "#F8FAFC",
+    fontSize: 42,
   },
 });

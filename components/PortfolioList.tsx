@@ -2,12 +2,11 @@ import React from "react";
 import { FlatList, StyleSheet } from "react-native";
 import PortfolioItem from "@/components/portfolio/PortfolioItem";
 
-const portfolios = [
-  { id: 1, updatedAt: null, userId: 1, name: "NASDAQ", holdings: [] },
-  { id: 2, updatedAt: null, userId: 1, name: "BRVM", holdings: [] },
-];
+interface PortfolioListProps {
+  portfolios: Portfolio[];
+}
 
-export default function PortfolioList() {
+export default function PortfolioList({ portfolios} : PortfolioListProps) {
   return (
     <FlatList
       data={portfolios}
