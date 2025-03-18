@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
 import PortfolioDetailsHeader from "@/components/portfolio/PortfolioDetailsHeader";
 import PortfolioHolding from "@/components/portfolio/PortfolioHolding";
 
@@ -43,8 +44,8 @@ const portfolios: Portfolio[] = [
 
 export default function PortfolioDetail() {
   const { id } = useLocalSearchParams();
+  const router = useRouter();
   const portfolioId = Number(id);
-
   const portfolio = portfolios.find((p) => p.id === portfolioId);
 
   return (
@@ -59,13 +60,19 @@ export default function PortfolioDetail() {
             <FlatList
               data={portfolio.holdings}
               keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <PortfolioHolding item={item} />
-              )}
+              renderItem={({ item }) => <PortfolioHolding item={item} />}
             />
           ) : (
             <Text style={styles.noHoldings}>No holdings in this portfolio.</Text>
           )}
+
+          {/* Floating Add Holding Button */}
+          <TouchableOpacity
+            style={styles.fab}
+            onPress={() => router.push(`/add-holding?id=${portfolioId}`)}
+          >
+            <FontAwesome name="plus" size={24} color="white" />
+          </TouchableOpacity>
         </>
       ) : (
         <Text style={styles.notFound}>Portfolio not found!</Text>
@@ -92,5 +99,17 @@ const styles = StyleSheet.create({
     color: "red",
     textAlign: "center",
     marginTop: 50,
+  },
+  fab: {
+    position: "absolute",
+    right: 20,
+    bottom: 30,
+    backgroundColor: "#007bff",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
   },
 });
