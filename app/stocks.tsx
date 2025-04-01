@@ -1,5 +1,5 @@
 // stocks.tsx
-import StockList from "@/components/StockList";
+import StockList from "@/components/stocks/StockList";
 import React from "react";
 import { View, Text } from "react-native";
 
