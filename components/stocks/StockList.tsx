@@ -1,12 +1,20 @@
-// screens/StockList.tsx
 import React, { useState } from "react";
-import { FlatList, StyleSheet, TextInput, View } from "react-native";
+import { FlatList, StyleSheet, TextInput, View, RefreshControl } from "react-native";
 import { stockData } from "@/data/stocks";
 import StockCard from "@/components/stocks/StockCard";
 
 const StockList: React.FC = () => {
   const [filterText, setFilterText] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Simulate data reload
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1500); // Simulated delay (replace with actual data fetching logic)
+  };
 
   const filteredStocks = stockData.filter((stock) =>
     stock.name.toLowerCase().includes(filterText.toLowerCase())
@@ -26,6 +34,9 @@ const StockList: React.FC = () => {
         data={filteredStocks}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#007bff"]} />
+        }
         renderItem={({ item }) => (
           <StockCard
             name={item.name}
@@ -48,13 +59,13 @@ const styles = StyleSheet.create({
   },
   filterInput: {
     height: 40,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 12,
     marginBottom: 10,
     marginHorizontal: 4,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   filterInputFocused: {
     borderColor: "#007bff",
@@ -63,7 +74,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 1.5,
-    elevation: 5, // Ajoute un effet de glow sur Android
+    elevation: 5, // Glow effect on Android
   },
 });
 
