@@ -5,18 +5,20 @@ import { ArrowUpRight, ArrowDownRight } from "lucide-react-native";
 
 interface StockCardProps {
   name: string;
+  symbol: string;
   currentPrice: number;
   previousClosePrice: number;
   percentageChange: number;
 }
 
-const StockCard: React.FC<StockCardProps> = ({ name, currentPrice, previousClosePrice, percentageChange }) => {
+const StockCard: React.FC<StockCardProps> = ({ name, symbol, currentPrice, previousClosePrice, percentageChange }) => {
   const isPositive = percentageChange >= 0;
 
   return (
     <View style={styles.card}>
       <View style={styles.infoContainer}>
-        <Text style={styles.symbol}>{name}</Text>
+        <Text style={styles.symbol}>{symbol.trim()}</Text>
+        <Text style={styles.title}>{name}</Text>
         <Text style={styles.label}>
           C: <Text style={styles.value}>{currentPrice}</Text> {"  "}
           V: <Text style={styles.value}>{previousClosePrice}</Text>
@@ -25,7 +27,7 @@ const StockCard: React.FC<StockCardProps> = ({ name, currentPrice, previousClose
 
       <View style={[styles.percentageContainer, isPositive ? styles.positive : styles.negative]}>
         {isPositive ? <ArrowUpRight color="white" size={20} /> : <ArrowDownRight color="white" size={20} />}
-        <Text style={styles.percentageText}>{percentageChange}%</Text>
+        <Text style={styles.percentageText}>{percentageChange.toFixed(2)}%</Text>
       </View>
     </View>
   );
@@ -48,14 +50,20 @@ const styles = StyleSheet.create({
   infoContainer: {
     flex: 1,
   },
+  title: {
+    fontWeight: "bold",
+    color: "#123458",
+    fontSize: 10,
+    marginBottom: 8,
+  },
   symbol: {
     fontWeight: "bold",
     color: "#123458",
-    fontSize: 18,
+    fontSize: 16,
     marginBottom: 8,
   },
   label: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#666",
   },
   value: {
@@ -65,11 +73,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     borderRadius: 10,
   },
   percentageText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
     color: "white",
     marginLeft: 6,

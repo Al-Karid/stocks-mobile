@@ -1,23 +1,57 @@
-import React, { useState } from "react";
-import { FlatList, StyleSheet, TextInput, View, RefreshControl } from "react-native";
-import { stockData } from "@/data/stocks";
+import React, { useEffect, useState } from "react";
+import { 
+  FlatList, 
+  StyleSheet, 
+  TextInput, 
+  View, 
+  RefreshControl 
+} from "react-native";
+import Toast from "react-native-toast-message";
+import { stockData as localStockData } from "@/data/stocks";
 import StockCard from "@/components/stocks/StockCard";
+
+const API_URL = "http://192.168.1.4:8088/api/web/stocks";
 
 const StockList: React.FC = () => {
   const [filterText, setFilterText] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [stocks, setStocks] = useState(localStockData);
 
-  // Simulate data reload
-  const onRefresh = () => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1500); // Simulated delay (replace with actual data fetching logic)
+  const showToast = (message: string, type: "success" | "error") => {
+    Toast.show({
+      type,
+      text1: message,
+      position: "bottom",
+      visibilityTime: 3000,
+    });
   };
 
-  const filteredStocks = stockData.filter((stock) =>
-    stock.name.toLowerCase().includes(filterText.toLowerCase())
+  const fetchStockData = async () => {
+    setRefreshing(true);
+    try {
+      const response = await fetch(API_URL);
+      if (!response.ok) throw new Error("API error");
+
+      const data = await response.json();
+      if (data.length === 0) throw new Error("Empty API response");
+
+      setStocks(data);
+      showToast("Stock data loaded from API", "success");
+    } catch (error) {
+      setStocks(localStockData);
+      showToast("Failed to load API data. Using local stock data.", "error");
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStockData();
+  }, []);
+
+  const filteredStocks = stocks.filter((stock) =>
+    stock.title.toLowerCase().includes(filterText.toLowerCase())
   );
 
   return (
@@ -35,17 +69,19 @@ const StockList: React.FC = () => {
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.container}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#007bff"]} />
+          <RefreshControl refreshing={refreshing} onRefresh={fetchStockData} colors={["#007bff"]} />
         }
         renderItem={({ item }) => (
           <StockCard
-            name={item.name}
+            name={item.title.trimStart()}
+            symbol={item.symbol}
             currentPrice={item.currentPrice}
             previousClosePrice={item.previousClosePrice}
             percentageChange={item.percentageChange}
           />
         )}
       />
+      <Toast />
     </View>
   );
 };
