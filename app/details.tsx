@@ -1,0 +1,178 @@
+import { useLocalSearchParams } from "expo-router";
+import { View, Text, StyleSheet } from "react-native";
+import { ArrowUpRight, ArrowDownRight, ArrowRight } from "lucide-react-native";
+
+// Utility function to format numbers with thousand separator
+const formatNumber = (number: number) => {
+  return new Intl.NumberFormat("fr-FR").format(number);
+};
+
+export default function DetailsScreen() {
+  const {
+    symbol,
+    name,
+    currentPrice,
+    previousClosePrice,
+    percentageChange,
+    volumeTitles,
+    volumeValues,
+    opening,
+    high,
+    low,
+  } = useLocalSearchParams();
+
+  const isPositive = Number(percentageChange) > 0;
+  const isNegative = Number(percentageChange) < 0;
+  const isZero = Number(percentageChange) === 0;
+
+  return (
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={[styles.card, styles.header]}>
+        <Text style={styles.headerText}>{name}</Text>
+      </View>
+
+      {/* Price Card */}
+      <View style={styles.card}>
+        <View style={styles.row}>
+          <Text style={styles.label}>Current Price</Text>
+          <Text style={styles.value}>{formatNumber(Number(currentPrice))}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Text style={styles.label}>Previous Close</Text>
+          <Text style={styles.value}>{formatNumber(Number(previousClosePrice))}</Text>
+        </View>
+
+        <View style={styles.rowLast}>
+          <Text style={styles.label}>Change</Text>
+          <View
+            style={[
+              styles.percentageBox,
+              isPositive && styles.positiveBox,
+              isNegative && styles.negativeBox,
+              isZero && styles.neutralBox, // Apply neutral style for 0%
+            ]}
+          >
+            {isPositive ? (
+              <ArrowUpRight size={16} color="white" />
+            ) : isNegative ? (
+              <ArrowDownRight size={16} color="white" />
+            ) : (
+              <ArrowRight size={16} color="white" /> // Neutral icon for 0%
+            )}
+            <Text style={styles.percentageText}>
+              {isZero ? "0,00%" : Number(percentageChange).toFixed(2) + "%"}
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Extra Info Card */}
+      <View style={[styles.card, { marginTop: 16 }]}>
+        <View style={styles.row}>
+          <Text style={styles.label}>Volume (titles)</Text>
+          <Text style={styles.value}>{formatNumber(Number(volumeTitles)) || "N/A"}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Volume ()</Text>
+          <Text style={styles.value}>{formatNumber(Number(volumeValues)) || "N/A"}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Opening Price</Text>
+          <Text style={styles.value}>{formatNumber(Number(opening)) || "N/A"}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>High</Text>
+          <Text style={styles.value}>{formatNumber(Number(high)) || "N/A"}</Text>
+        </View>
+        <View style={styles.rowLast}>
+          <Text style={styles.label}>Low</Text>
+          <Text style={styles.value}>{formatNumber(Number(low)) || "N/A"}</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F4F6F8",
+    padding: 20,
+    justifyContent: "flex-start",
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#123458",
+    textAlign: "center",
+  },
+  header: {
+    marginBottom: 20,
+  },
+  card: {
+    backgroundColor: "#ffffff",
+    borderRadius: 12,
+    padding: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+    elevation: 1,
+  },
+  name: {
+    fontSize: 16,
+    color: "#666",
+    marginBottom: 20,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 14,
+  },
+  rowLast: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 0,
+  },
+  label: {
+    fontSize: 16,
+    color: "#777",
+  },
+  value: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#222",
+  },
+  percentageBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  percentageText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 15,
+    marginLeft: 6,
+  },
+  positiveBox: {
+    backgroundColor: "#4CAF50",
+  },
+  negativeBox: {
+    backgroundColor: "#F44336",
+  },
+  neutralBox: {
+    backgroundColor: "#8E8E8E", // Neutral gray color for no change
+  },
+  neutralIcon: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 18,
+    marginLeft: 6,
+  },
+});

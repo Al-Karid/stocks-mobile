@@ -1,7 +1,14 @@
-// components/StockCard.tsx
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { ArrowUpRight, ArrowDownRight } from "lucide-react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  Pressable,
+  TouchableWithoutFeedback,
+} from "react-native";
+import { ArrowUpRight, ArrowDownRight, ArrowRight } from "lucide-react-native";
+import { router } from "expo-router";
 
 interface StockCardProps {
   name: string;
@@ -9,27 +16,107 @@ interface StockCardProps {
   currentPrice: number;
   previousClosePrice: number;
   percentageChange: number;
+  volumeTitles: number;
+  volumeValues: number;
+  opening: number;
+  high: number;
+  low: number;
 }
 
-const StockCard: React.FC<StockCardProps> = ({ name, symbol, currentPrice, previousClosePrice, percentageChange }) => {
-  const isPositive = percentageChange >= 0;
+const StockCard: React.FC<StockCardProps> = ({
+  name,
+  symbol,
+  currentPrice,
+  previousClosePrice,
+  percentageChange,
+  volumeTitles,
+  volumeValues,
+  opening,
+  high,
+  low,
+}) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const isPositive = percentageChange > 0;
+  const isNegative = percentageChange < 0;
+  const isZero = percentageChange === 0;
 
   return (
-    <View style={styles.card}>
-      <View style={styles.infoContainer}>
-        <Text style={styles.symbol}>{symbol.trim()}</Text>
-        <Text style={styles.title}>{name}</Text>
-        <Text style={styles.label}>
-          C: <Text style={styles.value}>{currentPrice}</Text> {"  "}
-          V: <Text style={styles.value}>{previousClosePrice}</Text>
-        </Text>
-      </View>
+    <>
+      <TouchableWithoutFeedback
+        onPress={() =>
+          router.push({
+            pathname: "/details",
+            params: {
+              symbol: symbol.trim(),
+              name: name,
+              currentPrice: currentPrice,
+              previousClosePrice: previousClosePrice,
+              percentageChange: percentageChange.toFixed(2),
+              volumeTitles: volumeTitles,
+              volumeValues: volumeValues,
+              opening: opening,
+              high: high,
+              low: low,
+            },
+          })
+        }
+      >
+        <View style={styles.card}>
+          <View style={styles.infoContainer}>
+            <Text style={styles.symbol}>{symbol.trim()}</Text>
+            <Text style={styles.title}>{name}</Text>
+            <Text style={styles.label}>
+              C: <Text style={styles.value}>{currentPrice}</Text> {"  "}
+              V: <Text style={styles.value}>{previousClosePrice}</Text>
+            </Text>
+          </View>
 
-      <View style={[styles.percentageContainer, isPositive ? styles.positive : styles.negative]}>
-        {isPositive ? <ArrowUpRight color="white" size={20} /> : <ArrowDownRight color="white" size={20} />}
-        <Text style={styles.percentageText}>{percentageChange.toFixed(2)}%</Text>
-      </View>
-    </View>
+          <View
+            style={[
+              styles.percentageContainer,
+              isPositive && styles.positive,
+              isNegative && styles.negative,
+              isZero && styles.neutral,
+            ]}
+          >
+            {isPositive ? (
+              <ArrowUpRight color="white" size={20} />
+            ) : isNegative ? (
+              <ArrowDownRight color="white" size={20} />
+            ) : (
+              <ArrowRight color="white" size={20} />
+            )}
+            <Text style={styles.percentageText}>
+              {isZero ? "0,00%" : percentageChange.toFixed(2) + "%"}
+            </Text>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{symbol}</Text>
+            <Text style={styles.modalText}>Nom complet : {name}</Text>
+            <Text style={styles.modalText}>Prix actuel : {currentPrice}</Text>
+            <Text style={styles.modalText}>
+              Clôture précédente : {previousClosePrice}
+            </Text>
+            <Text style={styles.modalText}>
+              Variation : {percentageChange.toFixed(2)}%
+            </Text>
+          </View>
+        </Pressable>
+      </Modal>
+    </>
   );
 };
 
@@ -87,6 +174,39 @@ const styles = StyleSheet.create({
   },
   negative: {
     backgroundColor: "#F44336",
+  },
+  neutral: {
+    backgroundColor: "#8E8E8E", // A neutral gray color for no change
+  },
+  neutralIcon: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 18,
+    marginLeft: 6,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    width: 280,
+    backgroundColor: "white",
+    borderRadius: 12,
+    padding: 20,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#123458",
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 6,
+    color: "#333",
   },
 });
 

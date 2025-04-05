@@ -78,6 +78,11 @@ const StockList: React.FC = () => {
             currentPrice={item.currentPrice}
             previousClosePrice={item.previousClosePrice}
             percentageChange={item.percentageChange}
+            volumeTitles={item.volumeTitles}
+            volumeValues={item.volumeValues}
+            opening={item.opening}
+            high={item.high}
+            low={item.low}
           />
         )}
       />
