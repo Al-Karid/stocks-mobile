@@ -62,7 +62,7 @@ export default function DetailsScreen() {
               <ArrowRight size={16} color="white" /> // Neutral icon for 0%
             )}
             <Text style={styles.percentageText}>
-              {isZero ? "0,00%" : Number(percentageChange).toFixed(2) + "%"}
+              {isZero ? "0,00%" : Number(percentageChange).toFixed(2) + "%"} ({Number(currentPrice) - Number(previousClosePrice)})
             </Text>
           </View>
         </View>

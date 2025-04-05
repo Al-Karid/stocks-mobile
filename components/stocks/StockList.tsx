@@ -10,7 +10,7 @@ import Toast from "react-native-toast-message";
 import { stockData as localStockData } from "@/data/stocks";
 import StockCard from "@/components/stocks/StockCard";
 
-const API_URL = "http://192.168.1.4:8088/api/web/stocks";
+const API_URL = "http://192.168.1.3:8088/api/web/stocks";
 
 const StockList: React.FC = () => {
   const [filterText, setFilterText] = useState("");
