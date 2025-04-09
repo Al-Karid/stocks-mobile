@@ -68,6 +68,7 @@ const StockList: React.FC = () => {
         data={filteredStocks}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={fetchStockData} colors={["#007bff"]} />
         }

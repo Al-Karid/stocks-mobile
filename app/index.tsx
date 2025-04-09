@@ -1,13 +1,135 @@
-// stocks.tsx
-import StockList from "@/components/stocks/StockList";
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { router } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function Stocks() {
+export default function HomeScreen() {
+  const navigateTo = (screen: string) => router.push(`/${screen}`);
+
   return (
-    <View style={{ flex: 1, padding: 20, backgroundColor: "white" }}>
-      <Text style={{ fontSize: 32, fontWeight: "bold", marginBottom: 10 }}>Stocks</Text>
-      <StockList />
-    </View>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Welcome to Stock Tracker 📈</Text>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[styles.button, styles.palmares]}
+            onPress={() => navigateTo("palmares")}
+          >
+            <Text style={styles.buttonText}>Palmarès</Text>
+            <FontAwesome name="line-chart" size={22} color="#fff" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.stocks]}
+            onPress={() => navigateTo("stocks")}
+          >
+            <Text style={styles.buttonText}>Stocks</Text>
+            <FontAwesome name="bar-chart" size={22} color="#fff" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.watchlist]}
+            onPress={() => navigateTo("watchlist")}
+          >
+            <Text style={styles.buttonText}>Watchlist</Text>
+            <FontAwesome name="eye" size={22} color="#fff" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.portfolio]}
+            // onPress={() => navigateTo("portfolio")}
+          >
+            <Text style={styles.buttonText}>Portfolio</Text>
+            {/* <FontAwesome name="folder" size={22} color="#fff" /> */}
+            <FontAwesome name="lock" size={22} color="#fff" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.alerts]}
+            // onPress={() => navigateTo("alerts")}
+          >
+            <Text style={styles.buttonText}>Alerts</Text>
+            {/* <FontAwesome name="bell" size={22} color="#fff" /> */}
+            <FontAwesome name="lock" size={22} color="#fff" />
+          </TouchableOpacity>
+        </View>
+
+        <View>
+            <Text style={styles.copyRight}>© Revalys Data Services - 2025</Text>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f7f7f7',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#f7f7f7", // Light background color for modern look
+    paddingHorizontal: 24,
+    paddingTop: 40,
+    justifyContent: "center",
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: "700",
+    textAlign: "center",
+    color: "#333",
+    marginBottom: 40,
+  },
+  buttonContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  button: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderRadius: 25,
+    paddingVertical: 22,
+    paddingHorizontal: 25,
+    marginBottom: 20,
+    width: "80%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 5,
+  },
+  palmares: {
+    backgroundColor: "#3b82f6", // Blue
+  },
+  stocks: {
+    backgroundColor: "#10b981", // Green
+  },
+  watchlist: {
+    backgroundColor: "#f59e0b", // Yellow
+  },
+  portfolio: {
+    // backgroundColor: "#8b5cf6", // Purple
+    backgroundColor: "#A6AEBF", // Purple
+  },
+  alerts: {
+    // backgroundColor: "#ef4444", // Red
+    backgroundColor: "#A6AEBF", // Red
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+    marginRight: 10,
+  },
+  copyRight: {
+    fontSize: 8,
+    color: "#666",
+    textAlign: "center",
+    marginTop: 0,
+  }
+});

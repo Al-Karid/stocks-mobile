@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { ArrowUpRight, ArrowDownRight, ArrowRight } from "lucide-react-native";
 
 // Utility function to format numbers with thousand separator
@@ -91,6 +91,19 @@ export default function DetailsScreen() {
           <Text style={styles.value}>{formatNumber(Number(low)) || "N/A"}</Text>
         </View>
       </View>
+
+      {/* Action Buttons */}
+<View style={styles.actionsContainer}>
+  <TouchableOpacity style={styles.actionButton}>
+    <Text style={styles.actionButtonText}>Ajouter à la Watchlist</Text>
+  </TouchableOpacity>
+  <TouchableOpacity style={styles.actionButton}>
+    <Text style={styles.actionButtonText}>Ajouter au Portefeuille</Text>
+  </TouchableOpacity>
+  <TouchableOpacity style={styles.actionButton}>
+    <Text style={styles.actionButtonText}>Ajouter une Alerte</Text>
+  </TouchableOpacity>
+</View>
     </View>
   );
 }
@@ -174,5 +187,23 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 18,
     marginLeft: 6,
+  },
+  actionsContainer: {
+    marginTop: 24,
+    gap: 12,
+  },
+  
+  actionButton: {
+    backgroundColor: "#ffffff",
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  
+  actionButtonText: {
+    color: "#12345",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
