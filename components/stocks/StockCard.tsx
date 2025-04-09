@@ -21,6 +21,7 @@ interface StockCardProps {
   opening: number;
   high: number;
   low: number;
+  isInWatchlist: boolean;
 }
 
 const StockCard: React.FC<StockCardProps> = ({
@@ -34,11 +35,15 @@ const StockCard: React.FC<StockCardProps> = ({
   opening,
   high,
   low,
+  isInWatchlist,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const isPositive = percentageChange > 0;
   const isNegative = percentageChange < 0;
   const isZero = percentageChange === 0;
+
+  console.log("isInWatchlist", isInWatchlist);
+  
 
   return (
     <>
@@ -57,7 +62,9 @@ const StockCard: React.FC<StockCardProps> = ({
               opening: opening,
               high: high,
               low: low,
+              isInWatchlist: isInWatchlist ? "1" : "0",
             },
+            
           })
         }
       >

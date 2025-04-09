@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useEffect, useSyncExternalStore } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { initDb } from "../data/db";
+import { syncStockDataFromServer } from "../data/syncStocks";
 
 export default function HomeScreen() {
   const navigateTo = (screen: string) => router.push(`/${screen}`);
+
+  useEffect(() => {
+    initDb();
+    syncStockDataFromServer();
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -54,10 +61,20 @@ export default function HomeScreen() {
             {/* <FontAwesome name="bell" size={22} color="#fff" /> */}
             <FontAwesome name="lock" size={22} color="#fff" />
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.syncButton}
+            onPress={() => {
+              console.log("🔄 Syncing stock data...");
+              syncStockDataFromServer();
+            }}
+          >
+            <FontAwesome name="refresh" size={22} color="#fff" />
+          </TouchableOpacity>
         </View>
 
         <View>
-            <Text style={styles.copyRight}>© Revalys Data Services - 2025</Text>
+          <Text style={styles.copyRight}>© Revalys Data Services - 2025</Text>
         </View>
       </View>
     </SafeAreaView>
@@ -67,7 +84,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f7f7f7',
+    backgroundColor: "#f7f7f7",
   },
   container: {
     flex: 1,
@@ -131,5 +148,22 @@ const styles = StyleSheet.create({
     color: "#666",
     textAlign: "center",
     marginTop: 0,
+  },
+  syncButton: {
+    position: "absolute",
+    bottom: 30,
+    alignSelf: "center",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#210F37",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 6,
+    zIndex: 10,
   }
 });

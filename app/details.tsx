@@ -1,6 +1,8 @@
 import { useLocalSearchParams } from "expo-router";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { ArrowUpRight, ArrowDownRight, ArrowRight } from "lucide-react-native";
+import { addToWatchlist, getStock, removeFromWatchlist } from "@/data/stockDataService";
+import { useState, useEffect } from "react";
 
 // Utility function to format numbers with thousand separator
 const formatNumber = (number: number) => {
@@ -8,40 +10,57 @@ const formatNumber = (number: number) => {
 };
 
 export default function DetailsScreen() {
-  const {
-    symbol,
-    name,
-    currentPrice,
-    previousClosePrice,
-    percentageChange,
-    volumeTitles,
-    volumeValues,
-    opening,
-    high,
-    low,
-  } = useLocalSearchParams();
+  const { symbol } = useLocalSearchParams();
 
-  const isPositive = Number(percentageChange) > 0;
-  const isNegative = Number(percentageChange) < 0;
-  const isZero = Number(percentageChange) === 0;
+  const [watchlisted, setWatchlisted] = useState(false);
+  const [stock, setStock] = useState<StockDb>();
+
+  const fetchStockData = async () => {
+    const data = await getStock(symbol);
+    setStock(data);
+    setWatchlisted(data.isInWatchlist);
+    console.log(data);
+  };
+
+  useEffect(() => {
+    fetchStockData();
+  }, []);
+
+  const isPositive = (stock?.percentageChange ?? 0) > 0;
+  const isNegative = (stock?.percentageChange ?? 0) < 0;
+  const isZero = (stock?.percentageChange ?? 0) === 0;
+
+  const addStockToWatchlist = (symbol: string | undefined) => {
+    addToWatchlist(symbol);
+    setWatchlisted(true);
+  };
+
+  const removeStockFromWatchlist = (symbol: string | undefined) => {
+    removeFromWatchlist(symbol);
+    setWatchlisted(false);
+  };
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={[styles.card, styles.header]}>
-        <Text style={styles.headerText}>{name}</Text>
+        <Text style={styles.headerText}>{stock?.title}</Text>
       </View>
 
       {/* Price Card */}
       <View style={styles.card}>
         <View style={styles.row}>
           <Text style={styles.label}>Current Price</Text>
-          <Text style={styles.value}>{formatNumber(Number(currentPrice))}</Text>
+          <Text style={styles.value}>
+            {formatNumber(stock?.currentPrice || 0)}
+          </Text>
         </View>
 
         <View style={styles.row}>
           <Text style={styles.label}>Previous Close</Text>
-          <Text style={styles.value}>{formatNumber(Number(previousClosePrice))}</Text>
+          <Text style={styles.value}>
+            {formatNumber(stock?.previousClosePrice || 0)}
+          </Text>
         </View>
 
         <View style={styles.rowLast}>
@@ -62,7 +81,8 @@ export default function DetailsScreen() {
               <ArrowRight size={16} color="white" /> // Neutral icon for 0%
             )}
             <Text style={styles.percentageText}>
-              {isZero ? "0,00%" : Number(percentageChange).toFixed(2) + "%"} ({Number(currentPrice) - Number(previousClosePrice)})
+              {isZero ? "0,00%" : stock?.percentageChange.toFixed(2) + "%"} (
+              {Number(stock?.currentPrice) - Number(stock?.previousClosePrice)})
             </Text>
           </View>
         </View>
@@ -72,38 +92,63 @@ export default function DetailsScreen() {
       <View style={[styles.card, { marginTop: 16 }]}>
         <View style={styles.row}>
           <Text style={styles.label}>Volume (titles)</Text>
-          <Text style={styles.value}>{formatNumber(Number(volumeTitles)) || "N/A"}</Text>
+          <Text style={styles.value}>
+            {formatNumber(stock?.volumeTitles || 0) || "N/A"}
+          </Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Volume ()</Text>
-          <Text style={styles.value}>{formatNumber(Number(volumeValues)) || "N/A"}</Text>
+          <Text style={styles.value}>
+            {formatNumber(stock?.volumeValues || 0) || "N/A"}
+          </Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Opening Price</Text>
-          <Text style={styles.value}>{formatNumber(Number(opening)) || "N/A"}</Text>
+          <Text style={styles.value}>
+            {formatNumber(stock?.opening || 0) || "N/A"}
+          </Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>High</Text>
-          <Text style={styles.value}>{formatNumber(Number(high)) || "N/A"}</Text>
+          <Text style={styles.value}>
+            {formatNumber(stock?.high || 0) || "N/A"}
+          </Text>
         </View>
         <View style={styles.rowLast}>
           <Text style={styles.label}>Low</Text>
-          <Text style={styles.value}>{formatNumber(Number(low)) || "N/A"}</Text>
+          <Text style={styles.value}>
+            {formatNumber(stock?.low || 0) || "N/A"}
+          </Text>
         </View>
       </View>
 
       {/* Action Buttons */}
-<View style={styles.actionsContainer}>
-  <TouchableOpacity style={styles.actionButton}>
-    <Text style={styles.actionButtonText}>Ajouter à la Watchlist</Text>
-  </TouchableOpacity>
-  <TouchableOpacity style={styles.actionButton}>
-    <Text style={styles.actionButtonText}>Ajouter au Portefeuille</Text>
-  </TouchableOpacity>
-  <TouchableOpacity style={styles.actionButton}>
-    <Text style={styles.actionButtonText}>Ajouter une Alerte</Text>
-  </TouchableOpacity>
-</View>
+      <View style={styles.actionsContainer}>
+        {watchlisted ? (
+          <TouchableOpacity
+            style={styles.actionButtonRemove}
+            onPress={() => removeFromWatchlist(symbol)}
+          >
+            <Text style={styles.actionButtonText}>
+              Supprimer de la Watchlist
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => addStockToWatchlist(stock?.symbol)}
+          >
+            <Text style={styles.actionButtonText}>Ajouter à la Watchlist</Text>
+          </TouchableOpacity>
+        )}
+
+        <TouchableOpacity style={styles.actionButton}>
+          <Text style={styles.actionButtonText}>Ajouter au Portefeuille</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.actionButton}>
+          <Text style={styles.actionButtonText}>Ajouter une Alerte</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -192,7 +237,6 @@ const styles = StyleSheet.create({
     marginTop: 24,
     gap: 12,
   },
-  
   actionButton: {
     backgroundColor: "#ffffff",
     paddingVertical: 14,
@@ -200,7 +244,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
-  
+  actionButtonRemove: {
+    backgroundColor: "red",
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
   actionButtonText: {
     color: "#12345",
     fontSize: 16,
