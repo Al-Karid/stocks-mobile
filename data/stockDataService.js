@@ -85,3 +85,14 @@ export const getStock = async (symbol) => {
   );
   return stock;
 };
+
+export const getPalmares = async () => {
+  const db = await dbPromise;
+  const gainers = await db.getAllAsync("SELECT * FROM stocks ORDER BY percentageChange DESC LIMIT 5");
+  const losers = await db.getAllAsync("SELECT * FROM stocks ORDER BY percentageChange ASC LIMIT 5");
+  const combined = [
+    ...gainers.map(stock => ({ ...stock, type: 'gainer' })),
+    ...losers.map(stock => ({ ...stock, type: 'loser' }))
+  ];
+  return combined;
+};

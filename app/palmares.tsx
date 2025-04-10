@@ -1,17 +1,32 @@
 import StockCard from "@/components/stocks/StockCard";
 import React from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import { palmaresData } from "@/data/palmares";
+import { getPalmares } from "@/data/stockDataService";
 import UpdatedAt from "@/components/UpdatedAt";
+import { StockDb } from "@/types/stock";
 
 
-const sortedPalmaresData = palmaresData.sort((a, b) => b.percentageChange - a.percentageChange);
+const sortedPalmaresData = getPalmares()
 
 const PalmaresScreen = () => {
+  
+  const [palmaresData, setPalmaresData] = React.useState<StockDb[]>([]);
+  const [updatedAt, setUpdatedAt] = React.useState<string>("");
+
+  const fetchPalmaresData = async () => {
+    const data = await getPalmares();
+    setPalmaresData(data.sort((a, b) => b.percentageChange - a.percentageChange));
+    setUpdatedAt(data[0].updatedAt);
+  };
+  
+  React.useEffect(() => {
+    fetchPalmaresData();
+  }, []);
+  
   return (
     <View style={styles.listContainer}>
       <FlatList
-        data={sortedPalmaresData}
+        data={palmaresData}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
@@ -34,7 +49,7 @@ const PalmaresScreen = () => {
           />
         )}
       />
-      <UpdatedAt updatedAt={sortedPalmaresData[0].updatedAt} />
+      <UpdatedAt updatedAt={updatedAt} />
     </View>
   );
 };
