@@ -4,38 +4,41 @@ import {
   StyleSheet,
   TextInput,
   View,
+  Text,
   RefreshControl,
 } from "react-native";
 import Toast from "react-native-toast-message";
-import { stockData as localStockData } from "@/data/stocks";
 import StockCard from "@/components/stocks/StockCard";
 import { getStocksFromDb } from "@/data/db";
 import { StockDb } from "@/types/stock";
+import { formatLocalDate } from "@/utils/dateUtils";
 
 const StockListDb: React.FC = () => {
   const [filterText, setFilterText] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [updatedAt, setUpdatedAt] = useState("");
   const [stocks, setStocks] = useState<StockDb[]>([]);
 
-  const showToast = (message: string, type: "success" | "error") => {
-    Toast.show({
-      type,
-      text1: message,
-      position: "bottom",
-      visibilityTime: 3000,
-    });
-  };
+  // const showToast = (message: string, type: "success" | "error") => {
+  //   Toast.show({
+  //     type,
+  //     text1: message,
+  //     position: "bottom",
+  //     visibilityTime: 3000,
+  //   });
+  // };
 
   const fetchStockData = async () => {
     setRefreshing(true);
     try {
       const data = await getStocksFromDb();
       setStocks(data);
-      showToast("Database: " + data[0].updatedAt, "success");
+      setUpdatedAt(data[0].updatedAt);
+      // showToast("Database: " + formatLocalDate(data[0].updatedAt), "success");
     } catch (error) {
       // setStocks(localStockData);
-      showToast("Failed to load API data. Using local stock data.", "error");
+      // showToast("Failed to load API data. Using local stock data.", "error");
     } finally {
       setRefreshing(false);
     }
@@ -51,6 +54,7 @@ const StockListDb: React.FC = () => {
 
   return (
     <View style={styles.listContainer}>
+      {/* <Text style={styles.dateText}>Données du {formatLocalDate(updatedAt)}</Text> */}
       <TextInput
         style={[styles.filterInput, isFocused && styles.filterInputFocused]}
         placeholder="Filter stocks..."
@@ -87,7 +91,8 @@ const StockListDb: React.FC = () => {
           />
         )}
       />
-      <Toast />
+      <Text style={styles.dateText}>Données du {formatLocalDate(updatedAt)}</Text>
+      {/* <Toast /> */}
     </View>
   );
 };
@@ -117,6 +122,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 1.5,
     elevation: 5, // Glow effect on Android
+  },
+  dateText: {
+    fontSize: 12,
+    color: "#12345678",
+    marginBottom: 8,
+    paddingHorizontal: 5,
+    paddingTop: 10,
+    paddingBottom: 2,
+    textAlign: "center",
+    borderTopColor: "#12345678",
   },
 });
 

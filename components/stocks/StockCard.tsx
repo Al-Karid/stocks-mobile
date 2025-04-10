@@ -43,7 +43,7 @@ const StockCard: React.FC<StockCardProps> = ({
   const isZero = percentageChange === 0;
 
   // console.log("isInWatchlist", isInWatchlist);
-  
+
   return (
     <>
       <TouchableWithoutFeedback
@@ -63,7 +63,6 @@ const StockCard: React.FC<StockCardProps> = ({
               low: low,
               isInWatchlist: isInWatchlist ? "1" : "0",
             },
-            
           })
         }
       >
@@ -72,8 +71,10 @@ const StockCard: React.FC<StockCardProps> = ({
             <Text style={styles.symbol}>{symbol.trim()}</Text>
             <Text style={styles.title}>{name}</Text>
             <Text style={styles.label}>
-              C: <Text style={styles.value}>{currentPrice}</Text> {"  "}
-              V: <Text style={styles.value}>{previousClosePrice}</Text>
+              <Text style={styles.labelHeader}>Cours: </Text>
+              <Text style={styles.value}>{currentPrice}</Text> {"  "}
+              <Text style={styles.labelHeader}>Veille: </Text>
+              <Text style={styles.value}>{previousClosePrice}</Text>
             </Text>
           </View>
 
@@ -158,6 +159,11 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     color: "#666",
+  },
+  labelHeader: {
+    fontStyle: "italic",
+    color: "#123458",
+    fontSize: 9
   },
   value: {
     color: "#333",

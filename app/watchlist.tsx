@@ -1,4 +1,5 @@
 import StockCard from "@/components/stocks/StockCard";
+import UpdatedAt from "@/components/UpdatedAt";
 import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
@@ -40,6 +41,7 @@ const PalmaresScreen: React.FC = () => {
           />
         )}
       />
+      <UpdatedAt updatedAt={watchlist[0].updatedAt} />
     </View>
   );
 };

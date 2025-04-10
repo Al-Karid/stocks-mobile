@@ -2,6 +2,7 @@ import StockCard from "@/components/stocks/StockCard";
 import React from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { palmaresData } from "@/data/palmares";
+import UpdatedAt from "@/components/UpdatedAt";
 
 
 const sortedPalmaresData = palmaresData.sort((a, b) => b.percentageChange - a.percentageChange);
@@ -29,9 +30,11 @@ const PalmaresScreen = () => {
             opening={item.opening}
             high={item.high}
             low={item.low}
+            isInWatchlist={false}
           />
         )}
       />
+      <UpdatedAt updatedAt={sortedPalmaresData[0].updatedAt} />
     </View>
   );
 };
