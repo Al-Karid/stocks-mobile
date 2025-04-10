@@ -1,4 +1,5 @@
 import { saveStocktoDb } from "./db";
+import { updateWatchlist } from "./stockDataService";
 
 const API_URL = "http://192.168.1.3:8088/api/v1/web/stocks";
 
@@ -15,7 +16,10 @@ export const syncStockDataFromServer = async () => {
         data.forEach((stock) => {
           saveStocktoDb(stock);
         });
+        console.log("💾 Saved all stocks to db");
 
+        updateWatchlist();
+        console.log("💾 Updated watchlist");
       } catch (error) {
         showToast("Failed to load API data. Using local stock data.", "error");
       } finally {

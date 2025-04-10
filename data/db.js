@@ -18,7 +18,7 @@ export const initDb = async () => {
           );`
     );
 
-    console.log("Database initialized: watchlists");
+    console.log("✅ Database initialized: watchlists");
 
     await db.runAsync(
       `CREATE TABLE IF NOT EXISTS stocks (
@@ -40,9 +40,9 @@ export const initDb = async () => {
         );`
     );
 
-    console.log("Database initialized: stocks");
+    console.log("✅ Database initialized: stocks");
   } catch (error) {
-    console.error("Error initializing database: ", error);
+    console.error("⚠️ Error initializing database: ", error);
     throw error;
   }
 };
@@ -87,9 +87,9 @@ try {
         stock.updatedAt,
       ]
     );
-    console.log("Stock saved to db: ", stock.symbol);
+    // console.log("Stock saved to db: ", stock.symbol);
 } catch (error) {
-  console.error("Error saving stock to db: ", error);
+  console.error("⚠️ Error saving stock to db: ", error);
 }
 };
 

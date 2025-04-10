@@ -1,4 +1,4 @@
-type Stock = {
+export interface Stock {
   id: number;
   code: string;
   country: string;
@@ -13,9 +13,9 @@ type Stock = {
   high: number;
   low: number;
   updatedAt: string; // ISO 8601 date string
-};
+}
 
-type StockDb = {
+export interface StockDb {
   id: number;
   code: string;
   country: string;

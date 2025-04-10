@@ -11,24 +11,39 @@ export const addToWatchlist = async (symbol) => {
       [symbol.trim()]
     );
 
-    console.log("Added to watchlist: ", symbol);
-    console.log("Updated stocks table: ", up);
+    console.log("✅ Added to watchlist: ", symbol.trim());
+    // console.log("Updated stocks table: ", up);
   } catch (error) {
-    console.error("Error adding to watchlist:", error);
+    console.error("⚠️ Error adding to watchlist:", error);
   }
+};
+
+export const updateWatchlist = async (symbol) => {
+  const watchlist = await getWatchlist();
+  watchlist.forEach((stock) => {
+    addToWatchlist(stock.symbol);
+  })
 };
 
 export const removeFromWatchlist = async (symbol) => {
   const db = await dbPromise;
-  await db.runAsync("DELETE FROM watchlists WHERE trim(symbol) = ?", [symbol.trim()]);
+  await db.runAsync("DELETE FROM watchlists WHERE trim(symbol) = ?", [
+    symbol.trim(),
+  ]);
   await db.runAsync(
     "UPDATE stocks SET isInWatchlist = FALSE WHERE trim(symbol) = ?",
     [symbol.trim()]
   );
-  console.log("Stock removed from watchlist: ", symbol);
+  console.log("‼️ Stock removed from watchlist: ", symbol.trim());
 };
 
 export const getWatchlist = async () => {
+  const db = await dbPromise;
+  const watchlist = await db.getAllAsync("SELECT symbol FROM watchlists");
+  return watchlist;
+};
+
+export const getWatchlistAsStocks = async () => {
   try {
     const db = await dbPromise;
 
@@ -42,14 +57,16 @@ export const getWatchlist = async () => {
 
     // Filter stocks that are in the watchlist
     const stocksInWatchlist = stocks.filter((stock) =>
-      watchlist.some((watchedStock) => watchedStock.symbol.trim() === stock.symbol.trim())
+      watchlist.some(
+        (watchedStock) => watchedStock.symbol.trim() === stock.symbol.trim()
+      )
     );
 
-    console.log("Stocks in Watchlist: ", stocksInWatchlist[0]);
+    // console.log("Stocks in Watchlist: ", stocksInWatchlist[0]);
 
     return stocksInWatchlist;
   } catch (error) {
-    console.error("Error fetching watchlist:", error);
+    console.error("⚠️ Error fetching watchlist:", error);
     throw error;
   }
 };
@@ -62,8 +79,9 @@ export const getStocks = async () => {
 
 export const getStock = async (symbol) => {
   const db = await dbPromise;
-  const stock = await db.getFirstAsync("SELECT * FROM stocks WHERE trim(symbol) = ?", [
-    symbol,
-  ]);
+  const stock = await db.getFirstAsync(
+    "SELECT * FROM stocks WHERE trim(symbol) = ?",
+    [symbol]
+  );
   return stock;
 };

@@ -1,16 +1,18 @@
 import { useLocalSearchParams } from "expo-router";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { ArrowUpRight, ArrowDownRight, ArrowRight } from "lucide-react-native";
-import { addToWatchlist, getStock, removeFromWatchlist } from "@/data/stockDataService";
+import { getStock } from "@/data/stockDataService";
+import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useState, useEffect } from "react";
+import { StockDb } from "@/types/stock";
 
-// Utility function to format numbers with thousand separator
 const formatNumber = (number: number) => {
   return new Intl.NumberFormat("fr-FR").format(number);
 };
 
 export default function DetailsScreen() {
   const { symbol } = useLocalSearchParams();
+  const { addStockToWatchlist, removeStockFromWatchlist } = useWatchlistStore();
 
   const [watchlisted, setWatchlisted] = useState(false);
   const [stock, setStock] = useState<StockDb>();
@@ -19,7 +21,6 @@ export default function DetailsScreen() {
     const data = await getStock(symbol);
     setStock(data);
     setWatchlisted(data.isInWatchlist);
-    console.log(data);
   };
 
   useEffect(() => {
@@ -30,13 +31,13 @@ export default function DetailsScreen() {
   const isNegative = (stock?.percentageChange ?? 0) < 0;
   const isZero = (stock?.percentageChange ?? 0) === 0;
 
-  const addStockToWatchlist = (symbol: string | undefined) => {
-    addToWatchlist(symbol);
+  const addToWatchlist = (symbol: string | undefined) => {
+    addStockToWatchlist(symbol ?? "");
     setWatchlisted(true);
   };
 
-  const removeStockFromWatchlist = (symbol: string | undefined) => {
-    removeFromWatchlist(symbol);
+  const removeFromWatchlist = (symbol: string | undefined) => {
+    removeStockFromWatchlist(symbol ?? "");
     setWatchlisted(false);
   };
 
@@ -127,7 +128,7 @@ export default function DetailsScreen() {
         {watchlisted ? (
           <TouchableOpacity
             style={styles.actionButtonRemove}
-            onPress={() => removeFromWatchlist(symbol)}
+            onPress={() => removeFromWatchlist(stock?.symbol)}
           >
             <Text style={styles.actionButtonText}>
               Supprimer de la Watchlist
@@ -136,7 +137,7 @@ export default function DetailsScreen() {
         ) : (
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => addStockToWatchlist(stock?.symbol)}
+            onPress={() => addToWatchlist(stock?.symbol)}
           >
             <Text style={styles.actionButtonText}>Ajouter à la Watchlist</Text>
           </TouchableOpacity>

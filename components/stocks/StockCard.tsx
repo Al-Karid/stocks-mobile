@@ -42,9 +42,8 @@ const StockCard: React.FC<StockCardProps> = ({
   const isNegative = percentageChange < 0;
   const isZero = percentageChange === 0;
 
-  console.log("isInWatchlist", isInWatchlist);
+  // console.log("isInWatchlist", isInWatchlist);
   
-
   return (
     <>
       <TouchableWithoutFeedback

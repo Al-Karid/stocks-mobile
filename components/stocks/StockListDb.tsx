@@ -10,6 +10,7 @@ import Toast from "react-native-toast-message";
 import { stockData as localStockData } from "@/data/stocks";
 import StockCard from "@/components/stocks/StockCard";
 import { getStocksFromDb } from "@/data/db";
+import { StockDb } from "@/types/stock";
 
 const StockListDb: React.FC = () => {
   const [filterText, setFilterText] = useState("");

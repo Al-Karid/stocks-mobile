@@ -1,29 +1,23 @@
 import StockCard from "@/components/stocks/StockCard";
-import React, {useState} from "react";
+import { useWatchlistStore } from "@/stores/watchlistStore";
+import { useEffect } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import { stockData } from "@/data/stocks";
-import { getWatchlist } from "@/data/stockDataService";
-
-
-const slicedStockData = stockData.slice(0,3);
 
 const PalmaresScreen: React.FC = () => {
-
-  const [stocks, setStocks] = useState<StockDb[]>([]);
+  const { watchlist, fetchWatchlist } = useWatchlistStore();
 
   const fetchStockData = async () => {
-    const data = await getWatchlist();
-    setStocks(data);
+    await fetchWatchlist();
   };
-  
-  React.useEffect(() => {
-    fetchStockData(); 
+
+  useEffect(() => {
+    fetchStockData();
   }, []);
 
   return (
     <View style={styles.listContainer}>
       <FlatList
-        data={stocks}
+        data={watchlist}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
