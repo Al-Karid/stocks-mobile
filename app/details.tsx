@@ -130,7 +130,7 @@ export default function DetailsScreen() {
             style={styles.actionButtonRemove}
             onPress={() => removeFromWatchlist(stock?.symbol)}
           >
-            <Text style={styles.actionButtonText}>
+            <Text style={styles.actionButtonRemoveText}>
               Supprimer de la Watchlist
             </Text>
           </TouchableOpacity>
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F44336",
   },
   neutralBox: {
-    backgroundColor: "#8E8E8E", // Neutral gray color for no change
+    backgroundColor: "#8E8E8E",
   },
   neutralIcon: {
     color: "white",
@@ -246,11 +246,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   actionButtonRemove: {
-    backgroundColor: "red",
+    backgroundColor: "#F7CFD8",
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 10,
     alignItems: "center",
+  },
+  actionButtonRemoveText: {
+    color: "#102E50",
+    fontSize: 16,
+    fontWeight: "600",
   },
   actionButtonText: {
     color: "#12345",

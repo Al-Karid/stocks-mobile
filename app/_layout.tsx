@@ -17,6 +17,20 @@ export default function RootLayout() {
         headerShown: true,
         gestureEnabled: true, 
         }} />
+      <Stack.Screen 
+      name="stocks" 
+      options={{ 
+        title: "Stocks",
+        headerShown: true,
+        gestureEnabled: true, 
+        }} />
+      <Stack.Screen 
+      name="watchlist" 
+      options={{ 
+        title: "Watchlist",
+        headerShown: true,
+        gestureEnabled: true, 
+        }} />
       <Stack.Screen
         name="details"
         options={{
