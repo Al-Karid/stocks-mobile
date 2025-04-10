@@ -1,14 +1,16 @@
 import StockCard from "@/components/stocks/StockCard";
 import UpdatedAt from "@/components/UpdatedAt";
 import { useWatchlistStore } from "@/stores/watchlistStore";
-import { useEffect } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { useEffect, useState } from "react";
+import { View, Text, StyleSheet, FlatList } from "react-native";
 
 const PalmaresScreen: React.FC = () => {
   const { watchlist, fetchWatchlist } = useWatchlistStore();
+  const [updatedAt, setUpdatedAt] = useState<string>("");
 
   const fetchStockData = async () => {
     await fetchWatchlist();
+    setUpdatedAt(watchlist[0].updatedAt);
   };
 
   useEffect(() => {
@@ -17,31 +19,36 @@ const PalmaresScreen: React.FC = () => {
 
   return (
     <View style={styles.listContainer}>
-      <FlatList
-        data={watchlist}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-        // refreshControl={
-        //   <RefreshControl refreshing={refreshing} onRefresh={fetchStockData} colors={["#007bff"]} />
-        // }
-        renderItem={({ item }) => (
-          <StockCard
-            name={item.title.trimStart()}
-            symbol={item.symbol}
-            currentPrice={item.currentPrice}
-            previousClosePrice={item.previousClosePrice}
-            percentageChange={item.percentageChange}
-            volumeTitles={item.volumeTitles}
-            volumeValues={item.volumeValues}
-            opening={item.opening}
-            high={item.high}
-            low={item.low}
-            isInWatchlist={item.isInWatchlist}
+      {watchlist.length === 0 ? (
+        <Text style={{ textAlign: "center", marginTop: 20, fontStyle: "italic" }}>
+          No stocks in watchlist
+        </Text>
+      ) : (
+        <>
+          <FlatList
+            data={watchlist}
+            keyExtractor={(item) => item.id.toString()}
+            contentContainerStyle={styles.container}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <StockCard
+                name={item.title.trimStart()}
+                symbol={item.symbol}
+                currentPrice={item.currentPrice}
+                previousClosePrice={item.previousClosePrice}
+                percentageChange={item.percentageChange}
+                volumeTitles={item.volumeTitles}
+                volumeValues={item.volumeValues}
+                opening={item.opening}
+                high={item.high}
+                low={item.low}
+                isInWatchlist={item.isInWatchlist}
+              />
+            )}
           />
-        )}
-      />
-      <UpdatedAt updatedAt={watchlist[0].updatedAt} />
+          <UpdatedAt updatedAt={updatedAt} />
+        </>
+      )}
     </View>
   );
 };
