@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { StockDb } from "../types/stock";
+import { Stock } from "../types/stock";
 import {
   getWatchlistAsStocks,
   addToWatchlist,
@@ -7,8 +7,8 @@ import {
 } from "../data/stockDataService";
 
 interface WatchlistStore {
-    watchlist: StockDb[];
-    fetchWatchlist: () => Promise<StockDb[]>;
+    watchlist: Stock[];
+    fetchWatchlist: () => Promise<Stock[]>;
     addStockToWatchlist: (symbol: string) => Promise<void>;
     removeStockFromWatchlist: (symbol: string) => Promise<void>;
 }

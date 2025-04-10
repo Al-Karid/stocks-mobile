@@ -1,46 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { 
-  FlatList, 
-  StyleSheet, 
-  TextInput, 
-  View, 
-  RefreshControl 
+import {
+  FlatList,
+  StyleSheet,
+  TextInput,
+  View,
+  Text,
+  RefreshControl,
 } from "react-native";
-import Toast from "react-native-toast-message";
-import { stockData as localStockData } from "@/data/stocks";
 import StockCard from "@/components/stocks/StockCard";
+import { Stock } from "@/types/stock";
+import { formatLocalDate } from "@/utils/dateUtils";
+import { getStocks } from "@/data/stockDataService";
 
-const API_URL = "http://192.168.1.3:8088/api/v1/web/stocks";
-
-const StockList: React.FC = () => {
+const StockListing: React.FC = () => {
   const [filterText, setFilterText] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [stocks, setStocks] = useState(localStockData);
-
-  const showToast = (message: string, type: "success" | "error") => {
-    Toast.show({
-      type,
-      text1: message,
-      position: "bottom",
-      visibilityTime: 3000,
-    });
-  };
+  const [updatedAt, setUpdatedAt] = useState("");
+  const [stocks, setStocks] = useState<Stock[]>([]);
 
   const fetchStockData = async () => {
     setRefreshing(true);
     try {
-      const response = await fetch(API_URL);
-      if (!response.ok) throw new Error("API error");
-
-      const data = await response.json();
-      if (data.length === 0) throw new Error("Empty API response");
-
+      const data = await getStocks();
       setStocks(data);
-      showToast("Stock data loaded from API", "success");
+      setUpdatedAt(data[0].updatedAt);
     } catch (error) {
-      setStocks(localStockData);
-      showToast("Failed to load API data. Using local stock data.", "error");
     } finally {
       setRefreshing(false);
     }
@@ -70,7 +55,11 @@ const StockList: React.FC = () => {
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={fetchStockData} colors={["#007bff"]} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={fetchStockData}
+            colors={["#007bff"]}
+          />
         }
         renderItem={({ item }) => (
           <StockCard
@@ -84,10 +73,14 @@ const StockList: React.FC = () => {
             opening={item.opening}
             high={item.high}
             low={item.low}
+            isInWatchlist={item.isInWatchlist}
           />
         )}
       />
-      <Toast />
+      <Text style={styles.dateText}>
+        Données du {formatLocalDate(updatedAt)}
+      </Text>
+      {/* <Toast /> */}
     </View>
   );
 };
@@ -118,6 +111,16 @@ const styles = StyleSheet.create({
     shadowRadius: 1.5,
     elevation: 5, // Glow effect on Android
   },
+  dateText: {
+    fontSize: 12,
+    color: "#12345678",
+    marginBottom: 8,
+    paddingHorizontal: 5,
+    paddingTop: 10,
+    paddingBottom: 2,
+    textAlign: "center",
+    borderTopColor: "#12345678",
+  },
 });
 
-export default StockList;
+export default StockListing;

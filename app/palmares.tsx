@@ -3,14 +3,11 @@ import React from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { getPalmares } from "@/data/stockDataService";
 import UpdatedAt from "@/components/UpdatedAt";
-import { StockDb } from "@/types/stock";
-
-
-const sortedPalmaresData = getPalmares()
+import { Stock } from "@/types/stock";
 
 const PalmaresScreen = () => {
   
-  const [palmaresData, setPalmaresData] = React.useState<StockDb[]>([]);
+  const [palmaresData, setPalmaresData] = React.useState<Stock[]>([]);
   const [updatedAt, setUpdatedAt] = React.useState<string>("");
 
   const fetchPalmaresData = async () => {

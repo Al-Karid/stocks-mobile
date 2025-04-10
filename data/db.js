@@ -7,7 +7,6 @@ export const initDb = async () => {
   const db = await dbPromise;
 
   try {
-
     await db.runAsync("drop table if exists stocks");
     await db.runAsync("drop table if exists watchlists");
 
@@ -48,7 +47,7 @@ export const initDb = async () => {
 };
 
 export const saveStocktoDb = async (stock) => {
-try {
+  try {
     const db = await dbPromise;
     await db.runAsync(
       "INSERT OR REPLACE INTO stocks \
@@ -88,13 +87,7 @@ try {
       ]
     );
     // console.log("Stock saved to db: ", stock.symbol);
-} catch (error) {
-  console.error("⚠️ Error saving stock to db: ", error);
-}
-};
-
-export const getStocksFromDb = async () => {
-  const db = await dbPromise;
-  const stocks = await db.getAllAsync("SELECT * FROM stocks");
-  return stocks;
+  } catch (error) {
+    console.error("⚠️ Error saving stock to db: ", error);
+  }
 };

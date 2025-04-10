@@ -4,18 +4,15 @@ import { ArrowUpRight, ArrowDownRight, ArrowRight } from "lucide-react-native";
 import { getStock } from "@/data/stockDataService";
 import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useState, useEffect } from "react";
-import { StockDb } from "@/types/stock";
-
-const formatNumber = (number: number) => {
-  return new Intl.NumberFormat("fr-FR").format(number);
-};
+import { Stock } from "@/types/stock";
+import { formatNumber } from "../utils/numberUtils";
 
 export default function DetailsScreen() {
   const { symbol } = useLocalSearchParams();
   const { addStockToWatchlist, removeStockFromWatchlist } = useWatchlistStore();
 
   const [watchlisted, setWatchlisted] = useState(false);
-  const [stock, setStock] = useState<StockDb>();
+  const [stock, setStock] = useState<Stock>();
 
   const fetchStockData = async () => {
     const data = await getStock(symbol);

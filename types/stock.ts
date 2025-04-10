@@ -1,4 +1,4 @@
-export interface Stock {
+export interface StockResponse {
   id: number;
   code: string;
   country: string;
@@ -15,7 +15,7 @@ export interface Stock {
   updatedAt: string; // ISO 8601 date string
 }
 
-export interface StockDb {
+export interface Stock {
   id: number;
   code: string;
   country: string;
