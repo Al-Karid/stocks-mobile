@@ -1,17 +1,17 @@
 import React from "react";
 import { FlatList, StyleSheet } from "react-native";
-import PortfolioItem from "@/components/portfolio/PortfolioItem";
+import PortfolioCard from "@/components/portfolio/PortfolioCard";
 
 interface PortfolioListProps {
   portfolios: Portfolio[];
 }
 
-export default function PortfolioList({ portfolios} : PortfolioListProps) {
+export default function PortfolioListing({ portfolios} : PortfolioListProps) {
   return (
     <FlatList
       data={portfolios}
       keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => <PortfolioItem id={item.id} name={item.name} />}
+      renderItem={({ item }) => <PortfolioCard id={item.id} name={item.name} />}
       contentContainerStyle={styles.container}
     />
   );

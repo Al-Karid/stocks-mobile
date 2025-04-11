@@ -48,11 +48,11 @@ export default function HomeScreen() {
 
           <TouchableOpacity
             style={[styles.button, styles.portfolio]}
-            // onPress={() => navigateTo("portfolio")}
+            onPress={() => navigateTo("portfolio")}
           >
             <Text style={styles.buttonText}>Portfolio</Text>
-            {/* <FontAwesome name="folder" size={22} color="#fff" /> */}
-            <FontAwesome name="lock" size={22} color="#fff" />
+            <FontAwesome name="folder" size={22} color="#fff" />
+            {/* <FontAwesome name="lock" size={22} color="#fff" /> */}
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -132,8 +132,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#f59e0b", // Yellow
   },
   portfolio: {
-    // backgroundColor: "#8b5cf6", // Purple
-    backgroundColor: "#A6AEBF", // Purple
+    backgroundColor: "#8b5cf6", // Purple
+    // backgroundColor: "#A6AEBF", // Purple
   },
   alerts: {
     // backgroundColor: "#ef4444", // Red
