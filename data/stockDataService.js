@@ -1,4 +1,4 @@
-import { dbPromise } from "./db.js";
+import { dbPromise } from "./db/db";
 
 export const addToWatchlist = async (symbol) => {
   try {

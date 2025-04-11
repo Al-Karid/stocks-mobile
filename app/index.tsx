@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { initDb } from "../data/db";
+import { initDb } from "../data/db/stockDb";
 import { syncStockDataFromServer } from "../data/syncStocks";
 
 export default function HomeScreen() {

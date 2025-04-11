@@ -1,7 +1,4 @@
-// db/db.ts
-import * as SQLite from "expo-sqlite";
-
-export const dbPromise = SQLite.openDatabaseAsync("stocks.db");
+import { dbPromise } from "./db";
 
 export const initDb = async () => {
   const db = await dbPromise;
