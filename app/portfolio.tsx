@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import PortfolioListing from "@/components/portfolio/PortfolioListing";
 import { HapticButton } from "@/components/HapticButton";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 
 export default function Index() {
   const [portfolios, setPortfolios] = useState<Portfolio[]>([
@@ -29,18 +30,20 @@ export default function Index() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Portfolio</Text>
-        <HapticButton onPress={() => {}}>
-          <FontAwesome name="plus" size={22} color="#123456" />
-        </HapticButton>
-      </View>
+    <ActionSheetProvider>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Portfolio</Text>
+          <HapticButton onPress={() => {}}>
+            <FontAwesome name="plus" size={22} color="#123456" />
+          </HapticButton>
+        </View>
 
-      {/* Portfolio List */}
-      <PortfolioListing portfolios={portfolios} />
-    </View>
+        {/* Portfolio List */}
+        <PortfolioListing portfolios={portfolios} />
+      </View>
+    </ActionSheetProvider>
   );
 }
 
