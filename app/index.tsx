@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { initDb } from "../data/db/stockDb";
+import { initPortfolioDb } from "@/data/db/portfolioDb"
 import { syncStockDataFromServer } from "../data/syncStocks";
 
 export default function HomeScreen() {
@@ -11,6 +12,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     initDb();
+    initPortfolioDb()
     syncStockDataFromServer();
   }, []);
 

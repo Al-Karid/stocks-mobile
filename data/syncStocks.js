@@ -1,7 +1,7 @@
 import { saveStocktoDb } from "./db/stockDb";
 import { updateWatchlist } from "./stockDataService";
 
-const API_URL = "http://192.168.43.93:8088/api/v1/web/stocks";
+const API_URL = "http://192.168.1.3:8088/api/v1/web/stocks";
 
 export const syncStockDataFromServer = async () => {
   try {

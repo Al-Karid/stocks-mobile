@@ -4,6 +4,8 @@ export const initDb = async () => {
   const db = await dbPromise;
 
   try {
+
+    // Fix remove the drop statements
     await db.runAsync("drop table if exists stocks");
     await db.runAsync("drop table if exists watchlists");
 
