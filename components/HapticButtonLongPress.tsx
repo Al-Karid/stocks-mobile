@@ -3,6 +3,7 @@ import * as Haptics from 'expo-haptics';
 
 interface HapticButtonProps {
   onLongPress?: (event: any) => void;
+  onPress?: (event: any) => void;
   style?: object;
   children?: React.ReactNode;
 }

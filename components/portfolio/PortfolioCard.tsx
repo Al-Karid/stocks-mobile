@@ -2,6 +2,7 @@ import { useActionSheet } from "@expo/react-native-action-sheet";
 import React from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import { HapticButtonLongPress } from "../HapticButtonLongPress";
+import { router } from "expo-router";
 
 type PortfolioProps = {
   id: number;
@@ -55,7 +56,10 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
   };
 
   return (
-    <HapticButtonLongPress style={styles.card} onLongPress={onPress}>
+    <HapticButtonLongPress 
+    style={styles.card} 
+    onPress={() => router.push({ pathname: "/holdings", params: { id } })}
+    onLongPress={onPress}>
       <View style={styles.container}>
         <Text style={styles.title}>{name.toUpperCase()}</Text>
         <Text
