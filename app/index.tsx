@@ -4,16 +4,24 @@ import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { initDb } from "../data/db/stockDb";
-import { initPortfolioDb } from "@/data/db/portfolioDb"
+import { initPortfolioDb } from "@/data/db/portfolioDb";
 import { syncStockDataFromServer } from "../data/syncStocks";
 
 export default function HomeScreen() {
   const navigateTo = (screen: string) => router.push(`/${screen}`);
 
   useEffect(() => {
-    initDb();
-    initPortfolioDb()
-    syncStockDataFromServer();
+    const init = async () => {
+      try {
+        await initDb();
+        await initPortfolioDb();
+        await syncStockDataFromServer();
+        console.log("✅ All databases initialized successfully");
+      } catch (e) {
+        console.error("❌ Failed to initialize databases", e);
+      }
+    };
+    init();
   }, []);
 
   return (
@@ -167,5 +175,5 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 6,
     zIndex: 10,
-  }
+  },
 });

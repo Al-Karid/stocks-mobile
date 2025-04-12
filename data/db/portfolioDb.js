@@ -1,3 +1,4 @@
+//File: portfoliodb.js
 import { dbPromise } from "./db";
 
 export const initPortfolioDb = async () => {
@@ -12,15 +13,17 @@ export const initPortfolioDb = async () => {
     await db.runAsync("drop table if exists holdings");
 
     // Portfolios Table
-    db.runAsync(
+    await db.runAsync(
       `CREATE TABLE IF NOT EXISTS portfolios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL
+        name TEXT NOT NULL,
         UNIQUE (name)
       );`
     );
+    console.log("✅ Database initialized: Portfolios");
+    
     // Transactions Table
-    db.runAsync(
+    await db.runAsync(
       `CREATE TABLE IF NOT EXISTS transactions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         portfolioId INTEGER NOT NULL,
@@ -35,8 +38,10 @@ export const initPortfolioDb = async () => {
         FOREIGN KEY (portfolioId) REFERENCES portfolios(id)
       );`
     );
+    console.log("✅ Database initialized: Transactions");
+    
     // Holdings Table
-    db.runAsync(
+    await db.runAsync(
       `CREATE TABLE IF NOT EXISTS holdings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         portfolioId INTEGER NOT NULL,
@@ -51,11 +56,10 @@ export const initPortfolioDb = async () => {
         UNIQUE (portfolioId, symbol)
       );`
     );
+    console.log("✅ Database initialized: Holdings");
+
   } catch (error) {
     console.error("⚠️ Error initializing portfolio database: ", error);
     throw error;
-  } finally {
-    console.log("✅ Portfolio database initialized");
   }
 };
-// export default initPortfolioDb;
