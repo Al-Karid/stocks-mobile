@@ -1,6 +1,6 @@
 // PortfolioListing.tsx
 import React, { useState } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList, StyleSheet, Text } from "react-native";
 import Dialog from "react-native-dialog";
 import PortfolioCard from "@/components/portfolio/PortfolioCard";
 import { handleCloseDialog } from "@/utils/dialogUtils";
@@ -45,6 +45,18 @@ export default function PortfolioListing({ portfolios }: PortfolioListProps) {
       <FlatList
         data={portfolios}
         keyExtractor={(item) => item.id.toString()}
+        ListEmptyComponent={() => (
+          <Text
+            style={{
+              textAlign: "center",
+              marginTop: 20,
+              fontStyle: "italic",
+              color: "#888",
+            }}
+          >
+            Create a portfolio to get started.
+          </Text>
+        )}
         renderItem={({ item }) => (
           <PortfolioCard
             id={item.id}
@@ -55,6 +67,7 @@ export default function PortfolioListing({ portfolios }: PortfolioListProps) {
           />
         )}
         contentContainerStyle={styles.container}
+        contentInsetAdjustmentBehavior="automatic"
       />
 
       <Dialog.Container visible={isRenameVisible}>
@@ -76,6 +89,6 @@ export default function PortfolioListing({ portfolios }: PortfolioListProps) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 1.5,
+    padding: 16,
   },
 });

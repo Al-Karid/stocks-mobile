@@ -130,13 +130,13 @@ const StockCard: React.FC<StockCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
-    backgroundColor: "#fff",
-    marginVertical: 5,
+    backgroundColor: "#f9fafb",
+    marginBottom: 10,
     borderRadius: 12,
     padding: 20,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.12,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
     shadowRadius: 4,
     elevation: 3,
     alignItems: "center",
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   labelHeader: {
     fontStyle: "italic",
     color: "#123458",
-    fontSize: 9
+    fontSize: 9,
   },
   value: {
     color: "#333",

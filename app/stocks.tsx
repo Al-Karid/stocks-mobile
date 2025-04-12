@@ -1,13 +1,58 @@
 // stocks.tsx
 import StockListing from "@/components/stocks/StockListing";
-import React from "react";
-import { View, Text } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import { router, useNavigation } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { TouchableOpacity } from "react-native";
+import { useStockDataService } from "@/data/useStockDataService";
+import { Stock } from "@/types/stock";
 
 export default function Stocks() {
+  const { fetchStocks } = useStockDataService();
+  const navigation = useNavigation();
+
+  const [filterText, setFilterText] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+  const [stocks, setStocks] = useState<Stock[]>([]);
+
+  const filteredStocks = stocks.filter((stock: Stock) =>
+    stock.title.toLowerCase().includes(filterText.toLowerCase())
+  );
+
+  const fetchStockData = async () => {
+    setRefreshing(true);
+    const stocks = await fetchStocks();
+    setStocks(stocks);
+    setRefreshing(false);
+  };
+
+  useEffect(() => {
+    fetchStockData();
+    navigation.setOptions({
+      headerTitle: "Stocks",
+      headerSearchBarOptions: {
+        placeholder: "Search stocks",
+        onChangeText: (event: {
+          nativeEvent: { text: React.SetStateAction<string> };
+        }) => {
+          setFilterText(event.nativeEvent.text);
+        },
+      },
+      headerRight: () => (
+        <TouchableOpacity
+          style={{ marginRight: 5, marginTop: 6 }}
+          onPress={() => router.push("/watchlist")}
+        >
+          <FontAwesome name="eye" size={25} color="#007AFF" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
   return (
-    <View style={{ flex: 1, padding: 20, backgroundColor: "white" }}>
-      {/* <Text style={{ fontSize: 32, fontWeight: "bold", marginBottom: 10 }}>Stocks</Text> */}
-      <StockListing />
-    </View>
+    <StockListing
+      stocks={filteredStocks}
+      refreshing={refreshing}
+      onRefresh={fetchStockData}
+    />
   );
 }

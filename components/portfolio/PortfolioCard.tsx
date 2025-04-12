@@ -56,10 +56,11 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
   };
 
   return (
-    <HapticButtonLongPress 
-    style={styles.card} 
-    onPress={() => router.push({ pathname: "/holdings", params: { id } })}
-    onLongPress={onPress}>
+    <HapticButtonLongPress
+      style={styles.card}
+      onPress={() => router.push({ pathname: "/holdings", params: { id } })}
+      onLongPress={onPress}
+    >
       <View style={styles.container}>
         <Text style={styles.title}>{name.toUpperCase()}</Text>
         <Text
@@ -78,16 +79,16 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#fff",
-    padding: 15,
-    marginVertical: 8,
     paddingVertical: 25,
-    borderRadius: 8,
+    backgroundColor: "#f9fafb",
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 5,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    elevation: 3,
   },
   container: {
     flexDirection: "row",

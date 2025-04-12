@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Dialog from "react-native-dialog";
-import { View, Text, StyleSheet } from "react-native";
+import { Text, StyleSheet, Pressable } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import PortfolioListing from "@/components/portfolio/PortfolioListing";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { handleCloseDialog } from "@/utils/dialogUtils";
 import { provideHapticFeedback } from "@/utils/interactionUtils";
 import { usePortfolioStore } from "@/stores/portfolioStore";
+import { useNavigation } from "expo-router";
 
-export default function Index() {
+export default function Portfolio() {
+  const navigation = useNavigation();
   const { portfolios: portfolioStore, addPortfolio } = usePortfolioStore();
 
   const [portfolioName, setPortfolioName] = useState("");
@@ -30,33 +32,29 @@ export default function Index() {
     setAddVisible(false);
   };
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable
+          style={{ marginRight: 5, marginTop: 6 }}
+          onPress={handleOpenDialog}
+        >
+          <FontAwesome name="pencil-square-o" size={23} color="#007AFF" />
+        </Pressable>
+      ),
+    });
+  }, [navigation]);
+
   return (
     <ActionSheetProvider>
-      <View style={{ flex: 1 }}>
-        <View style={styles.container}>
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title}>Portfolio</Text>
-            <Text style={styles.newPortfolio} onPress={handleOpenDialog}>
-              <FontAwesome
-                name="plus"
-                size={18}
-                color="#123456"
-                style={{ fontSize: 18 }}
-              >
-                {" "}
-                New
-              </FontAwesome>
-            </Text>
-          </View>
-
-          {/* Portfolio List */}
-          <PortfolioListing portfolios={portfolioStore} />
-        </View>
-
+      <>
+        {/* Portfolio List */}
+        <PortfolioListing portfolios={portfolioStore} />
         {/* Add Portfolio Dialog */}
         <Dialog.Container visible={isAddVisible}>
-          <Dialog.Title>Create Portfolio</Dialog.Title>
+          <Dialog.Title>
+            <Text>Create Portfolio</Text>
+          </Dialog.Title>
           <Dialog.Input
             placeholder="Enter portfolio name"
             value={portfolioName}
@@ -66,33 +64,12 @@ export default function Index() {
             label="Cancel"
             onPress={() => handleCloseDialog(setAddVisible)}
           />
-          <Dialog.Button label="Create" onPress={() => handleSavePortfolio(portfolioName)} />
+          <Dialog.Button
+            label="Create"
+            onPress={() => handleSavePortfolio(portfolioName)}
+          />
         </Dialog.Container>
-      </View>
+      </>
     </ActionSheetProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "white",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#123456",
-  },
-  newPortfolio: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 8,
-  },
-});
