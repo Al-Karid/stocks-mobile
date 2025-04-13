@@ -1,5 +1,7 @@
+import { StockResponse } from "@/types/stock";
 import { saveStocktoDb } from "./db/stockDb";
 import { updateWatchlist } from "./stockDataService";
+import { Storage } from "expo-sqlite/kv-store"
 
 const API_URL = "http://192.168.1.3:8088/api/v1/web/stocks";
 
@@ -8,18 +10,20 @@ export const syncStockDataFromServer = async () => {
     const response = await fetch(API_URL);
     if (!response.ok) throw new Error("API error");
 
-    const data = await response.json();
+    const data: StockResponse[] = await response.json();
     if (data.length === 0) throw new Error("Empty API response");
+    
+    await Storage.setItem("lastSync", data[0].updatedAt);
 
     data.forEach((stock) => {
       saveStocktoDb(stock);
     });
-    console.log("💾 Saved all stocks to db");
+    console.log("💾 Synced stocks from server: " + await Storage.getItem("lastSync"));
 
     updateWatchlist();
     console.log("💾 Updated watchlist");
   } catch (error) {
-    showToast("Failed to load API data. Using local stock data.", "error");
+    console.error("⚠️ Error syncing stock data:", error);
   } finally {
   }
 };

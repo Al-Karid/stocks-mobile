@@ -5,7 +5,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { initDb } from "../data/db/stockDb";
 import { initPortfolioDb } from "@/data/db/portfolioDb";
-import { syncStockDataFromServer } from "../data/syncStocks";
+import { syncStockDataFromServer } from "@/data/syncStocks";
+import UpdatedAt from "@/components/UpdatedAt";
 
 export default function HomeScreen() {
   const navigateTo = (screen: string) => router.push(`/${screen}`);
@@ -27,7 +28,9 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.title}>Welcome to Stock Tracker 📈</Text>
+        <Text style={styles.title}>Stock Tracker</Text>
+
+        <UpdatedAt />
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity
@@ -71,17 +74,17 @@ export default function HomeScreen() {
             {/* <FontAwesome name="bell" size={22} color="#fff" /> */}
             <FontAwesome name="lock" size={22} color="#fff" />
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.syncButton}
-            onPress={() => {
-              console.log("🔄 Syncing stock data...");
-              syncStockDataFromServer();
-            }}
-          >
-            <FontAwesome name="refresh" size={22} color="#fff" />
-          </TouchableOpacity>
         </View>
+
+        <TouchableOpacity
+          style={styles.syncButton}
+          onPress={() => {
+            console.log("🔄 Syncing stock data...");
+            syncStockDataFromServer();
+          }}
+        >
+          <FontAwesome name="refresh" size={22} color="#fff" />
+        </TouchableOpacity>
 
         <View>
           <Text style={styles.copyRight}>© Revalys Data Services - 2025</Text>
@@ -160,7 +163,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   syncButton: {
-    position: "absolute",
+    // position: "absolute",
     bottom: 30,
     alignSelf: "center",
     width: 60,

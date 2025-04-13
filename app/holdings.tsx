@@ -1,13 +1,24 @@
 import { useEffect, useState } from "react";
-import { TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Platform } from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import Dialog from "react-native-dialog";
 import HoldingListing from "@/components/holdings/HoldingListing";
 import { Holding } from "@/types/portfolio";
 import { useNavigation } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
+import { useStockDataService } from "@/data/useStockDataService";
 
 export default function SomeScreen() {
   const [holdings, setHoldings] = useState<Holding[]>([]);
+  const [selectedStock, setSelectedStock] = useState<string>("");
+  const [dialogVisible, setDialogVisible] = useState(false);
   const navigation = useNavigation();
+  const { stocks } = useStockDataService();
+
+  const stockOptions = [
+    { label: "SIBC - Société Ivoirienne de Banque", value: "SIBC" },
+    { label: "SOGB - Société Générale de Banques", value: "SOGB" },
+  ];
 
   useEffect(() => {
     navigation.setOptions({
@@ -43,8 +54,69 @@ export default function SomeScreen() {
   }, []);
 
   const handleNewTransaction = () => {
-    //navigation.navigate("transaction/new");
+    setDialogVisible(true);
   };
 
-  return <HoldingListing holdings={holdings} />;
+  const handleCancel = () => {
+    setDialogVisible(false);
+  };
+
+  const handleConfirm = () => {
+    setDialogVisible(false);
+    // You can add more logic here
+  };
+
+  return (
+    <>
+      <Dialog.Container visible={dialogVisible}>
+        <Dialog.Title>Choisir une action</Dialog.Title>
+
+        <View style={styles.pickerWrapper}>
+          <Picker
+            selectedValue={selectedStock}
+            onValueChange={(itemValue) => setSelectedStock(itemValue)}
+            style={{ width: "100%" }}
+          >
+            <Picker.Item label="-- Sélectionner --" value="" />
+            {stocks.map((option) => (
+              <Picker.Item
+                key={option.id}
+                label={option.title}
+                value={option.symbol}
+              />
+            ))}
+          </Picker>
+        </View>
+
+        <Dialog.Button label="Annuler" onPress={handleCancel} />
+        <Dialog.Button label="Valider" onPress={handleConfirm} />
+      </Dialog.Container>
+
+      <HoldingListing holdings={holdings} />
+    </>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  selectButton: {
+    margin: 16,
+    padding: 12,
+    backgroundColor: "#007AFF",
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  selectText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  pickerWrapper: {
+    borderWidth: Platform.OS === "android" ? 1 : 0,
+    borderColor: "#ccc",
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+});
