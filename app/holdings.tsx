@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { View, TouchableOpacity, StyleSheet, Platform } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Platform, Pressable } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import Dialog from "react-native-dialog";
 import HoldingListing from "@/components/holdings/HoldingListing";
 import { Holding } from "@/types/portfolio";
-import { useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { useStockDataService } from "@/data/useStockDataService";
+import { provideHapticFeedback } from "@/utils/interactionUtils";
 
 export default function SomeScreen() {
   const [holdings, setHoldings] = useState<Holding[]>([]);
@@ -23,12 +24,12 @@ export default function SomeScreen() {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity
+        <Pressable
           style={{ marginRight: 5, marginTop: 6 }}
           onPress={handleNewTransaction}
         >
           <FontAwesome name="pencil-square-o" size={23} color="#007AFF" />
-        </TouchableOpacity>
+        </Pressable>
       ),
     });
 
@@ -55,6 +56,7 @@ export default function SomeScreen() {
 
   const handleNewTransaction = () => {
     setDialogVisible(true);
+    provideHapticFeedback()
   };
 
   const handleCancel = () => {
@@ -62,8 +64,17 @@ export default function SomeScreen() {
   };
 
   const handleConfirm = () => {
+    if (!selectedStock) {
+      return;
+    }
     setDialogVisible(false);
-    // You can add more logic here
+    router.push({
+      pathname: "/add-transaction",
+      params: { 
+        symbol: selectedStock,
+        title: stocks.find((stock) => stock.symbol.trim() === selectedStock.trim())?.title 
+      },
+    });
   };
 
   return (

@@ -42,6 +42,14 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
+        name="add-transaction"
+        options={{
+          title: "New Transaction",
+          presentation: "modal",
+          animation: "slide_from_bottom",
+        }}
+      />
+      <Stack.Screen
         name="portfolio"
         options={{
           title: "Portfolio",
