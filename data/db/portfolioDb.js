@@ -20,6 +20,9 @@ export const initPortfolioDb = async () => {
         UNIQUE (name)
       );`
     );
+    await db.runAsync(
+      `INSERT OR IGNORE INTO portfolios (name) VALUES ('Default Portfolio');`
+    );
     console.log("✅ Database initialized: Portfolios");
     
     // Transactions Table

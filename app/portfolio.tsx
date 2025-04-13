@@ -11,7 +11,7 @@ import { useNavigation } from "expo-router";
 
 export default function Portfolio() {
   const navigation = useNavigation();
-  const { portfolios: portfolioStore, addPortfolio } = usePortfolioStore();
+  const { portfolios: portfolioStore, fetchPortfolios, addPortfolio } = usePortfolioStore();
 
   const [portfolioName, setPortfolioName] = useState("");
   const [isAddVisible, setAddVisible] = useState(false);
@@ -33,6 +33,7 @@ export default function Portfolio() {
   };
 
   useEffect(() => {
+    fetchPortfolios();
     navigation.setOptions({
       headerRight: () => (
         <Pressable
