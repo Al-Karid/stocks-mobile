@@ -13,6 +13,9 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { TransactionType } from "@/types/portfolio";
 import { useLocalSearchParams, router } from "expo-router";
+import { useConputeService } from "@/data/useComputeService";
+import { useHoldingStore } from "@/stores/holdingStore";
+import { formatNumber } from "@/utils/numberUtils";
 
 export default function NewTransaction() {
   const { portfolioId, symbol, title } = useLocalSearchParams<{
@@ -21,11 +24,14 @@ export default function NewTransaction() {
     title?: string;
   }>();
 
+  const { computeRealPricePerShare, computeTotalCost } = useConputeService();
+  const { addTransaction } = useHoldingStore();
+
   const [type, setType] = useState<TransactionType>("BUY");
   const [transactionDate, setTransactionDate] = useState(new Date());
-  const [quantity, setQuantity] = useState("");
-  const [pricePerShare, setPricePerShare] = useState("");
-  const [fees, setFees] = useState("1.2");
+  const [quantity, setQuantity] = useState("10");
+  const [pricePerShare, setPricePerShare] = useState("1200");
+  const [fees, setFees] = useState("1.51");
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const priceInputRef = useRef<TextInput>(null);
@@ -38,10 +44,16 @@ export default function NewTransaction() {
   const subtotal = parsedQuantity * parsedPrice;
   const total = subtotal + subtotal * (parsedFees / 100);
 
-  const handleSubmit = () => {
+  const setCleanFees = (value: string) => {
+    const parsedValue = value.replace(",", ".");
+    setFees(parsedValue);
+  }
+
+  const handleSubmit = async () => {
     const parsedQuantity = parseFloat(quantity);
     const parsedPrice = parseFloat(pricePerShare);
     const parsedFees = parseFloat(fees);
+    const realPricePerShare = computeRealPricePerShare(parsedPrice, parsedFees);
 
     if (isNaN(parsedQuantity) || isNaN(parsedPrice)) {
       Alert.alert(
@@ -52,17 +64,24 @@ export default function NewTransaction() {
     }
 
     const newTransaction = {
-      portfolioId: portfolioId ? parseInt(portfolioId) : undefined,
+      //FIX manage the case when portfolioId is undefined
+      //FIX manage the case when symbol is undefined
+      portfolioId: parseInt(portfolioId!),
       symbol: symbol ?? "",
-      type,
-      transactionDate,
+      type: type,
+      name: title ?? "",
+      transactionDate: transactionDate,
       quantity: parsedQuantity,
       pricePerShare: parsedPrice,
-      fees: isNaN(parsedFees) ? 1.2 : parsedFees,
+      realPricePerShare: realPricePerShare,
+      totalCost: computeTotalCost(parsedQuantity, realPricePerShare),
+      fees: isNaN(parsedFees) ? 1.51 : parsedFees,
+      notes: null,
     };
 
     console.log("📤 Nouvelle transaction :", newTransaction);
-    Alert.alert("✅ Succès", "Transaction enregistrée !");
+    Alert.alert("Succès", "Transaction enregistrée !");
+    await addTransaction(newTransaction);
     router.back();
   };
 
@@ -154,7 +173,7 @@ export default function NewTransaction() {
           keyboardType="numeric"
           returnKeyType="done"
           value={fees}
-          onChangeText={setFees}
+          onChangeText={setCleanFees}
           onFocus={() => setFocusedField("fees")}
           onBlur={() => setFocusedField(null)}
           placeholder="Par défaut 1.2"
@@ -162,7 +181,7 @@ export default function NewTransaction() {
 
         <View style={styles.totalContainer}>
           <Text style={styles.totalLabel}>Total estimé</Text>
-          <Text style={styles.totalValue}>{total.toFixed(2)} FCFA</Text>
+          <Text style={styles.totalValue}>{formatNumber(total.toFixed(2))} FCFA</Text>
         </View>
 
         <Pressable style={styles.submitButton} onPress={handleSubmit}>

@@ -15,7 +15,9 @@ export interface Transaction {
   transactionDate: Date;
   quantity: number;
   pricePerShare: number;
-  totalAmount: number;
+  currentPrice?: number;
+  realPricePerShare: number;
+  totalCost: number;
   fees: number;
   notes?: string;
 }

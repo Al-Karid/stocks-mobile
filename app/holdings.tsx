@@ -4,22 +4,23 @@ import { Picker } from "@react-native-picker/picker";
 import Dialog from "react-native-dialog";
 import HoldingListing from "@/components/holdings/HoldingListing";
 import { Holding } from "@/types/portfolio";
-import { router, useNavigation } from "expo-router";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { useStockDataService } from "@/data/useStockDataService";
 import { provideHapticFeedback } from "@/utils/interactionUtils";
+import { useHoldingStore } from "@/stores/holdingStore";
+import { Stock } from "@/types/stock";
 
-export default function SomeScreen() {
-  const [holdings, setHoldings] = useState<Holding[]>([]);
+export default function HoldingScreen() {
+
+  const { portfolioId } = useLocalSearchParams();
+
+  const [stocks, setStocks] = useState<Stock[]>([]);
+  const { holdings, getHoldings } = useHoldingStore();
   const [selectedStock, setSelectedStock] = useState<string>("");
   const [dialogVisible, setDialogVisible] = useState(false);
   const navigation = useNavigation();
-  const { stocks } = useStockDataService();
-
-  const stockOptions = [
-    { label: "SIBC - Société Ivoirienne de Banque", value: "SIBC" },
-    { label: "SOGB - Société Générale de Banques", value: "SOGB" },
-  ];
+  const { fetchStocks } = useStockDataService();
 
   useEffect(() => {
     navigation.setOptions({
@@ -33,26 +34,14 @@ export default function SomeScreen() {
       ),
     });
 
-    const sampleHoldings: Holding[] = [
-      {
-        symbol: "SIBC",
-        name: "Société Ivoirienne de Banque",
-        quantity: 10,
-        averagePrice: 3000,
-        currentPrice: 3400,
-        gainLoss: 4000,
-      },
-      {
-        symbol: "SOGB",
-        name: "Société Générale de Banques",
-        quantity: 5,
-        averagePrice: 5000,
-        currentPrice: 5200,
-        gainLoss: -1000,
-      },
-    ];
-    setHoldings(sampleHoldings);
-  }, []);
+    getHoldings(Number(portfolioId));
+    
+    const fetchStocksData = async () => {
+      const stocks = await fetchStocks();
+      setStocks(stocks);
+    };
+    fetchStocksData();
+  }, [portfolioId]);
 
   const handleNewTransaction = () => {
     setDialogVisible(true);
@@ -70,7 +59,8 @@ export default function SomeScreen() {
     setDialogVisible(false);
     router.push({
       pathname: "/add-transaction",
-      params: { 
+      params: {
+        portfolioId, 
         symbol: selectedStock,
         title: stocks.find((stock) => stock.symbol.trim() === selectedStock.trim())?.title 
       },

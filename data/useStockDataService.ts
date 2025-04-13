@@ -3,26 +3,19 @@ import { dbPromise } from "./db/db";
 import { Stock } from "@/types/stock";
 
 export const useStockDataService = () => {
-  const [stocks, setStocks] = useState<Stock[]>([]);
-  const [palmares, setPalmares] = useState<Stock[]>([]);
-  const [loading, setLoading] = useState(true);
 
   const fetchStocks = async (): Promise<Stock[]> => {
-    setLoading(true);
     const db = await dbPromise;
     const stocks = await db.getAllAsync<Stock>("SELECT * FROM stocks");
-    setStocks(stocks);
-    setLoading(false);
     return stocks;
   };
 
   const findStock = async (symbol: string): Promise<Stock | null> => {
-    setLoading(true);
     if (!symbol) return null;
     const db = await dbPromise;
     const stock = await db.getFirstAsync<Stock>(
       "SELECT * FROM stocks WHERE trim(symbol) = ?",
-      [symbol]
+      [symbol.trim()]
     );
     return stock;
   };
@@ -39,21 +32,11 @@ export const useStockDataService = () => {
       ...gainers.map((stock) => ({ ...stock, type: "gainer" })),
       ...losers.map((stock) => ({ ...stock, type: "loser" })),
     ];
-    setPalmares(
-      combined.sort((a, b) => b.percentageChange - a.percentageChange)
-    );
-    return combined;
+
+    return combined.sort((a, b) => b.percentageChange - a.percentageChange);
   };
 
-  useEffect(() => {
-    fetchStocks();
-    fetchPalmares();
-  }, []);
-
   return {
-    stocks,
-    loading,
-    palmares,
     findStock,
     fetchStocks,
     fetchPalmares,

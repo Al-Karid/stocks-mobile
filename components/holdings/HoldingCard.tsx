@@ -23,13 +23,14 @@ export default function HoldingCard({ holding }: Props) {
   const computedTotalCost = totalCost ?? quantity * averagePrice;
   const currentValue = quantity * currentPrice;
   const isGain = gainLoss >= 0;
+  const gainLossPercentage = ((currentPrice - averagePrice) / averagePrice) * 100;
 
   return (
     <View style={styles.card}>
       {/* HEADER */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.symbol}>{symbol}</Text>
+          <Text style={styles.symbol}>{symbol.trim()}</Text>
           <Text style={styles.name}>{name}</Text>
         </View>
         <View style={styles.priceStatus}>
@@ -44,7 +45,7 @@ export default function HoldingCard({ holding }: Props) {
               { color: isGain ? "#22c55e" : "#ef4444" },
             ]}
           >
-            {gainLoss.toFixed(0)} FCFA
+            {gainLossPercentage.toFixed(2)}% ({gainLoss.toFixed(0)} FCFA)
           </Text>
         </View>
       </View>

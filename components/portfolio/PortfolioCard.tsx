@@ -58,7 +58,7 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
   return (
     <HapticButtonLongPress
       style={styles.card}
-      onPress={() => router.push({ pathname: "/holdings", params: { id } })}
+      onPress={() => router.push({ pathname: "/holdings", params: { portfolioId: id } })}
       onLongPress={onPress}
     >
       <View style={styles.container}>
