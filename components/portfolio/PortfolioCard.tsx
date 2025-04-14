@@ -1,7 +1,7 @@
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
-import { HapticButtonLongPress } from "../HapticButtonLongPress";
+import { HapticButtonLongPress } from "../buttons/HapticButtonLongPress";
 import { router } from "expo-router";
 import { useHoldingDataService } from "@/data/holdingService";
 
