@@ -6,7 +6,7 @@ import {
 } from "react-native";
 import StockCard from "@/components/stocks/StockCard";
 import { Stock } from "@/types/stock";
-import { getStocks } from "@/data/stockDataService";
+import { useStockDataService } from "@/data/stockService";
 
 interface StockListingProps {
   stocks: Stock[];
@@ -43,7 +43,7 @@ const StockListing: React.FC<StockListingProps> = ({stocks, refreshing, onRefres
           opening={item.opening}
           high={item.high}
           low={item.low}
-          isInWatchlist={item.isInWatchlist}
+          isInWatchlist={item.isInWatchlist ?? false}
         />
       )}
     />

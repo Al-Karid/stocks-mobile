@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { initDb } from "../data/db/stockDatabase";
-import { initPortfolioDb } from "@/data/db/portfolioDb";
+import { initPortfolioDb } from "@/data/db/portfolioDatabase";
 import { syncStockDataFromServer } from "@/data/syncStocks";
 import UpdatedAt from "@/components/UpdatedAt";
 

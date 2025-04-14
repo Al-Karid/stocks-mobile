@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, TouchableOpacity, StyleSheet, Platform, Pressable } from "react-native";
+import { View, StyleSheet, Platform, Pressable } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import Dialog from "react-native-dialog";
 import HoldingListing from "@/components/holdings/HoldingListing";
