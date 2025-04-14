@@ -30,8 +30,8 @@ export default function HoldingCard({ holding }: Props) {
       {/* HEADER */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.symbol}>{symbol.trim()}</Text>
           <Text style={styles.name}>{name}</Text>
+          <Text style={styles.symbol}>{symbol.trim()}</Text>
         </View>
         <View style={styles.priceStatus}>
           <FontAwesome
@@ -45,7 +45,7 @@ export default function HoldingCard({ holding }: Props) {
               { color: isGain ? "#22c55e" : "#ef4444" },
             ]}
           >
-            {gainLossPercentage.toFixed(2)}% ({gainLoss.toFixed(0)} FCFA)
+            {gainLossPercentage.toFixed(1)}% ({gainLoss.toFixed(0)} FCFA)
           </Text>
         </View>
       </View>
@@ -57,11 +57,11 @@ export default function HoldingCard({ holding }: Props) {
           <Text style={styles.value}>{quantity}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>Prix moyen</Text>
+          <Text style={styles.label}>CMP</Text>
           <Text style={styles.value}>{formatNumber(Number(averagePrice.toFixed(0)))}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>Prix actuel</Text>
+          <Text style={styles.label}>Cours</Text>
           <Text style={styles.value}>{formatNumber(Number(currentPrice.toFixed(0)))}</Text>
         </View>
         <View style={styles.row}>
@@ -102,8 +102,8 @@ const styles = StyleSheet.create({
   },
   name: {
     color: "#6b7280",
-    fontSize: 14,
-    fontStyle: "italic",
+    fontSize: 10,
+    fontStyle: "normal",
     marginTop: 0,
   },
   priceStatus: {

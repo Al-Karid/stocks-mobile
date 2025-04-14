@@ -1,8 +1,9 @@
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import { HapticButtonLongPress } from "../HapticButtonLongPress";
 import { router } from "expo-router";
+import { useHoldingDataService } from "@/data/useHoldingDataService";
 
 type PortfolioProps = {
   id: number;
@@ -19,7 +20,23 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
   onRename,
   onDelete,
 }) => {
+  const { computePortfolioPerformance } = useHoldingDataService();
   const { showActionSheetWithOptions } = useActionSheet();
+
+  const [perf, setPerf] = useState("");
+
+  useEffect(() => {
+    const fetchPerformance = async () => {
+      const performanceData = await computePortfolioPerformance(id);
+      if (performanceData) {
+        setPerf(performanceData.gainLossPercentage.toString());
+      } else {
+        setPerf("0"); // Default value if performanceData is null
+      }
+    };
+
+    fetchPerformance();
+  }, [id]);
 
   const onPress = () => {
     const options = ["Rename", "Delete", "Cancel"];
@@ -66,11 +83,11 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
         <Text
           style={[
             styles.performance,
-            { color: performance >= 0 ? "#4CAF50" : "#F44336" },
+            { color: Number(perf) >= 0 ? "#4CAF50" : "#F44336" },
           ]}
         >
-          {performance >= 0 ? "+" : ""}
-          {performance}%
+          {Number(perf) >= 0 ? "+" : ""}
+          {isNaN(Number(perf)) ? "0.00" : perf}%
         </Text>
       </View>
     </HapticButtonLongPress>

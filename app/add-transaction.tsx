@@ -14,7 +14,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { TransactionType } from "@/types/portfolio";
 import { useLocalSearchParams, router } from "expo-router";
 import { useConputeService } from "@/data/useComputeService";
-import { useHoldingStore } from "@/stores/holdingStore";
+import { usePortfolioStore } from "@/stores/portfolioStore";
 import { formatNumber } from "@/utils/numberUtils";
 
 export default function NewTransaction() {
@@ -25,7 +25,7 @@ export default function NewTransaction() {
   }>();
 
   const { computeRealPricePerShare, computeTotalCost } = useConputeService();
-  const { addTransaction } = useHoldingStore();
+  const { addTransaction } = usePortfolioStore();
 
   const [type, setType] = useState<TransactionType>("BUY");
   const [transactionDate, setTransactionDate] = useState(new Date());

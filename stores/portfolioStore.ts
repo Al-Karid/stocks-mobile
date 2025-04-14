@@ -7,17 +7,26 @@ import {
   deletePortfolio,
 } from "../data/portfolioDataService";
 import { Portfolio } from "../types/portfolio";
+import { Holding } from "@/types/portfolio";
+import { TransactionRequest } from "@/types/portfolioRequest";
+import { useHoldingDataService } from "@/data/useHoldingDataService";
+
+const { fetchHoldings, saveTransaction } = useHoldingDataService();
 
 interface PortfolioStore {
   portfolios: Portfolio[];
+  holdings: Holding[];
   fetchPortfolios: () => Promise<Portfolio[]>;
   addPortfolio: (name: string) => Promise<void>;
   renamePortfolio: (id: number, newName: string) => Promise<void>;
   deletePortfolio: (id: number) => Promise<void>;
+  getHoldings: (portfolioId: number) => Promise<Holding[]>;
+  addTransaction: (transaction: TransactionRequest) => Promise<void>;
 }
 
 export const usePortfolioStore = create<PortfolioStore>((set) => ({
   portfolios: [],
+  holdings: [],
 
   fetchPortfolios: async () => {
     const portfolios = await getPortfolios();
@@ -43,5 +52,19 @@ export const usePortfolioStore = create<PortfolioStore>((set) => ({
     await deletePortfolio(id);
     const portfolios = await getPortfolios();
     set({ portfolios });
+  },
+
+  getHoldings: async (portfolioId: number) => {
+    const holdings = await fetchHoldings(portfolioId);
+    set({ holdings });
+    console.log("🔄 Data loaded from holding store");
+    return holdings;
+  },
+  addTransaction: async (transaction: TransactionRequest) => {
+    await saveTransaction(transaction);
+    const holdings = await fetchHoldings(transaction.portfolioId);
+    const portfolios = await getPortfolios();
+    set({ portfolios });
+    set({ holdings });
   },
 }));

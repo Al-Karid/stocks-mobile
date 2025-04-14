@@ -8,7 +8,7 @@ import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { useStockDataService } from "@/data/useStockDataService";
 import { provideHapticFeedback } from "@/utils/interactionUtils";
-import { useHoldingStore } from "@/stores/holdingStore";
+import { usePortfolioStore } from "@/stores/portfolioStore";
 import { Stock } from "@/types/stock";
 
 export default function HoldingScreen() {
@@ -16,7 +16,7 @@ export default function HoldingScreen() {
   const { portfolioId } = useLocalSearchParams();
 
   const [stocks, setStocks] = useState<Stock[]>([]);
-  const { holdings, getHoldings } = useHoldingStore();
+  const { holdings, getHoldings } = usePortfolioStore();
   const [selectedStock, setSelectedStock] = useState<string>("");
   const [dialogVisible, setDialogVisible] = useState(false);
   const navigation = useNavigation();
