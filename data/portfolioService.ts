@@ -1,6 +1,5 @@
-// File: portfolioDataService.ts
 import { Portfolio } from "@/types/portfolio";
-import { dbPromise } from "./db/db";
+import { dbPromise } from "@/data/db/db";
 
 export const createPortfolio = async (name: string): Promise<void> => {
   const db = await dbPromise;

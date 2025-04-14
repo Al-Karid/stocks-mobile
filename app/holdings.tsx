@@ -6,7 +6,7 @@ import HoldingListing from "@/components/holdings/HoldingListing";
 import { Holding } from "@/types/portfolio";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
-import { useStockDataService } from "@/data/useStockDataService";
+import { useStockDataService } from "@/data/stockService";
 import { provideHapticFeedback } from "@/utils/interactionUtils";
 import { usePortfolioStore } from "@/stores/portfolioStore";
 import { Stock } from "@/types/stock";

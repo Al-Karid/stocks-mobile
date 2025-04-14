@@ -13,7 +13,7 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { TransactionType } from "@/types/portfolio";
 import { useLocalSearchParams, router } from "expo-router";
-import { useConputeService } from "@/data/useComputeService";
+import { useConputeService } from "@/data/computeService";
 import { usePortfolioStore } from "@/stores/portfolioStore";
 import { formatNumber } from "@/utils/numberUtils";
 

@@ -1,20 +1,3 @@
-export interface StockResponse {
-  id: number;
-  code: string;
-  country: string;
-  symbol: string;
-  title: string;
-  currentPrice: number;
-  previousClosePrice: number;
-  percentageChange: number;
-  volumeTitles: number;
-  volumeValues: number;
-  opening: number;
-  high: number;
-  low: number;
-  updatedAt: string; // ISO 8601 date string
-}
-
 export interface Stock {
   id: number;
   code: string;
@@ -30,5 +13,5 @@ export interface Stock {
   high: number;
   low: number;
   updatedAt: string; // ISO 8601 date string
-  isInWatchlist: boolean;
-};
+  isInWatchlist?: boolean;
+}

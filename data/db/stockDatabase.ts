@@ -1,4 +1,5 @@
-import { dbPromise } from "./db";
+import { dbPromise } from "@/data/db/db";
+import { Stock } from "@/types/stock";
 
 export const initDb = async () => {
   const db = await dbPromise;
@@ -45,7 +46,7 @@ export const initDb = async () => {
   }
 };
 
-export const saveStocktoDb = async (stock) => {
+export const saveStocktoDb = async (stock: Stock) => {
   try {
     const db = await dbPromise;
     await db.runAsync(

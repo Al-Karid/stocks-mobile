@@ -1,7 +1,7 @@
 import StockCard from "@/components/stocks/StockCard";
 import React, { useEffect } from "react";
 import { FlatList, RefreshControl } from "react-native";
-import { useStockDataService } from "@/data/useStockDataService";
+import { useStockDataService } from "@/data/stockService";
 import { Stock } from "@/types/stock";
 
 const PalmaresScreen = () => {

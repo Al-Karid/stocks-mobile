@@ -1,8 +1,7 @@
 import { Holding, Transaction } from "@/types/portfolio";
 import { dbPromise } from "@/data/db/db"
-import { HoldingRequest, TransactionRequest } from "@/types/portfolioRequest";
-import { Stock } from "@/types/stock";
-import { useStockDataService } from "@/data/useStockDataService";
+import { HoldingRequest, TransactionRequest } from "@/types/portfolio";
+import { useStockDataService } from "@/data/stockService";
 
 export const useHoldingDataService = () => {
 
