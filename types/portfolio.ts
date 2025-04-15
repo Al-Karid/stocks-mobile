@@ -36,6 +36,7 @@ export interface Holding {
   gainLoss: number;
   quantity: number;
   totalCost: number;
+  portfolioId: number;
   averagePrice: number;
   currentPrice?: number;
 }

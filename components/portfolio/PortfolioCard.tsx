@@ -1,42 +1,24 @@
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import React, { useEffect, useState } from "react";
+import React, {  } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import { HapticButtonLongPress } from "../buttons/HapticButtonLongPress";
 import { router } from "expo-router";
-import { useHoldingDataService } from "@/data/holdingService";
+import { Portfolio } from "@/types/portfolio";
 
 type PortfolioProps = {
-  id: number;
-  name: string;
-  performance?: number;
+  portfolio: Portfolio;
   onRename: () => void;
   onDelete: () => void;
 };
 
 const PortfolioCard: React.FC<PortfolioProps> = ({
-  id,
-  name,
-  performance = 0,
+  portfolio,
   onRename,
   onDelete,
 }) => {
-  const { computePortfolioPerformance } = useHoldingDataService();
   const { showActionSheetWithOptions } = useActionSheet();
-
-  const [perf, setPerf] = useState("");
-
-  useEffect(() => {
-    const fetchPerformance = async () => {
-      const performanceData = await computePortfolioPerformance(id);
-      if (performanceData) {
-        setPerf(performanceData.gainLossPercentage.toString());
-      } else {
-        setPerf("0"); // Default value if performanceData is null
-      }
-    };
-
-    fetchPerformance();
-  }, [id]);
+  const { id, name, performance } = portfolio;
+  const { gainLossPercentage } = performance || {};
 
   const onPress = () => {
     const options = ["Rename", "Delete", "Cancel"];
@@ -83,11 +65,11 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
         <Text
           style={[
             styles.performance,
-            { color: Number(perf) >= 0 ? "#4CAF50" : "#F44336" },
+            { color: Number(gainLossPercentage) >= 0 ? "#4CAF50" : "#F44336" },
           ]}
         >
-          {Number(perf) >= 0 ? "+" : ""}
-          {isNaN(Number(perf)) ? "0.00" : perf}%
+          {Number(gainLossPercentage) >= 0 ? "+" : ""}
+          {isNaN(Number(gainLossPercentage)) ? "0.00" : gainLossPercentage.toFixed(1)}%
         </Text>
       </View>
     </HapticButtonLongPress>

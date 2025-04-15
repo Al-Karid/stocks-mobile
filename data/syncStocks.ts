@@ -7,7 +7,7 @@ const API_URL = "http://192.168.1.5:8088/api/v1/web/stocks";
 
 const { updateWatchlist } = useStockDataService();
 
-export const syncStockDataFromServer = async () => {
+export const syncStockDataFromServer = async (): Promise<string> => {
   try {
     const response = await fetch(API_URL);
     if (!response.ok) throw new Error("API error");
@@ -24,8 +24,9 @@ export const syncStockDataFromServer = async () => {
 
     updateWatchlist();
     console.log("💾 Updated watchlist");
+    return data[0].updatedAt;
   } catch (error) {
     console.error("⚠️ Error syncing stock data:", error);
-  } finally {
+    return "";
   }
 };

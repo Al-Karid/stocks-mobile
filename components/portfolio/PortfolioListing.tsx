@@ -5,12 +5,7 @@ import Dialog from "react-native-dialog";
 import PortfolioCard from "@/components/portfolio/PortfolioCard";
 import { handleCloseDialog } from "@/utils/dialogUtils";
 import { usePortfolioStore } from "@/stores/portfolioStore";
-
-interface Portfolio {
-  id: number;
-  name: string;
-  performance?: number;
-}
+import { Portfolio } from "@/types/portfolio";
 
 interface PortfolioListProps {
   portfolios: Portfolio[];
@@ -40,6 +35,9 @@ export default function PortfolioListing({ portfolios }: PortfolioListProps) {
     deletePortfolio(id);
   };
 
+  console.log("Rendering PortfolioListing with portfolios:", portfolios);
+  
+
   return (
     <>
       <FlatList
@@ -59,9 +57,7 @@ export default function PortfolioListing({ portfolios }: PortfolioListProps) {
         )}
         renderItem={({ item }) => (
           <PortfolioCard
-            id={item.id}
-            name={item.name}
-            performance={item.performance}
+            portfolio={item}
             onRename={() => showRenameDialog(item.id, item.name)}
             onDelete={() => handleDelete(item.id)}
           />

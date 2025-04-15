@@ -1,5 +1,8 @@
 import { Portfolio } from "@/types/portfolio";
 import { dbPromise } from "@/data/db/db";
+import { useHoldingDataService } from "./holdingService";
+
+const { computePortfolioPerformance } = useHoldingDataService();
 
 export const createPortfolio = async (name: string): Promise<void> => {
   const db = await dbPromise;
@@ -18,6 +21,20 @@ export const getPortfolios = async (): Promise<Portfolio[]> => {
     const portfolios = await db.getAllAsync<Portfolio>(
       `SELECT * FROM portfolios`
     );
+    // Fetch performance for each portfolio
+    for (const portfolio of portfolios) {
+      const performance = await computePortfolioPerformance(portfolio.id);
+      if (performance) {
+        portfolio.performance = performance;
+      } else {
+        portfolio.performance = {
+          totalCost: 0,
+          totalValue: 0,
+          totalGainLoss: 0,
+          gainLossPercentage: 0,
+        };
+      }
+    }
     console.log("💾 Portfolios fetched successfully");
     return portfolios;
   } catch (error) {
