@@ -4,40 +4,41 @@ export interface Portfolio {
   id: number;
   name: string;
   holdings: Holding[];
+  performance: Performance;
   transactions: Transaction[];
+}
+
+export interface Performance {
+  totalCost: number;
+  totalValue: number;
+  totalGainLoss: number;
+  gainLossPercentage: number;
 }
 
 export interface Transaction {
   id: number;
-  portfolioId: number;
-  symbol: string;
-  type: TransactionType;
-  transactionDate: Date;
-  quantity: number;
-  pricePerShare: number;
-  currentPrice?: number;
-  realPricePerShare: number;
-  totalCost: number;
   fees: number;
   notes?: string;
+  symbol: string;
+  quantity: number;
+  totalCost: number;
+  portfolioId: number;
+  currentPrice: number;
+  pricePerShare: number;
+  type: TransactionType;
+  transactionDate: Date;
+  realPricePerShare: number;
 }
 
 export interface Holding {
+  name: string;
   symbol: string;
-  name?: string;
-  quantity: number;
-  averagePrice: number;
-  currentPrice: number;
-  totalCost: number;
   gainLoss: number;
-}
-
-export interface PortfolioPerformance {
-  totalValue: number;
+  quantity: number;
   totalCost: number;
-  totalGainLoss: number;
-  gainLossPercentage: number;
-  dailyChange: number;
+  portfolioId: number;
+  averagePrice: number;
+  currentPrice?: number;
 }
 
 export interface PortfolioRequest {
@@ -45,24 +46,24 @@ export interface PortfolioRequest {
 }
 
 export interface HoldingRequest {
-  portfolioId: number;
-  symbol: string;
   name: string;
+  symbol: string;
   quantity: number;
-  averagePrice: number;
   totalCost?: number;
+  portfolioId: number;
+  averagePrice: number;
 }
 
 export interface TransactionRequest {
-  portfolioId: number;
-  symbol: string;
   name: string;
-  type: TransactionType;
-  transactionDate: Date;
+  symbol: string;
   quantity: number;
+  totalCost: number;
+  portfolioId: number;
+  type: TransactionType;
+  notes: string | null;
+  transactionDate: Date;
   pricePerShare: number;
   realPricePerShare: number;
-  totalCost: number;
-  notes: string | null;
   fees: number; // in percentage
 }

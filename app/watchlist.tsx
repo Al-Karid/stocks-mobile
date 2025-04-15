@@ -1,5 +1,5 @@
 import StockCard from "@/components/stocks/StockCard";
-import UpdatedAt from "@/components/UpdatedAt";
+import UpdatedAt from "@/components/views/UpdatedAt";
 import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useEffect, useState } from "react";
 import { Text, StyleSheet, FlatList } from "react-native";
@@ -48,7 +48,7 @@ const PalmaresScreen: React.FC = () => {
           opening={item.opening}
           high={item.high}
           low={item.low}
-          isInWatchlist={item.isInWatchlist}
+          isInWatchlist={item.isInWatchlist ?? false}
         />
       )}
     />

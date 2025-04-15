@@ -1,4 +1,3 @@
-// stocks.tsx
 import StockListing from "@/components/stocks/StockListing";
 import { FontAwesome } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";

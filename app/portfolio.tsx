@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Dialog from "react-native-dialog";
-import { Text, StyleSheet, Pressable } from "react-native";
+import { Text, Pressable } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import PortfolioListing from "@/components/portfolio/PortfolioListing";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
@@ -10,6 +10,7 @@ import { usePortfolioStore } from "@/stores/portfolioStore";
 import { useNavigation } from "expo-router";
 
 export default function Portfolio() {
+  
   const navigation = useNavigation();
   const { portfolios: portfolioStore, fetchPortfolios, addPortfolio } = usePortfolioStore();
 

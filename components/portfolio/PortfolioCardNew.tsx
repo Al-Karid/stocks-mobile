@@ -1,8 +1,8 @@
-import { useActionSheet } from "@expo/react-native-action-sheet";
-import React, {  } from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
-import { HapticButtonLongPress } from "../buttons/HapticButtonLongPress";
 import { router } from "expo-router";
+import React from "react";
+import { View, Text, StyleSheet, Alert } from "react-native";
+import { useActionSheet } from "@expo/react-native-action-sheet";
+import { HapticButtonLongPress } from "@/components/buttons/HapticButtonLongPress";
 import { Portfolio } from "@/types/portfolio";
 
 type PortfolioProps = {
@@ -11,16 +11,15 @@ type PortfolioProps = {
   onDelete: () => void;
 };
 
-const PortfolioCard: React.FC<PortfolioProps> = ({
+const PortfolioCardNew: React.FC<PortfolioProps> = ({
   portfolio,
   onRename,
   onDelete,
 }) => {
-  const { showActionSheetWithOptions } = useActionSheet();
   const { id, name, performance } = portfolio;
-  const { gainLossPercentage } = performance || {};
+  const { showActionSheetWithOptions } = useActionSheet();
 
-  const onPress = () => {
+  const onLongPress = () => {
     const options = ["Rename", "Delete", "Cancel"];
     const destructiveButtonIndex = 1;
     const cancelButtonIndex = 2;
@@ -57,19 +56,24 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
   return (
     <HapticButtonLongPress
       style={styles.card}
-      onPress={() => router.push({ pathname: "/holdings", params: { portfolioId: id } })}
-      onLongPress={onPress}
+      onPress={() =>
+        router.push({
+          pathname: "/holdings",
+          params: { portfolioId: id },
+        })
+      }
+      onLongPress={onLongPress}
     >
       <View style={styles.container}>
         <Text style={styles.title}>{name.toUpperCase()}</Text>
         <Text
           style={[
             styles.performance,
-            { color: Number(gainLossPercentage) >= 0 ? "#4CAF50" : "#F44336" },
+            { color: performance.gainLossPercentage >= 0 ? "#4CAF50" : "#F44336" },
           ]}
         >
-          {Number(gainLossPercentage) >= 0 ? "+" : ""}
-          {isNaN(Number(gainLossPercentage)) ? "0.00" : gainLossPercentage.toFixed(1)}%
+          {performance.gainLossPercentage >= 0 ? "+" : ""}
+          {isNaN(performance.gainLossPercentage) ? "0.00" : performance.gainLossPercentage.toFixed(2)}%
         </Text>
       </View>
     </HapticButtonLongPress>
@@ -143,4 +147,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PortfolioCard;
+export default PortfolioCardNew;

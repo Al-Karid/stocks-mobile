@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, TouchableOpacity, StyleSheet, Platform, Pressable } from "react-native";
+import { View, StyleSheet, Platform, Pressable } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import Dialog from "react-native-dialog";
 import HoldingListing from "@/components/holdings/HoldingListing";
@@ -14,13 +14,14 @@ import { Stock } from "@/types/stock";
 export default function HoldingScreen() {
 
   const { portfolioId } = useLocalSearchParams();
-
+  
+  const navigation = useNavigation();
+  const { fetchStocks } = useStockDataService();
+  
   const [stocks, setStocks] = useState<Stock[]>([]);
   const { holdings, getHoldings } = usePortfolioStore();
   const [selectedStock, setSelectedStock] = useState<string>("");
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const navigation = useNavigation();
-  const { fetchStocks } = useStockDataService();
+  const [dialogVisible, setDialogVisible] = useState<boolean>(false);
 
   useEffect(() => {
     navigation.setOptions({
