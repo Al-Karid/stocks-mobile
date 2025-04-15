@@ -1,15 +1,14 @@
-// File: portfolioStore.ts
 import { create } from "zustand";
 import {
   createPortfolio,
   getPortfolios,
   updatePortfolio,
   deletePortfolio,
-} from "../data/portfolioDataService";
-import { Portfolio } from "../types/portfolio";
+} from "@/data/portfolioService";
+import { Portfolio } from "@/types/portfolio";
 import { Holding } from "@/types/portfolio";
-import { TransactionRequest } from "@/types/portfolioRequest";
-import { useHoldingDataService } from "@/data/useHoldingDataService";
+import { TransactionRequest } from "@/types/portfolio";
+import { useHoldingDataService } from "@/data/holdingService";
 
 const { fetchHoldings, saveTransaction } = useHoldingDataService();
 

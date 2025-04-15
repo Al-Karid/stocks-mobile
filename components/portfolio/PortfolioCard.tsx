@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import { HapticButtonLongPress } from "../HapticButtonLongPress";
 import { router } from "expo-router";
-import { useHoldingDataService } from "@/data/useHoldingDataService";
+import { useHoldingDataService } from "@/data/holdingService";
 
 type PortfolioProps = {
   id: number;

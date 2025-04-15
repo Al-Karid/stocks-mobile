@@ -1,26 +1,25 @@
 import { create } from "zustand";
-import { Stock } from "../types/stock";
-import {
-  getWatchlistAsStocks,
-  addToWatchlist,
-  removeFromWatchlist,
-} from "../data/stockDataService";
+import { Stock } from "@/types/stock";
+import { useStockDataService } from "@/data/stockService";
 
 interface WatchlistStore {
-    watchlist: Stock[];
-    fetchWatchlist: () => Promise<Stock[]>;
-    addStockToWatchlist: (symbol: string) => Promise<void>;
-    removeStockFromWatchlist: (symbol: string) => Promise<void>;
+  watchlist: Stock[];
+  fetchWatchlist: () => Promise<Stock[]>;
+  addStockToWatchlist: (symbol: string) => Promise<void>;
+  removeStockFromWatchlist: (symbol: string) => Promise<void>;
 }
 
+const { addToWatchlist, removeFromWatchlist, getWatchlistAsStocks } =
+  useStockDataService();
+
 export const useWatchlistStore = create<WatchlistStore>((set) => ({
-  watchlist:[],
+  watchlist: [],
 
   fetchWatchlist: async () => {
     const stocks = await getWatchlistAsStocks();
     set({ watchlist: stocks });
     console.log("🔄 Data loaded from watchlist store");
-    
+
     return stocks;
   },
 

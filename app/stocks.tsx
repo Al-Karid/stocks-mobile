@@ -4,7 +4,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
-import { useStockDataService } from "@/data/useStockDataService";
+import { useStockDataService } from "@/data/stockService";
 import { Stock } from "@/types/stock";
 
 export default function Stocks() {
