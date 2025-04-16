@@ -16,6 +16,7 @@ import { useLocalSearchParams, router } from "expo-router";
 import { useConputeService } from "@/data/computeService";
 import { usePortfolioStore } from "@/stores/portfolioStore";
 import { formatNumber } from "@/utils/numberUtils";
+import Toast from "react-native-toast-message";
 
 export default function NewTransaction() {
   const { portfolioId, symbol, title } = useLocalSearchParams<{
@@ -80,7 +81,12 @@ export default function NewTransaction() {
     };
 
     console.log("📤 Nouvelle transaction :", newTransaction);
-    Alert.alert("Succès", "Transaction enregistrée !");
+    Toast.show({
+      type: "success",
+      text1: "Succès",
+      text2: "Transaction enregistrée !",
+      position: "bottom"
+    });
     await addTransaction(newTransaction);
     router.back();
   };
