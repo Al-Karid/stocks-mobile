@@ -12,6 +12,21 @@ export interface Stock {
   opening: number;
   high: number;
   low: number;
-  updatedAt: string; // ISO 8601 date string
+  updatedAt: string;
   isInWatchlist?: boolean;
+}
+
+export interface APIStock {
+  code: string;
+  country: string;
+  symbol: string;
+  title: string;
+  current_price: number;
+  previous_close_price: number;
+  volume_titles: number;
+  volume_values: number;
+  opening: number;
+  high: number;
+  low: number;
+  updated_at: string;
 }
