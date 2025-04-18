@@ -1,5 +1,5 @@
 import React, { useEffect, useSyncExternalStore } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, RefreshControl } from "react-native";
 import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,6 +9,8 @@ import { syncStockDataFromServer } from "@/data/syncStocks";
 import UpdatedAt from "@/components/views/UpdatedAt";
 
 export default function HomeScreen() {
+  const [refreshing, setRefreshing] = React.useState(false);
+
   const navigateTo = (screen: string) => router.push(`/${screen}`);
 
   useEffect(() => {
@@ -25,9 +27,29 @@ export default function HomeScreen() {
     init();
   }, []);
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await syncStockDataFromServer();
+      console.log("✅ Data refreshed successfully");
+    } catch (e) {
+      console.error("❌ Failed to refresh data", e);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#3D90D7"]} />
+        }
+      >
         <Text style={styles.title}>Stock Tracker</Text>
 
         <UpdatedAt />
@@ -63,33 +85,18 @@ export default function HomeScreen() {
           >
             <Text style={styles.buttonText}>Portfolio</Text>
             <FontAwesome name="folder" size={22} color="#fff" />
-            {/* <FontAwesome name="lock" size={22} color="#fff" /> */}
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.button, styles.alerts]}
-            // onPress={() => navigateTo("alerts")}
-          >
+          <TouchableOpacity style={[styles.button, styles.alerts]}>
             <Text style={styles.buttonText}>Alerts</Text>
-            {/* <FontAwesome name="bell" size={22} color="#fff" /> */}
             <FontAwesome name="lock" size={22} color="#fff" />
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          style={styles.syncButton}
-          onPress={() => {
-            console.log("🔄 Syncing stock data...");
-            syncStockDataFromServer();
-          }}
-        >
-          <FontAwesome name="refresh" size={22} color="#fff" />
-        </TouchableOpacity>
-
         <View>
           <Text style={styles.copyRight}>© Revalys Data Services - 2025</Text>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -100,7 +107,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f7f7f7",
   },
   container: {
-    flex: 1,
+    flexGrow: 1, // Ensures the content is scrollable even if it doesn't fill the screen
     backgroundColor: "#f7f7f7", // Light background color for modern look
     paddingHorizontal: 24,
     paddingTop: 40,

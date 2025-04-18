@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
+  Text,
   StyleSheet,
   RefreshControl,
 } from "react-native";
@@ -45,6 +46,11 @@ const StockListing: React.FC<StockListingProps> = ({stocks, refreshing, onRefres
           low={item.low}
           isInWatchlist={item.isInWatchlist ?? false}
         />
+      )}
+      ListHeaderComponent={() => (
+        <Text style={{ fontSize: 12, marginBottom: 8, color: "#888", paddingLeft: 2 }}>
+          {stocks.length} Stocks
+        </Text>
       )}
     />
   );
