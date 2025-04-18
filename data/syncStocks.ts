@@ -3,7 +3,7 @@ import { saveStocktoDb } from "@/data/db/stockDatabase";
 import { useStockDataService } from "@/data/stockService";
 import { Storage } from "expo-sqlite/kv-store"
 
-const API_URL = "http://192.168.1.5:8088/api/v1/web/stocks";
+const API_URL = "http://192.168.1.7:8088/api/v1/web/stocks";
 
 const { updateWatchlist } = useStockDataService();
 
