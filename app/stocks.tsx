@@ -3,11 +3,11 @@ import { FontAwesome } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
-import { useStockDataService } from "@/data/stockService";
+import { useStockRepository } from "@/data/repositories/stockRepository";
 import { Stock } from "@/types/stock";
 
 export default function Stocks() {
-  const { fetchStocks } = useStockDataService();
+  const { fetchStocks } = useStockRepository();
   const navigation = useNavigation();
 
   const [filterText, setFilterText] = useState("");

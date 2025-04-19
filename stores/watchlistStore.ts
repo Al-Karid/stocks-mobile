@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { Stock } from "@/types/stock";
-import { useStockDataService } from "@/data/stockService";
+import { useStockRepository } from "@/data/repositories/stockRepository";
 
 interface WatchlistStore {
   watchlist: Stock[];
@@ -10,7 +10,7 @@ interface WatchlistStore {
 }
 
 const { addToWatchlist, removeFromWatchlist, getWatchlistAsStocks } =
-  useStockDataService();
+  useStockRepository();
 
 export const useWatchlistStore = create<WatchlistStore>((set) => ({
   watchlist: [],

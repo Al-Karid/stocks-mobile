@@ -1,25 +1,10 @@
-import { Holding, Transaction } from "@/types/portfolio";
-import { dbPromise } from "@/data/db/db"
-import { HoldingRequest, TransactionRequest } from "@/types/portfolio";
-import { useStockDataService } from "@/data/stockService";
+import { Transaction, TransactionRequest } from "@/types/portfolio";
+import { useHoldingRepository } from "@/data/repositories/holdingRepository";
+import { dbPromise } from "../db/db";
 
-export const useHoldingDataService = () => {
+export const useTransactionRepository = () => {
 
-    const { findStock } = useStockDataService();
-
-    const saveOrUpdateHolding = async (holding: HoldingRequest) => {
-        try {
-            const db = await dbPromise;
-            await db.runAsync("INSERT OR REPLACE INTO holdings (portfolioId, symbol, name, quantity, averagePrice, totalCost) VALUES (?, ?, ?, ?, ?, ?)",
-                [holding.portfolioId!, holding.symbol.trim(), holding.name, holding.quantity, holding.averagePrice, holding.totalCost!]
-            );
-            console.log(`💾 Holding ${holding.name} saved successfully into portfolio ${holding.portfolioId}`);
-            console.log("💾 Holding saved successfully:", holding);
-            
-        } catch (error) {
-            console.error("‼️ Error inserting Holding:", error);   
-        }
-    }
+    const { saveOrUpdateHolding } = useHoldingRepository();
 
     const fetchTransactions = async (portfolioId: number, symbol: string): Promise<Transaction[] | []> => {
         try {
@@ -27,7 +12,7 @@ export const useHoldingDataService = () => {
             const transactions = await db.getAllAsync<Transaction>("SELECT * FROM transactions WHERE portfolioId = ? AND trim(symbol) = ?", [portfolioId, symbol.trim()]);
             return transactions;
         } catch (error) {
-            console.error("‼️ Error fetching transqctions:", error);
+            console.error("‼️ Error fetching transactions:", error);
         }
         return [];
     }
@@ -44,13 +29,13 @@ export const useHoldingDataService = () => {
         }
     }
 
-    const saveTransaction = async (transaction: TransactionRequest) => {
+    const makeTransaction = async (transaction: TransactionRequest) => {
         try {
 
             const transactions = await fetchTransactions(transaction.portfolioId, transaction.symbol)
-            
+
             if (transactions.length === 0) {
-                
+
                 /**
                  * If there's no MATCHING transaction
                  * Create a new Holding in the Portfolio
@@ -68,7 +53,8 @@ export const useHoldingDataService = () => {
 
                 // Save new transaction
                 await insertTransaction(transaction);
-            }else{
+            } else {
+                
                 /**
                  * If there's at least one MATCHING transaction
                  * Update the existing Holding in the Portfolio
@@ -78,7 +64,6 @@ export const useHoldingDataService = () => {
                  *      - totalCost, sum of all transactions
                  *      - averagePrice
                  */
-                
                 // Calculate new average price and total cost
                 const totalQuantity = transactions.reduce((sum, t) => sum + t.quantity, transaction.quantity);
                 const totalCost = transactions.reduce((sum, t) => sum + (t.realPricePerShare * t.quantity), 0) + (transaction.realPricePerShare * transaction.quantity);
@@ -99,44 +84,13 @@ export const useHoldingDataService = () => {
             }
 
         } catch (error) {
-            console.error("‼️ Error inserting Transaction:", error); 
-        }
-    }
-    
-    const fetchHoldings = async (portfolioId: number) => {
-        const db = await dbPromise;
-        const holdings = await db.getAllAsync<Holding>("SELECT * FROM holdings WHERE portfolioId = ?", [portfolioId]);
-        for (const holding of holdings) {
-            const stock = await findStock(holding.symbol);
-            holding.currentPrice = stock?.currentPrice || 0;
-            holding.gainLoss = (holding.currentPrice - holding.averagePrice) * holding.quantity;
-        }
-        return holdings;
-    }
-
-    const computePortfolioPerformance = async (portfolioId: number) => {
-        try {
-            const holdings = await fetchHoldings(portfolioId);
-            const totalValue = holdings.reduce((sum, holding) => sum + (holding.currentPrice! * holding.quantity), 0);
-            const totalCost = holdings.reduce((sum, holding) => sum + holding.totalCost, 0);
-            const performance = totalValue - totalCost;
-            const gainLossPercentage = ((performance / totalCost) * 100);
-            return {
-                totalValue,
-                totalCost,
-                totalGainLoss: performance,
-                gainLossPercentage
-            };
-        } catch (error) {
-            console.error("‼️ Error computing portfolio performance:", error);
-            return null;
+            console.error("‼️ Error inserting Transaction:", error);
         }
     }
 
     return {
-        fetchHoldings, 
-        saveTransaction, 
         fetchTransactions,
-        computePortfolioPerformance
+        insertTransaction,
+        saveTransaction: makeTransaction
     }
 }

@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import StockCard from "@/components/stocks/StockCard";
 import { Stock } from "@/types/stock";
-import { useStockDataService } from "@/data/stockService";
+import { useStockRepository } from "@/data/repositories/stockRepository";
 
 interface StockListingProps {
   stocks: Stock[];

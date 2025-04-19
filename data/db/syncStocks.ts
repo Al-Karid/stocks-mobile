@@ -1,12 +1,12 @@
 import { APIStock, Stock } from "@/types/stock";
 import { saveStocksToDb } from "@/data/db/stockDatabase";
-import { useStockDataService } from "@/data/stockService";
+import { useStockRepository } from "@/data/repositories/stockRepository";
 import { Storage } from "expo-sqlite/kv-store"
 
 // const API_URL = "http://192.168.1.7:8088/api/v1/web/stocks";
 const API_URL = "https://stocks.revalys.com/v1/stocks";
 
-const { updateWatchlist } = useStockDataService();
+const { updateWatchlist } = useStockRepository();
 
 export const syncStockDataFromServer = async (): Promise<string> => {
   try {

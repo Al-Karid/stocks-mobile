@@ -1,7 +1,7 @@
 import { useLocalSearchParams } from "expo-router";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { ArrowUpRight, ArrowDownRight, ArrowRight } from "lucide-react-native";
-import { useStockDataService } from "@/data/stockService";
+import { useStockRepository } from "@/data/repositories/stockRepository";
 import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useState, useEffect } from "react";
 import { Stock } from "@/types/stock";
@@ -10,7 +10,7 @@ import { formatNumber } from "../utils/numberUtils";
 export default function DetailsScreen() {
   const { symbol } = useLocalSearchParams();
   const { addStockToWatchlist, removeStockFromWatchlist } = useWatchlistStore();
-  const { findStock } = useStockDataService();
+  const { findStock } = useStockRepository();
 
   const [watchlisted, setWatchlisted] = useState(false);
   const [stock, setStock] = useState<Stock | null>(null);

@@ -1,11 +1,11 @@
 import StockCard from "@/components/stocks/StockCard";
 import React, { useEffect } from "react";
 import { FlatList, RefreshControl } from "react-native";
-import { useStockDataService } from "@/data/stockService";
+import { useStockRepository } from "@/data/repositories/stockRepository";
 import { Stock } from "@/types/stock";
 
 const PalmaresScreen = () => {
-  const { fetchPalmares } = useStockDataService();
+  const { fetchPalmares } = useStockRepository();
   const [palmaresData, setPalmaresData] = React.useState<Stock[]>([]);
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
 

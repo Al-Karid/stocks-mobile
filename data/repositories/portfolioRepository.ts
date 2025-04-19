@@ -1,8 +1,8 @@
 import { Portfolio } from "@/types/portfolio";
 import { dbPromise } from "@/data/db/db";
-import { useHoldingDataService } from "./holdingService";
+import { useHoldingRepository } from "./holdingRepository";
 
-const { computePortfolioPerformance } = useHoldingDataService();
+const { computePortfolioPerformance } = useHoldingRepository();
 
 export const createPortfolio = async (name: string): Promise<void> => {
   const db = await dbPromise;

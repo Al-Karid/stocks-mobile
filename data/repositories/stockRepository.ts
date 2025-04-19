@@ -1,7 +1,7 @@
 import { dbPromise } from "@/data/db/db";
 import { Stock } from "@/types/stock";
 
-export const useStockDataService = () => {
+export const useStockRepository = () => {
 
   const fetchStocks = async (): Promise<Stock[]> => {
     const db = await dbPromise;
