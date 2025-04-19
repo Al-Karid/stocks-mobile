@@ -31,7 +31,7 @@ export default function NewTransaction() {
   const [type, setType] = useState<TransactionType>("BUY");
   const [transactionDate, setTransactionDate] = useState(new Date());
   const [quantity, setQuantity] = useState("10");
-  const [pricePerShare, setPricePerShare] = useState("1200");
+  const [pricePerShare, setPricePerShare] = useState("1000");
   const [fees, setFees] = useState("1.51");
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
@@ -51,44 +51,50 @@ export default function NewTransaction() {
   }
 
   const handleSubmit = async () => {
-    const parsedQuantity = parseFloat(quantity);
-    const parsedPrice = parseFloat(pricePerShare);
-    const parsedFees = parseFloat(fees);
-    const realPricePerShare = computeRealPricePerShare(parsedPrice, parsedFees);
+    try {
+      const parsedQuantity = parseFloat(quantity);
+      const parsedPrice = parseFloat(pricePerShare);
+      const parsedFees = parseFloat(fees);
+      const realPricePerShare = computeRealPricePerShare(parsedPrice, parsedFees);
 
-    if (isNaN(parsedQuantity) || isNaN(parsedPrice)) {
+      if (isNaN(parsedQuantity) || isNaN(parsedPrice) || isNaN(parsedFees)) {
+        throw new Error("Veuillez entrer des valeurs valides.");
+      }
+
+      if (parsedQuantity <= 0) {
+        throw new Error("La quantité doit être supérieure à 0.");
+      }
+
+      const newTransaction = {
+        //FIX manage the case when portfolioId is undefined
+        //FIX manage the case when symbol is undefined
+        portfolioId: parseInt(portfolioId!),
+        symbol: symbol ?? "",
+        type: type,
+        name: title ?? "",
+        transactionDate: transactionDate,
+        quantity: type === "BUY" ? parsedQuantity : -parsedQuantity,
+        pricePerShare: type === "BUY" ? parsedPrice : -parsedPrice,
+        realPricePerShare: type === "BUY" ? realPricePerShare : -realPricePerShare,
+        totalCost: type === "BUY" ? computeTotalCost(parsedQuantity, realPricePerShare) : -computeTotalCost(parsedQuantity, realPricePerShare),
+        fees: isNaN(parsedFees) ? 1.51 : parsedFees,
+        notes: null,
+      };
+
+      await addTransaction(newTransaction);
+      Toast.show({
+        type: "success",
+        text1: "Succès",
+        text2: "Transaction enregistrée !",
+        position: "bottom"
+      });
+      router.back();
+    } catch (error: any) {
       Alert.alert(
         "Erreur",
-        "Veuillez remplir correctement les champs numériques."
+        error.message || "Une erreur est survenue lors de l'enregistrement de la transaction."
       );
-      return;
     }
-
-    const newTransaction = {
-      //FIX manage the case when portfolioId is undefined
-      //FIX manage the case when symbol is undefined
-      portfolioId: parseInt(portfolioId!),
-      symbol: symbol ?? "",
-      type: type,
-      name: title ?? "",
-      transactionDate: transactionDate,
-      quantity: parsedQuantity,
-      pricePerShare: parsedPrice,
-      realPricePerShare: realPricePerShare,
-      totalCost: computeTotalCost(parsedQuantity, realPricePerShare),
-      fees: isNaN(parsedFees) ? 1.51 : parsedFees,
-      notes: null,
-    };
-
-    console.log("📤 Nouvelle transaction :", newTransaction);
-    Toast.show({
-      type: "success",
-      text1: "Succès",
-      text2: "Transaction enregistrée !",
-      position: "bottom"
-    });
-    await addTransaction(newTransaction);
-    router.back();
   };
 
   return (
@@ -157,7 +163,7 @@ export default function NewTransaction() {
 
         <Text style={styles.label}>Prix par action (FCFA)</Text>
         <TextInput
-        ref={priceInputRef}
+          ref={priceInputRef}
           style={[
             styles.input,
             focusedField === "pricePerShare" && styles.inputFocused,
@@ -174,7 +180,7 @@ export default function NewTransaction() {
 
         <Text style={styles.label}>Frais de transaction</Text>
         <TextInput
-        ref={feesInputRef}
+          ref={feesInputRef}
           style={[styles.input, focusedField === "fees" && styles.inputFocused]}
           keyboardType="numeric"
           returnKeyType="done"

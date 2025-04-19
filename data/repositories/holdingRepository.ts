@@ -7,6 +7,27 @@ export const useHoldingRepository = () => {
 
     const { findStock } = useStockRepository();
 
+    /**
+     * Fetch a holding by its symbol and portfolioId
+     * @param symbol 
+     * @param portfolioId 
+     * @returns 
+     */
+    const findHolding = async (symbol: string, portfolioId: number): Promise<Holding | null> => {
+        try {
+            const db = await dbPromise;
+            const holding = await db.getFirstAsync<Holding>("SELECT * FROM holdings WHERE portfolioId = ? AND trim(symbol) = ?", [portfolioId, symbol.trim()]);
+            return holding;
+        } catch (error) {
+            console.error("‼️ Error fetching holding:", error);
+        }
+        return null;
+    }
+
+    /**
+     * Save or update a holding in the database
+     * @param holding 
+     */
     const saveOrUpdateHolding = async (holding: HoldingRequest) => {
         try {
             const db = await dbPromise;
@@ -20,7 +41,29 @@ export const useHoldingRepository = () => {
             console.error("‼️ Error inserting Holding:", error);   
         }
     }
-    
+
+    /**
+     * Update a holding in the database
+     * @param holding 
+     */
+    const updateHolding = async (holding: HoldingRequest) => {
+        try {
+            const db = await dbPromise;
+            await db.runAsync("UPDATE holdings SET quantity = ?, averagePrice = ?, totalCost = ? WHERE portfolioId = ? AND symbol = ?",
+                [holding.quantity, holding.averagePrice, holding.totalCost!, holding.portfolioId, holding.symbol]
+            );
+            console.log(`💾 Holding ${holding.name} updated successfully in portfolio ${holding.portfolioId}`);
+        } catch (error) {
+            console.error("‼️ Error updating Holding:", error);
+            console.error("‼️ Error updating Holding:", holding);
+        }
+    }
+
+    /**
+     * Fetch all holdings for a given portfolio
+     * @param portfolioId 
+     * @returns 
+     */
     const fetchHoldings = async (portfolioId: number) => {
         const db = await dbPromise;
         const holdings = await db.getAllAsync<Holding>("SELECT * FROM holdings WHERE portfolioId = ?", [portfolioId]);
@@ -33,7 +76,9 @@ export const useHoldingRepository = () => {
     }
 
     return {
+        findHolding,
         fetchHoldings, 
+        updateHolding,
         saveOrUpdateHolding,
     }
 }
