@@ -1,8 +1,8 @@
 import { Portfolio } from "@/types/portfolio";
 import { dbPromise } from "@/data/db/db";
-import { useHoldingRepository } from "./holdingRepository";
+import { usePortfolioService } from "@/data/services/portfolioService"; 
 
-const { computePortfolioPerformance } = useHoldingRepository();
+const { computePortfolioPerformance } = usePortfolioService();
 
 export const usePortfolioRepository = () => {
   
