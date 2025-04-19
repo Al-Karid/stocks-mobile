@@ -60,9 +60,9 @@ export const useHoldingRepository = () => {
     }
 
     /**
-     * Fetch all holdings for a given portfolio
+     * Fetch all holdings for a given portfolio.
      * @param portfolioId 
-     * @returns 
+     * @returns only holdings with quantity > 0
      */
     const fetchHoldings = async (portfolioId: number) => {
         const db = await dbPromise;
@@ -72,7 +72,7 @@ export const useHoldingRepository = () => {
             holding.currentPrice = stock?.currentPrice || 0;
             holding.gainLoss = (holding.currentPrice - holding.averagePrice) * holding.quantity;
         }
-        return holdings;
+        return holdings.filter(holding => holding.quantity > 0);
     }
 
     return {
