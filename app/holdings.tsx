@@ -3,7 +3,6 @@ import { View, StyleSheet, Platform, Pressable } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import Dialog from "react-native-dialog";
 import HoldingListing from "@/components/holdings/HoldingListing";
-import { Holding } from "@/types/portfolio";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { useStockRepository } from "@/data/repositories/stockRepository";

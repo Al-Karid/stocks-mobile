@@ -1,10 +1,5 @@
 import { create } from "zustand";
-import {
-  createPortfolio,
-  getPortfolios,
-  updatePortfolio,
-  deletePortfolio,
-} from "@/data/repositories/portfolioRepository";
+import { usePortfolioRepository } from "@/data/repositories/portfolioRepository";
 import { Portfolio } from "@/types/portfolio";
 import { Holding } from "@/types/portfolio";
 import { TransactionRequest } from "@/types/portfolio";
@@ -13,6 +8,7 @@ import { useTransactionRepository } from "@/data/repositories/transactionReposit
 
 const { fetchHoldings } = useHoldingRepository();
 const { saveTransaction } = useTransactionRepository();
+const { createPortfolio, getPortfolios, updatePortfolio, deletePortfolio } = usePortfolioRepository();
 
 interface PortfolioStore {
   portfolios: Portfolio[];
