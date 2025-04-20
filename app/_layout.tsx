@@ -85,6 +85,14 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
+          name="portfolio/details"
+          options={{
+            title: "Portfolio Details",
+            presentation: "modal",
+            animation: "slide_from_bottom",
+          }}
+        />
+        <Stack.Screen
           name="holdings"
           options={{
             title: "Holdings",

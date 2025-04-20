@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Alert } from "react-native";
 import { HapticButtonLongPress } from "../buttons/HapticButtonLongPress";
 import { router } from "expo-router";
 import { Portfolio } from "@/types/portfolio";
+import { formatPercentage } from "@/utils/numberUtils";
 
 type PortfolioProps = {
   portfolio: Portfolio;
@@ -21,9 +22,9 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
   const { gainLossPercentage } = performance || {};
 
   const onPress = () => {
-    const options = ["Rename", "Delete", "Cancel"];
-    const destructiveButtonIndex = 1;
-    const cancelButtonIndex = 2;
+    const options = ["Details", "Rename", "Delete", "Cancel"];
+    const destructiveButtonIndex = 2;
+    const cancelButtonIndex = 3;
 
     showActionSheetWithOptions(
       {
@@ -36,7 +37,7 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
         if (selectedIndex === undefined) return;
 
         switch (selectedIndex) {
-          case 0:
+          case 1:
             onRename();
             break;
           case destructiveButtonIndex:
@@ -48,6 +49,9 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
                 { text: "Delete", style: "destructive", onPress: onDelete },
               ]
             );
+            break;
+          case 0:
+            router.push({ pathname: "/portfolio/details", params: { portfolioId: id } });
             break;
         }
       }
@@ -69,7 +73,7 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
           ]}
         >
           {Number(gainLossPercentage) >= 0 ? "+" : ""}
-          {isNaN(Number(gainLossPercentage)) ? "0.00" : gainLossPercentage.toFixed(1)}%
+          {formatPercentage((gainLossPercentage))}
         </Text>
       </View>
     </HapticButtonLongPress>

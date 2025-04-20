@@ -1,17 +1,13 @@
 import React from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
 import { Transaction } from "@/types/portfolio";
-import { formatNumber } from "@/utils/numberUtils";
+import { formatTransactionNumber } from "@/utils/numberUtils";
 
 const { width } = Dimensions.get("window");
 
 interface Props {
   transaction: Transaction;
   symbol: string;
-}
-
-const formatTransactionNumber = (number: number) => {
-  return formatNumber(Math.abs(number).toFixed(0));
 }
 
 const TransactionCard = ({ transaction, symbol }: Props) => {
