@@ -58,11 +58,23 @@ export default function HoldingScreen() {
     }
     setDialogVisible(false);
     router.push({
-      pathname: "/add-transaction",
+      pathname: "/transactions/new",
       params: {
         portfolioId, 
         symbol: selectedStock,
         title: stocks.find((stock) => stock.symbol.trim() === selectedStock.trim())?.title 
+      },
+    });
+  };
+
+  const handleHoldingLongPress = (symbol: string) => {
+    provideHapticFeedback();
+    router.push({
+      pathname: "/transactions/history",
+      params: {
+        portfolioId,
+        symbol,
+        title: stocks.find((stock) => stock.symbol.trim() === symbol.trim())?.title,
       },
     });
   };
@@ -93,7 +105,7 @@ export default function HoldingScreen() {
         <Dialog.Button label="Valider" onPress={handleConfirm} />
       </Dialog.Container>
 
-      <HoldingListing holdings={holdings} />
+      <HoldingListing holdings={holdings} onHoldingLongPress={(symbol) => handleHoldingLongPress(symbol)} />
     </>
   );
 }

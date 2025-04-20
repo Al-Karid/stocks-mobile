@@ -6,14 +6,15 @@ import HoldingCard from "./HoldingCard";
 
 interface Props {
   holdings: Holding[];
+  onHoldingLongPress: (symbol: string) => void;
 }
 
-export default function HoldingListing({ holdings }: Props) {
+export default function HoldingListing({ holdings, onHoldingLongPress }: Props) {
   return (
     <FlatList
       data={holdings}
       keyExtractor={(item) => item.symbol}
-      renderItem={({ item }) => <HoldingCard holding={item} />}
+      renderItem={({ item }) => <HoldingCard holding={item} onLongPress={() => onHoldingLongPress(item.symbol)} />}
       contentContainerStyle={styles.container}
       contentInsetAdjustmentBehavior="automatic"
     />

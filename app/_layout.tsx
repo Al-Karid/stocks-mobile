@@ -62,9 +62,17 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
-          name="add-transaction"
+          name="transactions/new"
           options={{
             title: "New Transaction",
+            presentation: "modal",
+            animation: "slide_from_bottom",
+          }}
+        />
+        <Stack.Screen
+          name="transactions/history"
+          options={{
+            title: "Transaction History",
             presentation: "modal",
             animation: "slide_from_bottom",
           }}

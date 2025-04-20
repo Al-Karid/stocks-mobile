@@ -1,15 +1,16 @@
 // components/HoldingCard.tsx
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Holding } from "@/types/portfolio";
 import { FontAwesome } from "@expo/vector-icons";
 import { formatNumber } from "@/utils/numberUtils";
 
 interface Props {
   holding: Holding;
+  onLongPress: () => void;
 }
 
-export default function HoldingCard({ holding }: Props) {
+export default function HoldingCard({ holding, onLongPress }: Props) {
   const {
     symbol,
     name,
@@ -21,59 +22,61 @@ export default function HoldingCard({ holding }: Props) {
   } = holding;
 
   const computedTotalCost = totalCost ?? quantity * averagePrice;
-  const currentValue = quantity * currentPrice;
+  const currentValue = quantity * currentPrice!;
   const isGain = gainLoss >= 0;
-  const gainLossPercentage = ((currentPrice - averagePrice) / averagePrice) * 100;
+  const gainLossPercentage = ((currentPrice! - averagePrice) / averagePrice) * 100;
 
   return (
-    <View style={styles.card}>
-      {/* HEADER */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.name}>{name}</Text>
-          <Text style={styles.symbol}>{symbol.trim()}</Text>
+    <TouchableOpacity onLongPress={() => onLongPress()} activeOpacity={0.4}>
+      <View style={styles.card}>
+        {/* HEADER */}
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.name}>{name}</Text>
+            <Text style={styles.symbol}>{symbol.trim()}</Text>
+          </View>
+          <View style={styles.priceStatus}>
+            <FontAwesome
+              name={isGain ? "arrow-up" : "arrow-down"}
+              size={18}
+              color={isGain ? "#22c55e" : "#ef4444"}
+            />
+            <Text
+              style={[
+                styles.gainLossValue,
+                { color: isGain ? "#22c55e" : "#ef4444" },
+              ]}
+            >
+              {gainLossPercentage.toFixed(1)}% ({gainLoss.toFixed(0)} FCFA)
+            </Text>
+          </View>
         </View>
-        <View style={styles.priceStatus}>
-          <FontAwesome
-            name={isGain ? "arrow-up" : "arrow-down"}
-            size={18}
-            color={isGain ? "#22c55e" : "#ef4444"}
-          />
-          <Text
-            style={[
-              styles.gainLossValue,
-              { color: isGain ? "#22c55e" : "#ef4444" },
-            ]}
-          >
-            {gainLossPercentage.toFixed(1)}% ({gainLoss.toFixed(0)} FCFA)
-          </Text>
-        </View>
-      </View>
 
-      {/* BODY */}
-      <View style={styles.details}>
-        <View style={styles.row}>
-          <Text style={styles.label}>Quantité</Text>
-          <Text style={styles.value}>{quantity}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>CMP</Text>
-          <Text style={styles.value}>{formatNumber(Number(averagePrice.toFixed(0)))}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Cours</Text>
-          <Text style={styles.value}>{formatNumber(Number(currentPrice.toFixed(0)))}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Coût total</Text>
-          <Text style={styles.value}>{formatNumber(computedTotalCost.toFixed(0))}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Valeur actuelle</Text>
-          <Text style={styles.value}>{formatNumber(currentValue.toFixed(0))}</Text>
+        {/* BODY */}
+        <View style={styles.details}>
+          <View style={styles.row}>
+            <Text style={styles.label}>Quantité</Text>
+            <Text style={styles.value}>{quantity}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>CMP</Text>
+            <Text style={styles.value}>{formatNumber(Number(averagePrice.toFixed(0)))}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Cours</Text>
+            <Text style={styles.value}>{formatNumber(Number(currentPrice!.toFixed(0)))}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Coût total</Text>
+            <Text style={styles.value}>{formatNumber(computedTotalCost.toFixed(0))}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Valeur actuelle</Text>
+            <Text style={styles.value}>{formatNumber(currentValue.toFixed(0))}</Text>
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
