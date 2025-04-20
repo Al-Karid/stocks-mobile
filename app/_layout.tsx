@@ -1,49 +1,46 @@
-import { Stack } from "expo-router";
-import Toast from "react-native-toast-message";
+import { Stack } from 'expo-router/stack';
+import Toast from 'react-native-toast-message';
 
-export default function RootLayout() {
+export default function Layout() {
   return (
     <>
       <Stack>
-        <Stack.Screen
-          name="index"
-          options={{
-            title: "Home",
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="dashboard"
-          options={{
-            title: "Dashboard",
-            headerShown: false,
-          }}
-        />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="stocks/palmares"
           options={{
             title: "Palmarès",
             headerLargeTitle: true,
-          }}
-        />
-        <Stack.Screen
-          name="stocks/index"
-          options={{
-            title: "Stocks",
-            headerLargeTitle: true,
-          }}
-        />
-        <Stack.Screen
-          name="watchlist"
-          options={{
-            title: "Watchlist",
-            headerLargeTitle: true,
+            headerBackTitle: "Retour",
           }}
         />
         <Stack.Screen
           name="stocks/details"
           options={{
             title: "Stock Details",
+            presentation: "modal",
+            animation: "slide_from_bottom",
+          }}
+        />
+        <Stack.Screen
+          name="watchlist/index"
+          options={{
+            title: "Watchlist",
+            headerLargeTitle: true,
+            headerBackTitle: "Retour",
+          }}
+        />
+        <Stack.Screen
+          name="portfolio/holdings"
+          options={{
+            title: "Holdings",
+            headerLargeTitle: true,
+          }}
+        />
+        <Stack.Screen
+          name="portfolio/details"
+          options={{
+            title: "Portfolio Details",
             presentation: "modal",
             animation: "slide_from_bottom",
           }}
@@ -62,28 +59,6 @@ export default function RootLayout() {
             title: "Transaction History",
             presentation: "modal",
             animation: "slide_from_bottom",
-          }}
-        />
-        <Stack.Screen
-          name="portfolio"
-          options={{
-            title: "Portfolio",
-            headerLargeTitle: true,
-          }}
-        />
-        <Stack.Screen
-          name="portfolio/details"
-          options={{
-            title: "Portfolio Details",
-            presentation: "modal",
-            animation: "slide_from_bottom",
-          }}
-        />
-        <Stack.Screen
-          name="holdings"
-          options={{
-            title: "Holdings",
-            headerLargeTitle: true,
           }}
         />
       </Stack>

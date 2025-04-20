@@ -4,7 +4,7 @@ import { Picker } from "@react-native-picker/picker";
 import Dialog from "react-native-dialog";
 import HoldingListing from "@/components/holdings/HoldingListing";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
+import { AntDesign, Entypo, MaterialIcons } from "@expo/vector-icons";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 import { provideHapticFeedback } from "@/utils/interactionUtils";
 import { usePortfolioStore } from "@/stores/portfolioStore";
@@ -26,10 +26,10 @@ export default function HoldingsScreen() {
     navigation.setOptions({
       headerRight: () => (
         <Pressable
-          style={{ marginRight: 5, marginTop: 6 }}
+          style={{ marginRight: 5, marginTop: 3 }}
           onPress={handleNewTransaction}
         >
-          <FontAwesome name="pencil-square-o" size={23} color="#007AFF" />
+          <AntDesign name="addfile" size={19} color="#007AFF" />
         </Pressable>
       ),
     });
