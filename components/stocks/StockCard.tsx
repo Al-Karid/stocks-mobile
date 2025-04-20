@@ -49,7 +49,7 @@ const StockCard: React.FC<StockCardProps> = ({
       <TouchableWithoutFeedback
         onPress={() =>
           router.push({
-            pathname: "/details",
+            pathname: "/stocks/details",
             params: {
               symbol: symbol.trim(),
               name: name,

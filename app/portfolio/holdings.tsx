@@ -10,7 +10,7 @@ import { provideHapticFeedback } from "@/utils/interactionUtils";
 import { usePortfolioStore } from "@/stores/portfolioStore";
 import { Stock } from "@/types/stock";
 
-export default function HoldingScreen() {
+export default function HoldingsScreen() {
 
   const { portfolioId } = useLocalSearchParams();
   

@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, RefreshControl } 
 import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { initDb } from "../data/db/stockDatabase";
+import { initDb } from "../../data/db/stockDatabase";
 import { initPortfolioDb } from "@/data/db/portfolioDatabase";
 import { syncStockDataFromServer } from "@/data/db/syncStocks";
 import UpdatedAt from "@/components/views/UpdatedAt";
@@ -57,7 +57,7 @@ export default function HomeScreen() {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[styles.button, styles.palmares]}
-            onPress={() => navigateTo("palmares")}
+            onPress={() => navigateTo("stocks/palmares")}
           >
             <Text style={styles.buttonText}>Palmarès</Text>
             <FontAwesome name="line-chart" size={22} color="#fff" />

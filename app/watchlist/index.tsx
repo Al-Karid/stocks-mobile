@@ -4,7 +4,7 @@ import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useEffect, useState } from "react";
 import { Text, StyleSheet, FlatList } from "react-native";
 
-const PalmaresScreen: React.FC = () => {
+const WatchlistScreen: React.FC = () => {
   const { watchlist, fetchWatchlist } = useWatchlistStore();
   const [updatedAt, setUpdatedAt] = useState<string>("");
 
@@ -61,4 +61,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PalmaresScreen;
+export default WatchlistScreen;

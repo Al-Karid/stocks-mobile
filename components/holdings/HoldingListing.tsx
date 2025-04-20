@@ -1,6 +1,6 @@
 // components/HoldingListing.tsx
 import React from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View, Text } from "react-native";
 import { Holding } from "@/types/portfolio";
 import HoldingCard from "./HoldingCard";
 
@@ -17,6 +17,14 @@ export default function HoldingListing({ holdings, onHoldingLongPress }: Props) 
       renderItem={({ item }) => <HoldingCard holding={item} onLongPress={() => onHoldingLongPress(item.symbol)} />}
       contentContainerStyle={styles.container}
       contentInsetAdjustmentBehavior="automatic"
+      showsVerticalScrollIndicator={false}
+      ListEmptyComponent={() => (
+        <View style={{ alignItems: "center", marginTop: 20 }}>
+          <Text style={{ fontStyle: "italic", color: "#888", textAlign: "center" }}>
+            Your transactions will appear here.
+          </Text>
+        </View>
+      )}
     />
   );
 }

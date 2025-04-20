@@ -1,5 +1,4 @@
 import { Stack } from "expo-router";
-import { View } from "react-native";
 import Toast from "react-native-toast-message";
 
 export default function RootLayout() {
@@ -18,29 +17,17 @@ export default function RootLayout() {
           options={{
             title: "Dashboard",
             headerShown: false,
-            headerBackground() {
-              return (
-                <View
-                  style={{
-                    backgroundColor: "#121212",
-                    height: "100%",
-                    width: "100%",
-                  }}
-                />
-              );
-            },
-            
           }}
         />
         <Stack.Screen
-          name="palmares"
+          name="stocks/palmares"
           options={{
             title: "Palmarès",
             headerLargeTitle: true,
           }}
         />
         <Stack.Screen
-          name="stocks"
+          name="stocks/index"
           options={{
             title: "Stocks",
             headerLargeTitle: true,
@@ -54,7 +41,7 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
-          name="details"
+          name="stocks/details"
           options={{
             title: "Stock Details",
             presentation: "modal",

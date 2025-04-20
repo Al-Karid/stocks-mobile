@@ -5,9 +5,10 @@ import { useStockRepository } from "@/data/repositories/stockRepository";
 import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useState, useEffect } from "react";
 import { Stock } from "@/types/stock";
-import { formatNumber } from "../utils/numberUtils";
+import { formatNumber } from "@/utils/numberUtils";
 
-export default function DetailsScreen() {
+export default function StocksDetailsScreen() {
+  
   const { symbol } = useLocalSearchParams();
   const { addStockToWatchlist, removeStockFromWatchlist } = useWatchlistStore();
   const { findStock } = useStockRepository();

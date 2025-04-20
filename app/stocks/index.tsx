@@ -6,7 +6,7 @@ import { TouchableOpacity } from "react-native";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 import { Stock } from "@/types/stock";
 
-export default function Stocks() {
+export default function StocksScreen() {
   const { fetchStocks } = useStockRepository();
   const navigation = useNavigation();
 

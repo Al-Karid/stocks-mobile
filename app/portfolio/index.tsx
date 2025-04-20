@@ -9,7 +9,7 @@ import { provideHapticFeedback } from "@/utils/interactionUtils";
 import { usePortfolioStore } from "@/stores/portfolioStore";
 import { useNavigation } from "expo-router";
 
-export default function Portfolio() {
+export default function PortfolioScreen() {
   
   const navigation = useNavigation();
   const { portfolios: portfolioStore, fetchPortfolios, addPortfolio } = usePortfolioStore();
