@@ -1,26 +1,23 @@
-import { useEffect, useState } from "react";
-import { View, StyleSheet, Platform, Pressable } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import Dialog from "react-native-dialog";
+import { useEffect, useState, useRef, useMemo } from "react";
+import { View, StyleSheet, Platform, Pressable, Text, SafeAreaView, FlatList } from "react-native";
+import { BottomSheetModal, BottomSheetModalProvider, BottomSheetView } from "@gorhom/bottom-sheet";
 import HoldingListing from "@/components/holdings/HoldingListing";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import { AntDesign, Entypo, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 import { provideHapticFeedback } from "@/utils/interactionUtils";
 import { usePortfolioStore } from "@/stores/portfolioStore";
 import { Stock } from "@/types/stock";
 
 export default function HoldingsScreen() {
-
   const { portfolioId } = useLocalSearchParams();
-  
   const navigation = useNavigation();
   const { fetchStocks } = useStockRepository();
-  
+
   const [stocks, setStocks] = useState<Stock[]>([]);
   const { holdings, getHoldings } = usePortfolioStore();
   const [selectedStock, setSelectedStock] = useState<string>("");
-  const [dialogVisible, setDialogVisible] = useState<boolean>(false);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
     navigation.setOptions({
@@ -35,36 +32,36 @@ export default function HoldingsScreen() {
     });
 
     getHoldings(Number(portfolioId));
-    
+
     const fetchStocksData = async () => {
       const stocks = await fetchStocks();
       setStocks(stocks);
     };
     fetchStocksData();
-  }, [portfolioId]);
+  }, []);
 
   const handleNewTransaction = () => {
-    setDialogVisible(true);
-    provideHapticFeedback()
+    bottomSheetModalRef.current?.present();
+    provideHapticFeedback();
   };
 
   const handleCancel = () => {
-    setDialogVisible(false);
+    bottomSheetModalRef.current?.dismiss();
+    setSelectedStock("");
   };
 
-  const handleConfirm = () => {
-    if (!selectedStock) {
-      return;
-    }
-    setDialogVisible(false);
+  const handleConfirm = (symbol: string) => {
+    if (!symbol) return;
+    bottomSheetModalRef.current?.dismiss();
     router.push({
       pathname: "/transactions/new",
       params: {
-        portfolioId, 
-        symbol: selectedStock,
-        title: stocks.find((stock) => stock.symbol.trim() === selectedStock.trim())?.title 
+        portfolioId,
+        symbol,
+        title: stocks.find((stock) => stock.symbol.trim() === symbol.trim())?.title
       },
     });
+    setSelectedStock(""); // Reset after confirm
   };
 
   const handleHoldingLongPress = (symbol: string) => {
@@ -79,31 +76,45 @@ export default function HoldingsScreen() {
     });
   };
 
+  const renderStockItem = ({ item }: { item: Stock }) => (
+    <Pressable
+      onPress={() => handleConfirm(item.symbol)}
+      style={({ pressed }) => [
+        styles.stockItem,
+        pressed && styles.stockItemPressed
+      ]}
+    >
+      <Text style={styles.stockItemText}>{item.title}</Text>
+    </Pressable>
+  );
+
   return (
     <>
-      <Dialog.Container visible={dialogVisible}>
-        <Dialog.Title>Choisir une action</Dialog.Title>
-
-        <View style={styles.pickerWrapper}>
-          <Picker
-            selectedValue={selectedStock}
-            onValueChange={(itemValue) => setSelectedStock(itemValue)}
-            style={{ width: "100%" }}
-          >
-            <Picker.Item label="-- Sélectionner --" value="" />
-            {stocks.map((option) => (
-              <Picker.Item
-                key={option.id}
-                label={option.title}
-                value={option.symbol}
-              />
-            ))}
-          </Picker>
-        </View>
-
-        <Dialog.Button label="Annuler" onPress={handleCancel} />
-        <Dialog.Button label="Valider" onPress={handleConfirm} />
-      </Dialog.Container>
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={0}
+        snapPoints={["50%"]}
+      >
+        <BottomSheetView style={{ flex: 1, padding: 20 }}>
+          <Text style={{ fontSize: 18, fontWeight: "600", marginBottom: 16 }}>
+            Sélectionner une action
+          </Text>
+          <Text style={{ fontSize: 14, color: "#666", marginBottom: 16 }}>
+            Sélectionnez pour enregistrer une transaction.
+          </Text>
+          <FlatList
+            data={stocks}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderStockItem}
+            contentContainerStyle={{ paddingBottom: 20}}
+          />
+          <View style={{ marginTop: 16 }}>
+            <Pressable onPress={handleCancel} style={styles.cancelButton}>
+              <Text style={styles.cancelButtonText}>Annuler</Text>
+            </Pressable>
+          </View>
+        </BottomSheetView>
+      </BottomSheetModal>
 
       <HoldingListing holdings={holdings} onHoldingLongPress={(symbol) => handleHoldingLongPress(symbol)} />
     </>
@@ -114,22 +125,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  selectButton: {
-    margin: 16,
-    padding: 12,
-    backgroundColor: "#007AFF",
+  stockItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    backgroundColor: "#fff",
+  },
+  stockItemPressed: {
+    backgroundColor: "#f0f0f0",
+  },
+  stockItemText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  cancelButton: {
+    backgroundColor: "#FF3B30",
+    paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",
   },
-  selectText: {
+  cancelButtonText: {
     color: "#fff",
     fontWeight: "600",
     fontSize: 16,
-  },
-  pickerWrapper: {
-    borderWidth: Platform.OS === "android" ? 1 : 0,
-    borderColor: "#ccc",
-    borderRadius: 4,
-    overflow: "hidden",
   },
 });
