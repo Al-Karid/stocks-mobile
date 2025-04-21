@@ -1,14 +1,18 @@
 // Déclaration des overloads
-export function formatNumber(value: number): string;
-export function formatNumber(value: string): string;
+export function formatNumber(value: number, toFixed?: number): string;
+export function formatNumber(value: string, toFixed?: number): string;
 
 // Implémentation unique
-export function formatNumber(value: number | string): string {
+export function formatNumber(value: number | string, toFixed: number = 1): string {
   const num = typeof value === "string" ? parseFloat(value) : value;
   if (isNaN(num)) {
     return "0.00";
   }
-  return new Intl.NumberFormat("fr-FR").format(num);
+  return new Intl.NumberFormat("fr-FR",
+    {
+      maximumFractionDigits: toFixed,
+    }
+  ).format(num);
 }
 
 export const formatPercentage = (value: number, toFixed: number = 1) => {
@@ -22,5 +26,5 @@ export const formatPercentage = (value: number, toFixed: number = 1) => {
 }
 
 export const formatTransactionNumber = (number: number) => {
-  return formatNumber(Math.abs(number).toFixed(0));
+  return formatNumber(Math.abs(number));
 }

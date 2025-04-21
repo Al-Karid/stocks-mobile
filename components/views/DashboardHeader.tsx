@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Portfolio } from '@/types/portfolio';
+import { formatNumber, formatPercentage } from '@/utils/numberUtils';
 
-const DashboardHeader = () => {
+interface DashboardHeaderProps {
+  portfolio: Portfolio;
+}
+
+const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio }) => {
   const [isHidden, setIsHidden] = useState(false);
+
+  const { performance } = portfolio;
+  const { totalValue, gainLossPercentage, totalGainLoss } = performance;
+
+  // Determine color based on performance
+  const isPositive = totalGainLoss >= 0;
 
   return (
     <View style={styles.header}>
@@ -19,12 +31,29 @@ const DashboardHeader = () => {
       <View style={styles.portfolioSection}>
         <Text style={styles.portfolioTitle}>Total portfolio</Text>
         <View style={styles.portfolioAmountRow}>
-          <Text style={styles.portfolioAmount}>{isHidden ? '**********' : '$16,458.50'}</Text>
+          <Text style={styles.portfolioAmount}>
+            {isHidden ? '**********' : `XOF ${formatNumber(totalValue)}`}
+          </Text>
           <TouchableOpacity onPress={() => setIsHidden(!isHidden)}>
-            <Ionicons name={isHidden ? "eye-off-outline" : "eye-outline"} size={20} color="white" style={isHidden ? styles.eyeOff : styles.eye} />
+            <Ionicons
+              name={isHidden ? "eye-off-outline" : "eye-outline"}
+              size={20}
+              color="white"
+              style={isHidden ? styles.eyeOff : styles.eye} 
+            />
           </TouchableOpacity>
         </View>
-        <Text style={styles.portfolioChange}>▲ $1.20 (2.40%)</Text>
+
+        {/* {!isHidden && ( */}
+          <Text
+            style={[
+              styles.portfolioChange,
+              { color: isPositive ? '#00FF7F' : '#FF4500' } // green if positive, red if negative
+            ]}
+          >
+            {isPositive ? '▲' : '▼'} XOF {formatNumber(totalGainLoss, 0)} ({formatPercentage(gainLossPercentage, 2)})
+          </Text>
+        {/* // )} */}
       </View>
     </View>
   );
@@ -72,14 +101,13 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   portfolioChange: {
-    color: '#00FF7F',
     marginTop: 5,
     fontSize: 16,
   },
-  eye : {
+  eye: {
     marginLeft: 8,
   },
-  eyeOff : {
+  eyeOff: {
     marginLeft: 8,
     marginBottom: 12,
   },

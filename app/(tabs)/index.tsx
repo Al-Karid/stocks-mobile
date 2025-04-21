@@ -35,8 +35,14 @@ const Dashboard = () => {
           showsVerticalScrollIndicator={false}
         >
           <View style={{ flex: 1, backgroundColor: 'white', minHeight: '100%' }}>
-            <DashboardHeader />
-
+            {portfolios.length > 0 && portfolios[0]?.performance ? (
+              <DashboardHeader portfolio={portfolios[0]} />
+            )
+              : (
+                <View style={{ height: 200, justifyContent: 'center', alignItems: 'center' }}>
+                  <Text style={{ fontSize: 18, color: '#6b7280' }}>No portfolio available</Text>
+                </View>
+              )}
             <View style={[styles.content, { flex: 1 }]}>
               {/* Portfolio Distribution */}
               <View style={styles.section}>
@@ -98,35 +104,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     marginTop: -30,
   },
-  buyingPowerSection: {
-    backgroundColor: '#030303',
-    padding: 16,
-    marginTop: 20,
-    borderRadius: 20,
-  },
-  buyingPowerLabel: {
-    color: 'gray',
-    fontSize: 14,
-  },
-  buyingPowerAmount: {
-    fontSize: 24,
-    // fontWeight: 'bold',
-    marginVertical: 10,
-    color: 'white',
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  actionButton: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  actionButtonText: {
-    marginTop: 4,
-    fontSize: 12,
-    color: '#ffffff',
-  },
   section: {
     marginTop: 10,
     paddingHorizontal: 20,
@@ -148,47 +125,6 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     fontSize: 14,
   },
-  assetCard: {
-    backgroundColor: 'white',
-    padding: 16,
-    borderRadius: 20,
-    marginRight: 10,
-    marginTop: 10,
-    width: 140,
-    // alignItems: 'center',
-  },
-  assetTicker: {
-    fontSize: 18,
-    // fontWeight: 'bold',
-  },
-  assetAmount: {
-    marginTop: 10,
-    fontSize: 16,
-  },
-  assetChangePositive: {
-    marginTop: 6,
-    color: '#00FF7F',
-    // fontWeight: 'bold',
-  },
-  assetChangeNegative: {
-    marginTop: 6,
-    color: 'red',
-    // fontWeight: 'bold',
-  },
-  watchlistTabs: {
-    flexDirection: 'row',
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  watchlistTab: {
-    marginRight: 10,
-    color: 'gray',
-  },
-  watchlistTabActive: {
-    marginRight: 10,
-    // fontWeight: 'bold',
-  },
-  /* Removed stockRow styles */
 });
 
 export default Dashboard;
