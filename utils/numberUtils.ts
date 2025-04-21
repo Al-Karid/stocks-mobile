@@ -3,7 +3,7 @@ export function formatNumber(value: number, toFixed?: number): string;
 export function formatNumber(value: string, toFixed?: number): string;
 
 // Implémentation unique
-export function formatNumber(value: number | string, toFixed: number = 1): string {
+export function formatNumber(value: number | string, toFixed: number = 0): string {
   const num = typeof value === "string" ? parseFloat(value) : value;
   if (isNaN(num)) {
     return "0.00";
@@ -19,10 +19,11 @@ export const formatPercentage = (value: number, toFixed: number = 1) => {
   if (isNaN(value)) {
     return "0.0%";
   }
-  return new Intl.NumberFormat("fr-FR", {
+  const percent = new Intl.NumberFormat("fr-FR", {
     style: "percent",
     maximumFractionDigits: toFixed,
   }).format(value / 100);
+  return value >= 0 ? `+${percent}` : percent;
 }
 
 export const formatTransactionNumber = (number: number) => {

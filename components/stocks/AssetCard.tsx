@@ -12,15 +12,14 @@ interface AssetCardProps {
 const AssetCard: React.FC<AssetCardProps> = ({ holding }) => {
     const { symbol: ticker, gainLoss: amount, totalCost, portfolioId } = holding;
     const isPositive = amount >= 0;
-    const changeRaw = totalCost ? ((amount / totalCost) * 100) : 0;
-    const change = `${isPositive ? '+' : ''}${formatPercentage(changeRaw, 0)}`;
+    const change = totalCost ? ((amount / totalCost) * 100) : 0;
 
     return (
         <TouchableOpacity onLongPress={() => { provideHapticFeedback(); router.push({ pathname: '/portfolio/holdings', params: { portfolioId } }); }}>
             <View style={styles.assetCard}>
                 <Text style={styles.assetTicker}>{ticker}</Text>
-                <Text style={styles.assetAmount}>{formatNumber(amount)}</Text>
-                <Text style={isPositive ? styles.assetChangePositive : styles.assetChangeNegative}>{change}</Text>
+                <Text style={styles.assetAmount}>{formatNumber(amount, 0)} XOF</Text>
+                <Text style={isPositive ? styles.assetChangePositive : styles.assetChangeNegative}>{formatPercentage(change, 2)}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -33,7 +32,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         marginRight: 10,
         marginTop: 10,
-        width: 125,
+        minWidth: 125,
         borderColor: '#e5e7eb',
         borderWidth: 1,
         shadowOpacity: 0.05,

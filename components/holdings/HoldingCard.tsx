@@ -3,7 +3,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Holding } from "@/types/portfolio";
 import { FontAwesome } from "@expo/vector-icons";
-import { formatNumber } from "@/utils/numberUtils";
+import { formatNumber, formatPercentage } from "@/utils/numberUtils";
 
 interface Props {
   holding: Holding;
@@ -47,7 +47,7 @@ export default function HoldingCard({ holding, onLongPress }: Props) {
                 { color: isGain ? "#22c55e" : "#ef4444" },
               ]}
             >
-              {gainLossPercentage.toFixed(1)}% ({gainLoss.toFixed(0)} FCFA)
+              {formatPercentage(gainLossPercentage, 2)} ({formatNumber(gainLoss)} XOF)
             </Text>
           </View>
         </View>

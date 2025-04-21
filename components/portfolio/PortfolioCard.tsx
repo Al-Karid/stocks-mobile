@@ -75,7 +75,7 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
           ]}
         >
           {isPositive ? "+" : ""}
-          {formatPercentage((gainLossPercentage))}
+          {formatPercentage(gainLossPercentage, 2)}
         </Text>
       </View>
     </HapticButtonLongPress>

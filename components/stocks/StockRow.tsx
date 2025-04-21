@@ -12,7 +12,7 @@ const StockRow: React.FC<StockRowProps> = ({ stock }) => {
   const { title, symbol, currentPrice, previousClosePrice } = stock;
   const isPositive = isPositiveNumber(currentPrice - previousClosePrice);
   const changeRaw = ((currentPrice - previousClosePrice) / previousClosePrice) * 100;
-  const change = formatPercentage(changeRaw);
+  const change = formatPercentage(changeRaw, 2);
 
   return (
     <Pressable style={styles.card} onLongPress={() => {router.push({ pathname: '/stocks/details', params: { symbol: stock.symbol } })}}>
@@ -23,9 +23,9 @@ const StockRow: React.FC<StockRowProps> = ({ stock }) => {
         </View>
         <View style={styles.rightSection}>
           <Text style={isPositive ? styles.changePositive : styles.changeNegative}>
-            {isPositive ? '▲' : '▼'} {isPositive? '+':''}{change}
+            {isPositive ? '▲' : '▼'} {change}
           </Text>
-          <Text style={styles.price}>{formatNumber(currentPrice)} FCFA</Text>
+          <Text style={styles.price}>{formatNumber(currentPrice)} XOF</Text>
         </View>
       </View>
     </Pressable>

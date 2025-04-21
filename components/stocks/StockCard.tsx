@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { ArrowUpRight, ArrowDownRight, ArrowRight } from "lucide-react-native";
 import { router } from "expo-router";
+import { formatNumber } from "@/utils/numberUtils";
 
 interface StockCardProps {
   name: string;
@@ -72,9 +73,9 @@ const StockCard: React.FC<StockCardProps> = ({
             <Text style={styles.title}>{name}</Text>
             <Text style={styles.label}>
               <Text style={styles.labelHeader}>Cours: </Text>
-              <Text style={styles.value}>{currentPrice}</Text> {"  "}
+              <Text style={styles.value}>{formatNumber(currentPrice)}</Text> {"  "}
               <Text style={styles.labelHeader}>Veille: </Text>
-              <Text style={styles.value}>{previousClosePrice}</Text>
+              <Text style={styles.value}>{formatNumber(previousClosePrice)}</Text>
             </Text>
           </View>
 
