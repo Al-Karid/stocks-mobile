@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
 import { Stock } from '@/types/stock';
 import { formatNumber, formatPercentage, isPositiveNumber } from '@/utils/numberUtils';
 import { router } from 'expo-router';
@@ -15,7 +15,7 @@ const StockRow: React.FC<StockRowProps> = ({ stock }) => {
   const change = formatPercentage(changeRaw, 2);
 
   return (
-    <Pressable style={styles.card} onLongPress={() => {router.push({ pathname: '/stocks/details', params: { symbol: stock.symbol } })}}>
+    <TouchableOpacity style={styles.card} onLongPress={() => {router.push({ pathname: '/stocks/details', params: { symbol: stock.symbol } })}}>
       <View style={styles.row}>
         <View style={styles.leftSection}>
           <Text style={styles.symbol}>{symbol}</Text>
@@ -28,7 +28,7 @@ const StockRow: React.FC<StockRowProps> = ({ stock }) => {
           <Text style={styles.price}>{formatNumber(currentPrice)} XOF</Text>
         </View>
       </View>
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 

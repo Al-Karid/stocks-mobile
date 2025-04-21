@@ -5,7 +5,7 @@ import { useStockRepository } from "@/data/repositories/stockRepository";
 import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useState, useEffect } from "react";
 import { Stock } from "@/types/stock";
-import { formatNumber } from "@/utils/numberUtils";
+import { formatCurrency, formatNumber, formatPercentage } from "@/utils/numberUtils";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function StocksDetailsScreen() {
@@ -54,14 +54,14 @@ export default function StocksDetailsScreen() {
         <View style={styles.row}>
           <Text style={styles.label}>Current Price</Text>
           <Text style={styles.value}>
-            {formatNumber(stock?.currentPrice || 0)}
+            {formatCurrency(stock?.currentPrice || 0)}
           </Text>
         </View>
 
         <View style={styles.row}>
           <Text style={styles.label}>Previous Close</Text>
           <Text style={styles.value}>
-            {formatNumber(stock?.previousClosePrice || 0)}
+            {formatCurrency(stock?.previousClosePrice || 0)}
           </Text>
         </View>
 
@@ -83,8 +83,8 @@ export default function StocksDetailsScreen() {
               <ArrowRight size={16} color="white" /> // Neutral icon for 0%
             )}
             <Text style={styles.percentageText}>
-              {isZero ? "0,00%" : stock?.percentageChange.toFixed(2) + "%"} (
-              {Number(stock?.currentPrice) - Number(stock?.previousClosePrice)})
+              {isZero ? "0,00%" : formatPercentage(stock?.percentageChange!, 2)} (
+              {formatCurrency(Number(stock?.currentPrice) - Number(stock?.previousClosePrice))})
             </Text>
           </View>
         </View>
@@ -95,31 +95,31 @@ export default function StocksDetailsScreen() {
         <View style={styles.row}>
           <Text style={styles.label}>Volume (titles)</Text>
           <Text style={styles.value}>
-            {formatNumber(stock?.volumeTitles || 0) || "N/A"}
+            {formatCurrency(stock?.volumeTitles || 0) || "N/A"}
           </Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Volume ()</Text>
           <Text style={styles.value}>
-            {formatNumber(stock?.volumeValues || 0) || "N/A"}
+            {formatCurrency(stock?.volumeValues || 0) || "N/A"}
           </Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Opening Price</Text>
           <Text style={styles.value}>
-            {formatNumber(stock?.opening || 0) || "N/A"}
+            {formatCurrency(stock?.opening || 0) || "N/A"}
           </Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>High</Text>
           <Text style={styles.value}>
-            {formatNumber(stock?.high || 0) || "N/A"}
+            {formatCurrency(stock?.high || 0) || "N/A"}
           </Text>
         </View>
         <View style={styles.rowLast}>
           <Text style={styles.label}>Low</Text>
           <Text style={styles.value}>
-            {formatNumber(stock?.low || 0) || "N/A"}
+            {formatCurrency(stock?.low || 0) || "N/A"}
           </Text>
         </View>
       </View>

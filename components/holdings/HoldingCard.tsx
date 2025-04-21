@@ -3,7 +3,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Holding } from "@/types/portfolio";
 import { FontAwesome } from "@expo/vector-icons";
-import { formatNumber, formatPercentage } from "@/utils/numberUtils";
+import { formatCurrency, formatPercentage } from "@/utils/numberUtils";
 
 interface Props {
   holding: Holding;
@@ -47,7 +47,7 @@ export default function HoldingCard({ holding, onLongPress }: Props) {
                 { color: isGain ? "#22c55e" : "#ef4444" },
               ]}
             >
-              {formatPercentage(gainLossPercentage, 2)} ({formatNumber(gainLoss)} XOF)
+              {formatPercentage(gainLossPercentage, 2)} ({formatCurrency(gainLoss, 0)})
             </Text>
           </View>
         </View>
@@ -56,23 +56,23 @@ export default function HoldingCard({ holding, onLongPress }: Props) {
         <View style={styles.details}>
           <View style={styles.row}>
             <Text style={styles.label}>Quantité</Text>
-            <Text style={styles.value}>{quantity}</Text>
+            <Text style={styles.value}>{formatCurrency(quantity)}</Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>CMP</Text>
-            <Text style={styles.value}>{formatNumber(Number(averagePrice.toFixed(0)))}</Text>
+            <Text style={styles.value}>{formatCurrency(Number(averagePrice.toFixed(0)))}</Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>Cours</Text>
-            <Text style={styles.value}>{formatNumber(Number(currentPrice!.toFixed(0)))}</Text>
+            <Text style={styles.value}>{formatCurrency(Number(currentPrice!.toFixed(0)))}</Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>Coût total</Text>
-            <Text style={styles.value}>{formatNumber(computedTotalCost.toFixed(0))}</Text>
+            <Text style={styles.value}>{formatCurrency(computedTotalCost.toFixed(0))}</Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>Valeur actuelle</Text>
-            <Text style={styles.value}>{formatNumber(currentValue.toFixed(0))}</Text>
+            <Text style={styles.value}>{formatCurrency(currentValue.toFixed(0))}</Text>
           </View>
         </View>
       </View>

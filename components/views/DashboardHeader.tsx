@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Portfolio } from '@/types/portfolio';
-import { formatNumber, formatPercentage } from '@/utils/numberUtils';
+import { formatCurrency, formatNumber, formatPercentage } from '@/utils/numberUtils';
 
 interface DashboardHeaderProps {
   portfolio: Portfolio;
@@ -32,7 +32,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio }) => {
         <Text style={styles.portfolioTitle}>{portfolio.name.toUpperCase()}</Text>
         <View style={styles.portfolioAmountRow}>
           <Text style={styles.portfolioAmount}>
-            {isHidden ? '**********' : `XOF ${formatNumber(totalValue)}`}
+            {isHidden ? '**********' : formatCurrency(totalValue, 0, 'XOF', true)}
           </Text>
           <TouchableOpacity onPress={() => setIsHidden(!isHidden)}>
             <Ionicons
@@ -51,7 +51,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio }) => {
             { color: isPositive ? '#00FF7F' : '#FF4500' } // green if positive, red if negative
           ]}
         >
-          {isPositive ? '▲' : '▼'} XOF {formatNumber(totalGainLoss, 0)} ({isPositive ? '+' : ''}{formatPercentage(gainLossPercentage, 2)})
+          {isPositive ? '▲' : '▼'} {formatCurrency(totalGainLoss, 0, "XOF", true)} ({isPositive ? '+' : ''}{formatPercentage(gainLossPercentage, 2)})
         </Text>
         {/* // )} */}
       </View>

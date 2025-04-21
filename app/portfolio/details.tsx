@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { usePortfolioStore } from "@/stores/portfolioStore";
-import { formatNumber, formatPercentage, formatTransactionNumber } from "@/utils/numberUtils";
+import { formatCurrency, formatNumber, formatPercentage, formatTransactionNumber } from "@/utils/numberUtils";
 import { Holding } from "@/types/portfolio";
 
 const { width } = Dimensions.get("window");
@@ -38,11 +38,11 @@ const PortfolioDetails = () => {
         <Text style={styles.sectionTitle}>Performance</Text>
         <View style={styles.detailRow}>
           <Text style={styles.label}>Total Value</Text>
-          <Text style={styles.value}>{formatNumber(portfolio.performance.totalValue)}</Text>
+          <Text style={styles.value}>{formatCurrency(portfolio.performance.totalValue)}</Text>
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.label}>Total Cost</Text>
-          <Text style={styles.value}>{formatNumber(portfolio.performance.totalCost)}</Text>
+          <Text style={styles.value}>{formatCurrency(portfolio.performance.totalCost)}</Text>
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.label}>Total Gain/Loss</Text>
@@ -52,7 +52,7 @@ const PortfolioDetails = () => {
               { color: portfolio.performance.totalGainLoss >= 0 ? "#34C759" : "#FF3B30" },
             ]}
           >
-            {formatNumber(portfolio.performance.totalGainLoss)}
+            {formatCurrency(portfolio.performance.totalGainLoss)}
           </Text>
         </View>
         <View style={styles.detailRow}>
@@ -63,7 +63,7 @@ const PortfolioDetails = () => {
               { color: portfolio.performance.gainLossPercentage >= 0 ? "#34C759" : "#FF3B30" },
             ]}
           >
-            {formatPercentage(portfolio.performance.gainLossPercentage)}
+            {formatPercentage(portfolio.performance.gainLossPercentage, 2)}
           </Text>
         </View>
       </View>
@@ -88,7 +88,7 @@ const PortfolioDetails = () => {
                 { color: holding.gainLoss >= 0 ? "#34C759" : "#FF3B30" },
               ]}
             >
-              {formatNumber(holding.gainLoss)}
+              {formatCurrency(holding.gainLoss)}
             </Text>
           </View>
         </View>

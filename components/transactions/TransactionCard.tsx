@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
 import { Transaction } from "@/types/portfolio";
-import { formatTransactionNumber } from "@/utils/numberUtils";
+import { formatTransactionCurrency, formatTransactionNumber } from "@/utils/numberUtils";
 
 const { width } = Dimensions.get("window");
 
@@ -32,12 +32,12 @@ const TransactionCard = ({ transaction, symbol }: Props) => {
 
       <View style={styles.detailRow}>
         <Text style={styles.label}>Price/Share</Text>
-        <Text style={styles.value}>{formatTransactionNumber(transaction.realPricePerShare)}</Text>
+        <Text style={styles.value}>{formatTransactionCurrency(transaction.realPricePerShare)}</Text>
       </View>
 
       <View style={styles.detailRow}>
         <Text style={styles.label}>Total Cost</Text>
-        <Text style={styles.value}>{formatTransactionNumber(transaction.totalCost)}</Text>
+        <Text style={styles.value}>{formatTransactionCurrency(transaction.totalCost)}</Text>
       </View>
 
       <View style={styles.detailRow}>

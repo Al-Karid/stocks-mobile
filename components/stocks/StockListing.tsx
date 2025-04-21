@@ -8,6 +8,7 @@ import {
 import StockCard from "@/components/stocks/StockCard";
 import { Stock } from "@/types/stock";
 import { useStockRepository } from "@/data/repositories/stockRepository";
+import UpdatedAt from "../views/UpdatedAt";
 
 interface StockListingProps {
   stocks: Stock[];
