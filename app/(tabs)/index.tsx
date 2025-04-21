@@ -1,189 +1,194 @@
-import React, { useEffect, useSyncExternalStore } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, RefreshControl } from "react-native";
-import { router } from "expo-router";
-import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { initDb } from "../../data/db/stockDatabase";
-import { initPortfolioDb } from "@/data/db/portfolioDatabase";
-import { syncStockDataFromServer } from "@/data/db/syncStocks";
-import UpdatedAt from "@/components/views/UpdatedAt";
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
+import { StatusBar } from 'react-native';
+import DashboardHeader from '@/components/views/DashboardHeader';
+import { useWatchlistStore } from '@/stores/watchlistStore';
+import StockRow from '@/components/stocks/StockRow';
+import { router } from 'expo-router';
+import { provideHapticFeedback } from '@/utils/interactionUtils';
+import { usePortfolioStore } from '@/stores/portfolioStore';
+import AssetCard from '@/components/stocks/AssetCard';
 
-export default function HomeScreen() {
-  const [refreshing, setRefreshing] = React.useState(false);
+const Dashboard = () => {
 
-  const navigateTo = (screen: string) => router.push(`/${screen}`);
+  const { watchlist, fetchWatchlist } = useWatchlistStore();
+  const { portfolios, fetchPortfolios } = usePortfolioStore();
 
   useEffect(() => {
-    const init = async () => {
-      try {
-        await initDb();
-        await initPortfolioDb();
-        await syncStockDataFromServer();
-        console.log("✅ All databases initialized successfully");
-      } catch (e) {
-        console.error("❌ Failed to initialize databases", e);
-      }
+    const fetchData = async () => {
+      await fetchWatchlist();
+      await fetchPortfolios();
     };
-    init();
+    fetchData();
   }, []);
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    try {
-      await syncStockDataFromServer();
-      console.log("✅ Data refreshed successfully");
-    } catch (e) {
-      console.error("❌ Failed to refresh data", e);
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={["#3D90D7"]} />
-        }
-      >
-        <Text style={styles.title}>Stock Tracker</Text>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#121212' }}>
+        <StatusBar barStyle="default" />
 
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={{ flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={{ flex: 1, backgroundColor: 'white', minHeight: '100%' }}>
+            <DashboardHeader />
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, styles.palmares]}
-            onPress={() => navigateTo("stocks/palmares")}
-          >
-            <Text style={styles.buttonText}>Palmarès</Text>
-            <FontAwesome name="line-chart" size={22} color="#fff" />
-          </TouchableOpacity>
+            <View style={[styles.content, { flex: 1 }]}>
+              {/* Portfolio Distribution */}
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>Portfolio distribution</Text>
+                  {/* <TouchableOpacity><Text style={styles.seeAll}>See all</Text></TouchableOpacity> */}
+                </View>
 
-          {/* <TouchableOpacity
-            style={[styles.button, styles.stocks]}
-            onPress={() => navigateTo("stocks")}
-          >
-            <Text style={styles.buttonText}>Stocks</Text>
-            <FontAwesome name="bar-chart" size={22} color="#fff" />
-          </TouchableOpacity> */}
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {portfolios.length > 0 && portfolios[0]?.holdings?.length > 0 ? (
+                    portfolios[0].holdings.map((holding) => (
+                      <AssetCard key={holding.symbol} holding={holding} />
+                    ))
+                  ) : (
+                    <Text style={{ textAlign: 'center', marginTop: 20 }}>No portfolios available</Text>
+                  )}
 
-          <TouchableOpacity
-            style={[styles.button, styles.watchlist]}
-            onPress={() => navigateTo("watchlist")}
-          >
-            <Text style={styles.buttonText}>Watchlist</Text>
-            <FontAwesome5 name="eye" size={22} color="#fff" />
-          </TouchableOpacity>
+                </ScrollView>
+              </View>
 
-          {/* <TouchableOpacity
-            style={[styles.button, styles.portfolio]}
-            onPress={() => navigateTo("portfolio")}
-          >
-            <Text style={styles.buttonText}>Portfolio</Text>
-            <FontAwesome name="folder" size={22} color="#fff" />
-          </TouchableOpacity> */}
+              {/* Watchlist */}
+              <View style={[styles.section, { marginTop: 20 }]}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>My watchlist</Text>
+                  <TouchableOpacity onPress={() => { provideHapticFeedback(); router.push('/stocks') }}>
+                    <Ionicons name="add-circle-outline" size={24} color="#6b7280" />
+                  </TouchableOpacity>
+                </View>
 
-          <TouchableOpacity style={[styles.button, styles.alerts]}>
-            <Text style={styles.buttonText}>Alerts</Text>
-            <FontAwesome name="lock" size={22} color="#fff" />
-          </TouchableOpacity>
-        </View>
+                {/* Removed all StockRow components */}
+                {watchlist.length > 0 ? (
+                  watchlist.map((stock) => (
+                    <StockRow key={stock.id} stock={stock} />
+                  ))
+                ) : (
+                  <Text style={{ textAlign: 'center', marginTop: 20 }}>No stocks in watchlist</Text>
+                )}
 
-        <View>
-          {/* <Text style={styles.copyRight}>© Revalys Data Services - 2025</Text> */}
-          <UpdatedAt />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#f7f7f7",
-  },
   container: {
-    flexGrow: 1, // Ensures the content is scrollable even if it doesn't fill the screen
-    backgroundColor: "#f7f7f7", // Light background color for modern look
-    paddingHorizontal: 24,
-    paddingTop: 40,
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: "700",
-    textAlign: "center",
-    color: "#333",
-    marginBottom: 40,
-  },
-  buttonContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#121212',
   },
-  button: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderRadius: 25,
-    paddingVertical: 22,
-    paddingHorizontal: 25,
-    marginBottom: 20,
-    width: "80%",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 5,
+  content: {
+    paddingHorizontal: 0,
+    paddingTop: 16,
+    paddingBottom: 20,
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    marginTop: -30,
   },
-  palmares: {
-    backgroundColor: "#3b82f6", // Blue
+  buyingPowerSection: {
+    backgroundColor: '#030303',
+    padding: 16,
+    marginTop: 20,
+    borderRadius: 20,
   },
-  stocks: {
-    backgroundColor: "#10b981", // Green
+  buyingPowerLabel: {
+    color: 'gray',
+    fontSize: 14,
   },
-  watchlist: {
-    backgroundColor: "#f59e0b", // Yellow
+  buyingPowerAmount: {
+    fontSize: 24,
+    // fontWeight: 'bold',
+    marginVertical: 10,
+    color: 'white',
   },
-  portfolio: {
-    backgroundColor: "#8b5cf6", // Purple
-    // backgroundColor: "#A6AEBF", // Purple
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  alerts: {
-    // backgroundColor: "#ef4444", // Red
-    backgroundColor: "#A6AEBF", // Red
+  actionButton: {
+    alignItems: 'center',
+    flex: 1,
   },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "600",
+  actionButtonText: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#ffffff',
+  },
+  section: {
+    marginTop: 10,
+    paddingHorizontal: 20,
+    backgroundColor: 'white',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 0,
+    color: 'gray',
+  },
+  seeAll: {
+    color: '#6b7280',
+    fontSize: 14,
+  },
+  assetCard: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 20,
     marginRight: 10,
+    marginTop: 10,
+    width: 140,
+    // alignItems: 'center',
   },
-  copyRight: {
-    fontSize: 8,
-    color: "#666",
-    textAlign: "center",
-    marginTop: 0,
+  assetTicker: {
+    fontSize: 18,
+    // fontWeight: 'bold',
   },
-  syncButton: {
-    // position: "absolute",
-    bottom: 30,
-    alignSelf: "center",
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: "#210F37",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 6,
-    zIndex: 10,
+  assetAmount: {
+    marginTop: 10,
+    fontSize: 16,
   },
+  assetChangePositive: {
+    marginTop: 6,
+    color: '#00FF7F',
+    // fontWeight: 'bold',
+  },
+  assetChangeNegative: {
+    marginTop: 6,
+    color: 'red',
+    // fontWeight: 'bold',
+  },
+  watchlistTabs: {
+    flexDirection: 'row',
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  watchlistTab: {
+    marginRight: 10,
+    color: 'gray',
+  },
+  watchlistTabActive: {
+    marginRight: 10,
+    // fontWeight: 'bold',
+  },
+  /* Removed stockRow styles */
 });
+
+export default Dashboard;

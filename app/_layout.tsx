@@ -35,6 +35,7 @@ export default function Layout() {
           options={{
             title: "Holdings",
             headerLargeTitle: true,
+            headerBackTitle: "Retour",
           }}
         />
         <Stack.Screen

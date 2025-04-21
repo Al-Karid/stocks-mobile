@@ -1,8 +1,10 @@
 import { Portfolio } from "@/types/portfolio";
 import { dbPromise } from "@/data/db/db";
-import { usePortfolioService } from "@/data/services/portfolioService"; 
+import { usePortfolioService } from "@/data/services/portfolioService";
+import { useHoldingRepository } from "@/data/repositories/holdingRepository";
 
 const { computePortfolioPerformance } = usePortfolioService();
+const { fetchHoldings } = useHoldingRepository();
 
 export const usePortfolioRepository = () => {
   
@@ -36,8 +38,11 @@ export const usePortfolioRepository = () => {
             gainLossPercentage: 0,
           };
         }
+        // Fetch holdings for each portfolio
+        const holdings = await fetchHoldings(portfolio.id);
+        portfolio.holdings = holdings;
       }
-      console.log("💾 Portfolios fetched successfully");
+      console.log("💾 Portfolios fetched successfully", portfolios);
       return portfolios;
     } catch (error) {
       console.error("‼️ Error fetching portfolios:", error);

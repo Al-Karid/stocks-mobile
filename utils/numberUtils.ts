@@ -11,13 +11,13 @@ export function formatNumber(value: number | string): string {
   return new Intl.NumberFormat("fr-FR").format(num);
 }
 
-export const formatPercentage = (value: number) => {
+export const formatPercentage = (value: number, toFixed: number = 1) => {
   if (isNaN(value)) {
     return "0.00%";
   }
   return new Intl.NumberFormat("fr-FR", {
     style: "percent",
-    maximumFractionDigits: 1,
+    maximumFractionDigits: toFixed,
   }).format(value / 100);
 }
 
