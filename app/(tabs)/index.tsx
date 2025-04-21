@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'react-native';
@@ -11,10 +11,18 @@ import { provideHapticFeedback } from '@/utils/interactionUtils';
 import { usePortfolioStore } from '@/stores/portfolioStore';
 import AssetCard from '@/components/stocks/AssetCard';
 
-const Dashboard = () => {
+const DashboardScreen = () => {
 
   const { watchlist, fetchWatchlist } = useWatchlistStore();
   const { portfolios, fetchPortfolios } = usePortfolioStore();
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchWatchlist();
+    await fetchPortfolios();
+    setRefreshing(false);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,6 +41,15 @@ const Dashboard = () => {
           style={styles.container}
           contentContainerStyle={{ flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#007AFF"]}          // Couleur de la roue Android
+            tintColor="#007AFF"            // Couleur de la roue iOS
+            progressBackgroundColor="#121212" // Couleur du fond du cercle sur Android
+          />
+          }
         >
           <View style={{ flex: 1, backgroundColor: 'white', minHeight: '100%' }}>
             {portfolios.length > 0 && portfolios[0]?.performance ? (
@@ -127,4 +144,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Dashboard;
+export default DashboardScreen;
