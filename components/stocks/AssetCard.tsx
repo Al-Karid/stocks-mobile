@@ -13,7 +13,7 @@ const AssetCard: React.FC<AssetCardProps> = ({ holding }) => {
     const { symbol: ticker, gainLoss: amount, totalCost, portfolioId } = holding;
     const isPositive = amount >= 0;
     const changeRaw = totalCost ? ((amount / totalCost) * 100) : 0;
-    const change = formatPercentage(changeRaw, 0);
+    const change = `${isPositive ? '+' : ''}${formatPercentage(changeRaw, 0)}`;
 
     return (
         <TouchableOpacity onLongPress={() => { provideHapticFeedback(); router.push({ pathname: '/portfolio/holdings', params: { portfolioId } }); }}>

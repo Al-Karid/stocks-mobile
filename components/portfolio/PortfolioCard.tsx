@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Alert } from "react-native";
 import { HapticButtonLongPress } from "../buttons/HapticButtonLongPress";
 import { router } from "expo-router";
 import { Portfolio } from "@/types/portfolio";
-import { formatPercentage } from "@/utils/numberUtils";
+import { formatPercentage, isPositiveNumber } from "@/utils/numberUtils";
 
 type PortfolioProps = {
   portfolio: Portfolio;
@@ -19,7 +19,9 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
 }) => {
   const { showActionSheetWithOptions } = useActionSheet();
   const { id, name, performance } = portfolio;
-  const { gainLossPercentage } = performance || {};
+  const { gainLossPercentage, totalGainLoss } = performance || {};
+
+  const isPositive = isPositiveNumber(totalGainLoss);
 
   const onPress = () => {
     const options = ["Details", "Rename", "Delete", "Cancel"];
@@ -69,10 +71,10 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
         <Text
           style={[
             styles.performance,
-            { color: Number(gainLossPercentage) >= 0 ? "#4CAF50" : "#F44336" },
+            { color: isPositive ? "#4CAF50" : "#F44336" },
           ]}
         >
-          {Number(gainLossPercentage) >= 0 ? "+" : ""}
+          {isPositive ? "+" : ""}
           {formatPercentage((gainLossPercentage))}
         </Text>
       </View>

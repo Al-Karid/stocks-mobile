@@ -29,7 +29,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio }) => {
       </View>
 
       <View style={styles.portfolioSection}>
-        <Text style={styles.portfolioTitle}>Total portfolio</Text>
+        <Text style={styles.portfolioTitle}>{portfolio.name.toUpperCase()}</Text>
         <View style={styles.portfolioAmountRow}>
           <Text style={styles.portfolioAmount}>
             {isHidden ? '**********' : `XOF ${formatNumber(totalValue)}`}
@@ -39,20 +39,20 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio }) => {
               name={isHidden ? "eye-off-outline" : "eye-outline"}
               size={20}
               color="white"
-              style={isHidden ? styles.eyeOff : styles.eye} 
+              style={isHidden ? styles.eyeOff : styles.eye}
             />
           </TouchableOpacity>
         </View>
 
         {/* {!isHidden && ( */}
-          <Text
-            style={[
-              styles.portfolioChange,
-              { color: isPositive ? '#00FF7F' : '#FF4500' } // green if positive, red if negative
-            ]}
-          >
-            {isPositive ? '▲' : '▼'} XOF {formatNumber(totalGainLoss, 0)} ({formatPercentage(gainLossPercentage, 2)})
-          </Text>
+        <Text
+          style={[
+            styles.portfolioChange,
+            { color: isPositive ? '#00FF7F' : '#FF4500' } // green if positive, red if negative
+          ]}
+        >
+          {isPositive ? '▲' : '▼'} XOF {formatNumber(totalGainLoss, 0)} ({isPositive ? '+' : ''}{formatPercentage(gainLossPercentage, 2)})
+        </Text>
         {/* // )} */}
       </View>
     </View>
