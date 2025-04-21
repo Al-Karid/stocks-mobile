@@ -6,10 +6,11 @@ import HoldingCard from "./HoldingCard";
 
 interface Props {
   holdings: Holding[];
+  portfolioName: string;
   onHoldingLongPress: (symbol: string) => void;
 }
 
-export default function HoldingListing({ holdings, onHoldingLongPress }: Props) {
+export default function HoldingListing({ holdings, portfolioName, onHoldingLongPress }: Props) {
   return (
     <FlatList
       data={holdings}
@@ -25,6 +26,11 @@ export default function HoldingListing({ holdings, onHoldingLongPress }: Props) 
           </Text>
         </View>
       )}
+      ListHeaderComponent={() => (
+        <View style={{ marginBottom: 8 }}>
+          <Text style={styles.portfolioName}>{portfolioName.toLocaleUpperCase()}</Text>
+        </View>
+      )}
     />
   );
 }
@@ -32,5 +38,12 @@ export default function HoldingListing({ holdings, onHoldingLongPress }: Props) 
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+  },
+  portfolioName: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "gray",
+    marginBottom: 8,
+    marginLeft: 3,
   },
 });

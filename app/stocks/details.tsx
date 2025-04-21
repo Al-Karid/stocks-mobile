@@ -6,6 +6,7 @@ import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useState, useEffect } from "react";
 import { Stock } from "@/types/stock";
 import { formatNumber } from "@/utils/numberUtils";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function StocksDetailsScreen() {
   
@@ -15,6 +16,7 @@ export default function StocksDetailsScreen() {
 
   const [watchlisted, setWatchlisted] = useState(false);
   const [stock, setStock] = useState<Stock | null>(null);
+  const [isDisabled, setIsDisabled] = useState(true);
 
   const fetchStockData = async () => {
     const data = await findStock(symbol as string);
@@ -41,7 +43,7 @@ export default function StocksDetailsScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {/* Header */}
       <View style={[styles.card, styles.header]}>
         <Text style={styles.headerText}>{stock?.title}</Text>
@@ -142,14 +144,20 @@ export default function StocksDetailsScreen() {
           </TouchableOpacity>
         )}
 
-        <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.actionButtonText}>Ajouter au Portefeuille</Text>
+        <TouchableOpacity
+          style={[styles.actionButton, isDisabled && styles.actionButtonDisabled]}
+          disabled={isDisabled}
+        >
+          <Text style={[styles.actionButtonText, isDisabled && styles.actionButtonTextDisabled]}>Ajouter au Portefeuille</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.actionButtonText}>Ajouter une Alerte</Text>
+        <TouchableOpacity
+          style={[styles.actionButton, isDisabled && styles.actionButtonDisabled]}
+          disabled={isDisabled}
+        >
+          <Text style={[styles.actionButtonText, isDisabled && styles.actionButtonTextDisabled]}>Ajouter une Alerte</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -158,7 +166,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F4F6F8",
     padding: 20,
-    justifyContent: "flex-start",
+    // justifyContent: "flex-start",
   },
   headerText: {
     fontSize: 24,
@@ -260,5 +268,11 @@ const styles = StyleSheet.create({
     color: "#12345",
     fontSize: 16,
     fontWeight: "600",
+  },
+  actionButtonDisabled: {
+    backgroundColor: "#E0E0E0",
+  },
+  actionButtonTextDisabled: {
+    color: "#A0A0A0",
   },
 });

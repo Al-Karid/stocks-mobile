@@ -17,7 +17,7 @@ export function formatNumber(value: number | string, toFixed: number = 0): strin
 
 export const formatPercentage = (value: number, toFixed: number = 1) => {
   if (isNaN(value)) {
-    return "0.0%";
+    return "0.00%";
   }
   const percent = new Intl.NumberFormat("fr-FR", {
     style: "percent",

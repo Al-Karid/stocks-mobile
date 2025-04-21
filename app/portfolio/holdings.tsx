@@ -15,7 +15,8 @@ export default function HoldingsScreen() {
   const { fetchStocks } = useStockRepository();
 
   const [stocks, setStocks] = useState<Stock[]>([]);
-  const { holdings, getHoldings } = usePortfolioStore();
+  const [portfolioName, setPortfolioName] = useState<string>("");
+  const { holdings, getHoldings, portfolios } = usePortfolioStore();
   const [selectedStock, setSelectedStock] = useState<string>("");
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
@@ -36,6 +37,10 @@ export default function HoldingsScreen() {
     const fetchStocksData = async () => {
       const stocks = await fetchStocks();
       setStocks(stocks);
+      const portfolio = portfolios.find((p) => p.id === Number(portfolioId));
+      if (portfolio) {
+        setPortfolioName(portfolio.name);
+      }
     };
     fetchStocksData();
   }, []);
@@ -116,7 +121,7 @@ export default function HoldingsScreen() {
         </BottomSheetView>
       </BottomSheetModal>
 
-      <HoldingListing holdings={holdings} onHoldingLongPress={(symbol) => handleHoldingLongPress(symbol)} />
+      <HoldingListing holdings={holdings} portfolioName={portfolioName} onHoldingLongPress={(symbol) => handleHoldingLongPress(symbol)} />
     </>
   );
 }

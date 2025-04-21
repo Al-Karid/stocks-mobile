@@ -10,12 +10,13 @@ import { useTransactionRepository } from "@/data/repositories/transactionReposit
 const { fetchHoldings } = useHoldingRepository();
 const { processTransaction } = useTransactionService();
 const { fetchTransactions } = useTransactionRepository();
-const { createPortfolio, getPortfolios, updatePortfolio, deletePortfolio } = usePortfolioRepository();
+const { createPortfolio, getPortfolios, updatePortfolio, deletePortfolio, getPortfolioById } = usePortfolioRepository();
 
 interface PortfolioStore {
   portfolios: Portfolio[];
   holdings: Holding[];
   fetchPortfolios: () => Promise<Portfolio[]>;
+  findPortfolio: (id: number) => Promise<Portfolio | null>;
   addPortfolio: (name: string) => Promise<void>;
   renamePortfolio: (id: number, newName: string) => Promise<void>;
   deletePortfolio: (id: number) => Promise<void>;
@@ -34,6 +35,14 @@ export const usePortfolioStore = create<PortfolioStore>((set) => ({
     console.log("🔄 Data loaded from portfolio store");
 
     return portfolios;
+  },
+
+  findPortfolio: (id: number) => {
+    const portfolio = getPortfolioById(id);
+    if (!portfolio) {
+      throw new Error(`Portfolio with id ${id} not found`);
+    }
+    return portfolio;
   },
 
   addPortfolio: async (name: string) => {
