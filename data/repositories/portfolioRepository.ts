@@ -2,12 +2,13 @@ import { Portfolio } from "@/types/portfolio";
 import { dbPromise } from "@/data/db/db";
 import { usePortfolioService } from "@/data/services/portfolioService";
 import { useHoldingRepository } from "@/data/repositories/holdingRepository";
+import { StocksPortfolioError } from "@/types/errors";
 
 const { computePortfolioPerformance } = usePortfolioService();
 const { fetchHoldings } = useHoldingRepository();
 
 export const usePortfolioRepository = () => {
-  
+
   const createPortfolio = async (name: string): Promise<void> => {
     const db = await dbPromise;
     try {
@@ -69,7 +70,7 @@ export const usePortfolioRepository = () => {
 
   const updatePortfolio = async (
     id: number,
-    name: string
+    name: string,
   ): Promise<void> => {
     const db = await dbPromise;
     try {
@@ -87,11 +88,43 @@ export const usePortfolioRepository = () => {
   const deletePortfolio = async (id: number): Promise<void> => {
     const db = await dbPromise;
     try {
+
+      // Check if the portfolio is the default one
+      const defaultPortfolio = await db.getFirstAsync<Portfolio>(
+        `SELECT * FROM portfolios WHERE isDefault = 1`
+      );
+
+      if (defaultPortfolio && defaultPortfolio.id === id) {
+        //console.error("‼️ Cannot delete the default portfolio");
+        throw new StocksPortfolioError("Default portfolio cannot be deleted");
+      }
+
+      // First, delete all holdings associated with the portfolio
+      await db.runAsync(`DELETE FROM holdings WHERE portfolioId = ?`, [id]);
+      // Then, delete all transactions associated with the portfolio
+      await db.runAsync(`DELETE FROM transactions WHERE portfolioId = ?`, [id]);
+      // Finally, delete the portfolio itself
       await db.runAsync(`DELETE FROM portfolios WHERE id = ?`, [id]);
       console.log("💾 Portfolio deleted successfully: " + id);
+    } catch (error) { throw error; }
+  }
+
+  const makePortfolioDefault = async (id: number): Promise<void> => {
+    const db = await dbPromise;
+    try {
+      await db.runAsync(
+        `UPDATE portfolios SET isDefault = 0 WHERE isDefault = 1`
+      );
+      await db.runAsync(
+        `UPDATE portfolios SET isDefault = 1 WHERE id = ?`,
+        [id]
+      );
+      console.log("💾 Portfolio set as default successfully: " + id);
     } catch (error) {
-      console.error("‼️ Error deleting portfolio:", error);
-      throw error;
+      console.error("‼️ Error setting portfolio as default:", error);
+      throw new StocksPortfolioError(
+        "Error setting portfolio as default: " + error
+      );
     }
   }
 
@@ -101,5 +134,6 @@ export const usePortfolioRepository = () => {
     getPortfolioById,
     updatePortfolio,
     deletePortfolio,
+    makePortfolioDefault,
   };
 };

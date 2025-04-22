@@ -1,5 +1,5 @@
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import React, {  } from "react";
+import React from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import { HapticButtonLongPress } from "../buttons/HapticButtonLongPress";
 import { router } from "expo-router";
@@ -10,12 +10,14 @@ type PortfolioProps = {
   portfolio: Portfolio;
   onRename: () => void;
   onDelete: () => void;
+  onMakeDefault: () => void;
 };
 
 const PortfolioCard: React.FC<PortfolioProps> = ({
   portfolio,
   onRename,
   onDelete,
+  onMakeDefault,
 }) => {
   const { showActionSheetWithOptions } = useActionSheet();
   const { id, name, performance } = portfolio;
@@ -24,9 +26,9 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
   const isPositive = isPositiveNumber(totalGainLoss);
 
   const onPress = () => {
-    const options = ["Details", "Rename", "Delete", "Cancel"];
-    const destructiveButtonIndex = 2;
-    const cancelButtonIndex = 3;
+    const options = ["Details", "Rename", "Make default", "Delete", "Cancel"];
+    const destructiveButtonIndex = 3;
+    const cancelButtonIndex = 4;
 
     showActionSheetWithOptions(
       {
@@ -55,6 +57,13 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
           case 0:
             router.push({ pathname: "/portfolio/details", params: { portfolioId: id } });
             break;
+          case 2:
+            if (portfolio.isDefault) {
+              Alert.alert("Default Portfolio", "This portfolio is already set as default.");
+            } else {
+              onMakeDefault();
+            }
+            break;
         }
       }
     );
@@ -67,7 +76,13 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
       onLongPress={onPress}
     >
       <View style={styles.container}>
-        <Text style={styles.title}>{name.toUpperCase()}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Text style={styles.title}>{name.toUpperCase()}</Text>
+          <Text style={styles.defaultMark}>
+            {portfolio.isDefault ? "★" : ""}
+          </Text>
+        </View>
+
         <Text
           style={[
             styles.performance,
@@ -78,6 +93,7 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
           {formatPercentage(gainLossPercentage, 2)}
         </Text>
       </View>
+
     </HapticButtonLongPress>
   );
 };
@@ -146,6 +162,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#007bff",
+  },
+  defaultMark: {
+    fontSize: 16,
+    color: "#007AFF",
+    marginLeft: 4,
   },
 });
 

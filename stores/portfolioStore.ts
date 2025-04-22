@@ -10,7 +10,14 @@ import { useTransactionRepository } from "@/data/repositories/transactionReposit
 const { fetchHoldings } = useHoldingRepository();
 const { processTransaction } = useTransactionService();
 const { fetchTransactions } = useTransactionRepository();
-const { createPortfolio, getPortfolios, updatePortfolio, deletePortfolio, getPortfolioById } = usePortfolioRepository();
+const {
+  createPortfolio,
+  getPortfolios,
+  updatePortfolio,
+  deletePortfolio,
+  getPortfolioById,
+  makePortfolioDefault
+} = usePortfolioRepository();
 
 interface PortfolioStore {
   portfolios: Portfolio[];
@@ -23,6 +30,7 @@ interface PortfolioStore {
   getHoldings: (portfolioId: number) => Promise<Holding[]>;
   addTransaction: (transaction: TransactionRequest) => Promise<void>;
   getTransactions: (portfolioId: number, symbol: string) => Promise<Transaction[]>;
+  makePortfolioAsDefault: (id: number) => Promise<void>;
 }
 
 export const usePortfolioStore = create<PortfolioStore>((set) => ({
@@ -58,7 +66,15 @@ export const usePortfolioStore = create<PortfolioStore>((set) => ({
   },
 
   deletePortfolio: async (id: number) => {
-    await deletePortfolio(id);
+    try {
+      await deletePortfolio(id);
+      const portfolios = await getPortfolios();
+      set({ portfolios });
+    } catch (error) {throw error;}
+  },
+
+  makePortfolioAsDefault: async (id: number) => {
+    await makePortfolioDefault(id);
     const portfolios = await getPortfolios();
     set({ portfolios });
   },
@@ -69,6 +85,7 @@ export const usePortfolioStore = create<PortfolioStore>((set) => ({
     console.log("🔄 Data loaded from holding store");
     return holdings;
   },
+
   addTransaction: async (transaction: TransactionRequest) => {
     await processTransaction(transaction);
     const holdings = await fetchHoldings(transaction.portfolioId);
@@ -76,6 +93,7 @@ export const usePortfolioStore = create<PortfolioStore>((set) => ({
     set({ portfolios });
     set({ holdings });
   },
+
   getTransactions: async (portfolioId: number, symbol: string) => {
     const transactions = await fetchTransactions(portfolioId, symbol);
     return transactions;

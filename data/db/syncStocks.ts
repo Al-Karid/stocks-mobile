@@ -22,7 +22,10 @@ export const syncStockDataFromServer = async (): Promise<string> => {
     // data.forEach((stock) => {});
     console.log("💾 Synced stocks from server: " + await Storage.getItem("lastSync"));
 
-    updateWatchlist();
+    // Update the watchlist with the new stock data
+    // Because the watchlist is linked to the stocks via symbol, we need to update the watchlist
+    // after saving the new stocks to the database
+    updateWatchlist(); 
     console.log("💾 Updated watchlist");
     return data[0].updated_at;
   } catch (error) {

@@ -12,12 +12,14 @@ import { usePortfolioStore } from '@/stores/portfolioStore';
 import AssetCard from '@/components/stocks/AssetCard';
 import { syncStockDataFromServer } from '@/data/db/syncStocks';
 import { formatLocalDate, formatRelativeDate } from '@/utils/dateUtils';
+import { useInitDatabases } from '@/data/db/initDatabases';
 
 const DashboardScreen = () => {
 
   const { watchlist, fetchWatchlist } = useWatchlistStore();
   const { portfolios, fetchPortfolios } = usePortfolioStore();
   const [refreshing, setRefreshing] = React.useState(false);
+  const { loading, error } = useInitDatabases();
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -27,13 +29,25 @@ const DashboardScreen = () => {
     setRefreshing(false);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await fetchWatchlist();
-      await fetchPortfolios();
-    };
-    fetchData();
-  }, []);
+  if (loading) {
+    return (
+      <SafeAreaProvider>
+        <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#121212' }}>
+          <Text style={{ color: 'white' }}>Loading...</Text>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaProvider>
+        <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#121212' }}>
+          <Text style={{ color: 'red' }}>Error: {error}</Text>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    );
+  }
 
   return (
     <SafeAreaProvider>

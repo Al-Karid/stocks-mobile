@@ -3,6 +3,7 @@ export type TransactionType = "BUY" | "SELL";
 export interface Portfolio {
   id: number;
   name: string;
+  isDefault?: boolean;
   holdings: Holding[];
   performance: Performance;
   transactions: Transaction[];

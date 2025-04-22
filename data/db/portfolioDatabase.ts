@@ -17,11 +17,12 @@ export const initPortfolioDb = async () => {
       `CREATE TABLE IF NOT EXISTS portfolios (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
+        isDefault INTEGER NOT NULL DEFAULT 0,
         UNIQUE (name)
       );`
     );
     await db.runAsync(
-      `INSERT OR IGNORE INTO portfolios (name) VALUES ('Default Portfolio');`
+      `INSERT OR IGNORE INTO portfolios (name, isDefault) VALUES ('Default Portfolio', 1);`
     );
     console.log("✅ Database initialized: Portfolios");
     

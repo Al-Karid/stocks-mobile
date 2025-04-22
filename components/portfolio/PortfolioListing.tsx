@@ -1,6 +1,6 @@
 // PortfolioListing.tsx
 import React, { useState } from "react";
-import { FlatList, StyleSheet, Text } from "react-native";
+import { Alert, FlatList, StyleSheet, Text } from "react-native";
 import Dialog from "react-native-dialog";
 import PortfolioCard from "@/components/portfolio/PortfolioCard";
 import { handleCloseDialog } from "@/utils/dialogUtils";
@@ -12,7 +12,7 @@ interface PortfolioListProps {
 }
 
 export default function PortfolioListing({ portfolios }: PortfolioListProps) {
-  const { deletePortfolio, renamePortfolio } = usePortfolioStore();
+  const { deletePortfolio, renamePortfolio, makePortfolioAsDefault } = usePortfolioStore();
 
   const [isRenameVisible, setRenameVisible] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -31,12 +31,20 @@ export default function PortfolioListing({ portfolios }: PortfolioListProps) {
     setSelectedId(null);
   };
 
-  const handleDelete = (id: number) => {
-    deletePortfolio(id);
+  const handleDelete = async (id: number) => {
+    try {
+      await deletePortfolio(id);
+    } catch (error: any) {
+      Alert.alert("Error", error.message, [{ text: "OK" }])
+    }
   };
 
+  const handleMakeDefault = (id: number) => {
+    makePortfolioAsDefault(id);
+  }
+
   console.log("Rendering PortfolioListing with portfolios:", portfolios);
-  
+
 
   return (
     <>
@@ -60,6 +68,7 @@ export default function PortfolioListing({ portfolios }: PortfolioListProps) {
             portfolio={item}
             onRename={() => showRenameDialog(item.id, item.name)}
             onDelete={() => handleDelete(item.id)}
+            onMakeDefault={() => handleMakeDefault(item.id)}
           />
         )}
         contentContainerStyle={styles.container}
