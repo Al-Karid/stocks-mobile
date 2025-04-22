@@ -13,12 +13,15 @@ import AssetCard from '@/components/stocks/AssetCard';
 import { syncStockDataFromServer } from '@/data/db/syncStocks';
 import { formatLocalDate, formatRelativeDate } from '@/utils/dateUtils';
 import { useInitDatabases } from '@/data/db/initDatabases';
+import { Portfolio } from '@/types/portfolio';
 
 const DashboardScreen = () => {
 
   const { watchlist, fetchWatchlist } = useWatchlistStore();
   const { portfolios, fetchPortfolios } = usePortfolioStore();
   const [refreshing, setRefreshing] = React.useState(false);
+  const [defaultPortfolio, setDefaultPortfolio] = React.useState<Portfolio>();
+
   const { loading, error } = useInitDatabases();
 
   const onRefresh = async () => {
@@ -28,6 +31,16 @@ const DashboardScreen = () => {
     await fetchPortfolios();
     setRefreshing(false);
   };
+
+  useEffect(() => {
+    const fetchDefaultPortfolio = async () => {
+      const defaultPortfolio = portfolios.find((portfolio) => portfolio.isDefault);
+      if (defaultPortfolio) {
+        setDefaultPortfolio(defaultPortfolio);
+      }
+    };
+    fetchDefaultPortfolio();
+  }, [portfolios]);
 
   if (loading) {
     return (
@@ -60,17 +73,17 @@ const DashboardScreen = () => {
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={["#007AFF"]}          // Couleur de la roue Android
-            tintColor="#007AFF"            // Couleur de la roue iOS
-            progressBackgroundColor="#121212" // Couleur du fond du cercle sur Android
-          />
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#007AFF"]}          // Couleur de la roue Android
+              tintColor="#007AFF"            // Couleur de la roue iOS
+              progressBackgroundColor="#121212" // Couleur du fond du cercle sur Android
+            />
           }
         >
           <View style={{ flex: 1, backgroundColor: 'white', minHeight: '100%' }}>
             {portfolios.length > 0 && portfolios[0]?.performance ? (
-              <DashboardHeader portfolio={portfolios[0]} />
+              <DashboardHeader portfolio={defaultPortfolio!} />
             )
               : (
                 <View style={{ height: 200, justifyContent: 'center', alignItems: 'center' }}>
@@ -84,12 +97,12 @@ const DashboardScreen = () => {
                   <Text style={styles.sectionTitle}>Portfolio distribution</Text>
                   <TouchableOpacity>
                     {/* <Text style={styles.seeAll}>{formatRelativeDate(watchlist[0].updatedAt)}</Text> */}
-                    </TouchableOpacity>
+                  </TouchableOpacity>
                 </View>
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  {portfolios.length > 0 && portfolios[0]?.holdings?.length > 0 ? (
-                    portfolios[0].holdings.map((holding) => (
+                  {portfolios.length > 0 && defaultPortfolio!.holdings?.length > 0 ? (
+                    defaultPortfolio!.holdings.map((holding) => (
                       <AssetCard key={holding.symbol} holding={holding} />
                     ))
                   ) : (

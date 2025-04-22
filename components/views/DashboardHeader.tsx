@@ -51,7 +51,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio }) => {
             { color: isPositive ? '#00FF7F' : '#FF4500' } // green if positive, red if negative
           ]}
         >
-          {isPositive ? '▲' : '▼'} {formatCurrency(totalGainLoss, 0, "XOF", true)} ({isPositive ? '+' : ''}{formatPercentage(gainLossPercentage, 2)})
+          {isPositive ? '▲' : '▼'} {formatCurrency(totalGainLoss, 0, "XOF", true)} ({formatPercentage(gainLossPercentage, 2)})
         </Text>
         {/* // )} */}
       </View>
