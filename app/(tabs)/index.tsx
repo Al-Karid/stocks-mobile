@@ -11,15 +11,17 @@ import { provideHapticFeedback } from '@/utils/interactionUtils';
 import { usePortfolioStore } from '@/stores/portfolioStore';
 import AssetCard from '@/components/stocks/AssetCard';
 import { syncStockDataFromServer } from '@/data/db/syncStocks';
-import { formatLocalDate, formatRelativeDate } from '@/utils/dateUtils';
+import { formatRelativeDate } from '@/utils/dateUtils';
 import { useInitDatabases } from '@/data/db/initDatabases';
 import { Portfolio } from '@/types/portfolio';
+import { Storage } from "expo-sqlite/kv-store";
 
 const DashboardScreen = () => {
 
   const { watchlist, fetchWatchlist } = useWatchlistStore();
   const { portfolios, fetchPortfolios } = usePortfolioStore();
   const [refreshing, setRefreshing] = React.useState(false);
+  const [lastSync, setLastSync] = React.useState<string>();
   const [defaultPortfolio, setDefaultPortfolio] = React.useState<Portfolio>();
 
   const { loading, error } = useInitDatabases();
@@ -29,6 +31,7 @@ const DashboardScreen = () => {
     await syncStockDataFromServer();
     await fetchWatchlist();
     await fetchPortfolios();
+    await fetchLastSyncDate();
     setRefreshing(false);
   };
 
@@ -38,9 +41,18 @@ const DashboardScreen = () => {
       if (defaultPortfolio) {
         setDefaultPortfolio(defaultPortfolio);
       }
+      fetchLastSyncDate();
     };
     fetchDefaultPortfolio();
   }, [portfolios]);
+
+  const fetchLastSyncDate = async () => {
+    const lastSyncDate = await Storage.getItem("lastSync");
+    if (lastSyncDate) {
+      setLastSync(formatRelativeDate(lastSyncDate));
+      console.log("Last sync date: ", lastSync);
+    }
+  };
 
   if (loading) {
     return (
@@ -96,7 +108,7 @@ const DashboardScreen = () => {
                 <View style={styles.sectionHeader}>
                   <Text style={styles.sectionTitle}>Portfolio distribution</Text>
                   <TouchableOpacity>
-                    {/* <Text style={styles.seeAll}>{formatRelativeDate(watchlist[0].updatedAt)}</Text> */}
+                    <Text style={styles.seeAll}>{lastSync}</Text>
                   </TouchableOpacity>
                 </View>
 

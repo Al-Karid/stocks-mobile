@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "bold",
+    color: "#213555",
   },
   performance: {
     fontSize: 16,
@@ -163,8 +164,8 @@ const styles = StyleSheet.create({
     color: "#007bff",
   },
   defaultMark: {
-    fontSize: 16,
-    color: "#007AFF",
+    fontSize: 12,
+    color: "#5E686D",
     marginLeft: 4,
   },
 });

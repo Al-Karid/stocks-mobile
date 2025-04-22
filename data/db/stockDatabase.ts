@@ -1,6 +1,7 @@
 import { dbPromise } from "@/data/db/db";
 import { APIStock } from "@/types/stock";
 import { useConputeService } from "../computeService";
+import { Storage } from "expo-sqlite/kv-store";
 
 const { calculatePercentageChange } = useConputeService();
 
@@ -127,6 +128,8 @@ export const saveStocksToDb = async (apiStocks: APIStock[]) => {
     await db.execAsync("COMMIT");
 
     console.log(`✅ ${apiStocks.length} stocks saved to database.`);
+
+    await Storage.setItem("lastSync", apiStocks[0].updated_at);
 
   } catch (error) {
     await db.execAsync("ROLLBACK");
