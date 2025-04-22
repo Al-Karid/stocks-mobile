@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
 import { Stock } from '@/types/stock';
-import { formatNumber, formatPercentage, isPositiveNumber } from '@/utils/numberUtils';
+import { formatCurrency, formatNumber, formatPercentage, isPositiveNumber } from '@/utils/numberUtils';
 import { router } from 'expo-router';
 
 interface StockRowProps {
@@ -25,7 +25,7 @@ const StockRow: React.FC<StockRowProps> = ({ stock }) => {
           <Text style={isPositive ? styles.changePositive : styles.changeNegative}>
             {isPositive ? '▲' : '▼'} {change}
           </Text>
-          <Text style={styles.price}>{formatNumber(currentPrice)} XOF</Text>
+          <Text style={styles.price}>{formatCurrency(currentPrice)}</Text>
         </View>
       </View>
     </TouchableOpacity>

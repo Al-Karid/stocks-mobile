@@ -10,6 +10,8 @@ import { router } from 'expo-router';
 import { provideHapticFeedback } from '@/utils/interactionUtils';
 import { usePortfolioStore } from '@/stores/portfolioStore';
 import AssetCard from '@/components/stocks/AssetCard';
+import { syncStockDataFromServer } from '@/data/db/syncStocks';
+import { formatLocalDate, formatRelativeDate } from '@/utils/dateUtils';
 
 const DashboardScreen = () => {
 
@@ -19,6 +21,7 @@ const DashboardScreen = () => {
 
   const onRefresh = async () => {
     setRefreshing(true);
+    await syncStockDataFromServer();
     await fetchWatchlist();
     await fetchPortfolios();
     setRefreshing(false);
@@ -65,7 +68,9 @@ const DashboardScreen = () => {
               <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                   <Text style={styles.sectionTitle}>Portfolio distribution</Text>
-                  {/* <TouchableOpacity><Text style={styles.seeAll}>See all</Text></TouchableOpacity> */}
+                  <TouchableOpacity>
+                    <Text style={styles.seeAll}>{formatRelativeDate(watchlist[0].updatedAt)}</Text>
+                    </TouchableOpacity>
                 </View>
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -140,7 +145,8 @@ const styles = StyleSheet.create({
   },
   seeAll: {
     color: '#6b7280',
-    fontSize: 14,
+    fontSize: 11,
+    paddingVertical: 5,
   },
 });
 
