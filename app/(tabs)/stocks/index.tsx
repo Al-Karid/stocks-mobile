@@ -2,7 +2,7 @@ import StockListing from "@/components/stocks/StockListing";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, Text, View } from "react-native";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 import { Stock } from "@/types/stock";
 
@@ -38,13 +38,25 @@ export default function StocksScreen() {
         },
       },
       headerRight: () => (
-        <TouchableOpacity
-          style={{ marginRight: 5, marginTop: 6 }}
-          onPress={() => router.push("/stocks/watchlist")}
-        >
-          <FontAwesome5 name="eye" size={20} color="#007AFF" />
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity
+            style={{ marginHorizontal: 5 }}
+            onPress={() => router.push("/stocks/palmares")}
+          >
+            <Text style={{ color: "#007AFF", fontSize: 14 }}>Palmarès</Text>
+          </TouchableOpacity>
+      
+          <Text style={{ color: "#999", fontSize: 16 }}>|</Text>
+      
+          <TouchableOpacity
+            style={{ marginHorizontal: 5 }}
+            onPress={() => router.push("/stocks/watchlist")}
+          >
+            <Text style={{ color: "#007AFF", fontSize: 14 }}>Watchlist</Text>
+          </TouchableOpacity>
+        </View>
       ),
+      
     });
   }, [navigation]);
   return (

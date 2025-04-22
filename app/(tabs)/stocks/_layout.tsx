@@ -18,6 +18,13 @@ export default function StocksStackLayout() {
             headerLargeTitle: true,
           }}
         />
+        <Stack.Screen
+            name="palmares"
+            options={{
+              title: "Palmarès",
+              headerLargeTitle: true,
+            }}
+          />
       </Stack>
     </>
   );

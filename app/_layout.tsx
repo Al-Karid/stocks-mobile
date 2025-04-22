@@ -10,14 +10,14 @@ export default function Layout() {
       <BottomSheetModalProvider>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
+          {/* <Stack.Screen
             name="stocks/palmares"
             options={{
               title: "Palmarès",
               headerLargeTitle: true,
               headerBackTitle: "Retour",
             }}
-          />
+          /> */}
           <Stack.Screen
             name="stocks/details"
             options={{
