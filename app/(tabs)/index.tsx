@@ -69,7 +69,7 @@ const DashboardScreen = () => {
                 <View style={styles.sectionHeader}>
                   <Text style={styles.sectionTitle}>Portfolio distribution</Text>
                   <TouchableOpacity>
-                    <Text style={styles.seeAll}>{formatRelativeDate(watchlist[0].updatedAt)}</Text>
+                    {/* <Text style={styles.seeAll}>{formatRelativeDate(watchlist[0].updatedAt)}</Text> */}
                     </TouchableOpacity>
                 </View>
 

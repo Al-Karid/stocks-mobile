@@ -26,22 +26,22 @@ export default function Layout() {
               animation: "slide_from_bottom",
             }}
           />
-          <Stack.Screen
+          {/* <Stack.Screen
             name="watchlist/index"
             options={{
               title: "Watchlist",
               headerLargeTitle: true,
               headerBackTitle: "Retour",
             }}
-          />
-          <Stack.Screen
+          /> */}
+          {/* <Stack.Screen
             name="portfolio/holdings"
             options={{
               title: "Holdings",
               headerLargeTitle: true,
               headerBackTitle: "Retour",
             }}
-          />
+          /> */}
           <Stack.Screen
             name="portfolio/details"
             options={{

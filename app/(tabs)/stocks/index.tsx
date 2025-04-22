@@ -40,7 +40,7 @@ export default function StocksScreen() {
       headerRight: () => (
         <TouchableOpacity
           style={{ marginRight: 5, marginTop: 6 }}
-          onPress={() => router.push("/watchlist")}
+          onPress={() => router.push("/stocks/watchlist")}
         >
           <FontAwesome5 name="eye" size={20} color="#007AFF" />
         </TouchableOpacity>

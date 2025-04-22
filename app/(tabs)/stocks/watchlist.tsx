@@ -1,5 +1,4 @@
 import StockCard from "@/components/stocks/StockCard";
-import UpdatedAt from "@/components/views/UpdatedAt";
 import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useEffect, useState } from "react";
 import { Text, StyleSheet, FlatList } from "react-native";

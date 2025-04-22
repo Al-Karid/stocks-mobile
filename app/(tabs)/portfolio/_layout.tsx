@@ -2,11 +2,23 @@ import { Stack } from 'expo-router';
 
 export default function PortfolioStackLayout() {
   return (
-    <Stack
-      screenOptions={{
-        headerLargeTitle: true,
-        headerTitle: 'Portfolio',
-      }}
-    />
+    <>
+      <Stack>
+        <Stack.Screen
+          name="index"
+          options={{
+            title: "Portfolio",
+            headerLargeTitle: true,
+          }}
+        />
+        <Stack.Screen
+          name="holdings"
+          options={{
+            title: "Holdings",
+            headerLargeTitle: true,
+          }}
+        />
+      </Stack>
+    </>
   );
 }
