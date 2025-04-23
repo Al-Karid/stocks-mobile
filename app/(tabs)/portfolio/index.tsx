@@ -1,40 +1,50 @@
 import React, { useEffect, useState } from "react";
 import Dialog from "react-native-dialog";
 import { Text, Pressable } from "react-native";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import PortfolioListing from "@/components/portfolio/PortfolioListing";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { handleCloseDialog } from "@/utils/dialogUtils";
 import { provideHapticFeedback } from "@/utils/interactionUtils";
 import { usePortfolioStore } from "@/stores/portfolioStore";
 import { useNavigation } from "expo-router";
+import { Portfolio } from "@/types/portfolio";
 
 export default function PortfolioScreen() {
-  
+
   const navigation = useNavigation();
+
   const { portfolios: portfolioStore, fetchPortfolios, addPortfolio } = usePortfolioStore();
 
   const [portfolioName, setPortfolioName] = useState("");
   const [isAddVisible, setAddVisible] = useState(false);
+  const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
 
   const handleOpenDialog = () => {
     provideHapticFeedback();
     setAddVisible(true);
   };
 
-  // Function to handle adding a new portfolio
-  const handleSavePortfolio = (name: string) => {
+  const handleSavePortfolio = async (name: string) => {
     if (portfolioName.trim() === "") {
       alert("Please enter a portfolio name.");
       return;
     }
-    addPortfolio(portfolioName);
+    await addPortfolio(portfolioName);
     setPortfolioName("");
     setAddVisible(false);
+    await fetchPortfolios();
   };
 
   useEffect(() => {
     fetchPortfolios();
+  }, []);
+
+  useEffect(() => {
+    setPortfolios(portfolioStore);
+  }, [portfolioStore]);
+
+  useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Pressable
@@ -50,9 +60,8 @@ export default function PortfolioScreen() {
   return (
     <ActionSheetProvider>
       <>
-        {/* Portfolio List */}
-        <PortfolioListing portfolios={portfolioStore} />
-        {/* Add Portfolio Dialog */}
+        <PortfolioListing portfolios={portfolios} />
+
         <Dialog.Container visible={isAddVisible}>
           <Dialog.Title>
             <Text>Create Portfolio</Text>
