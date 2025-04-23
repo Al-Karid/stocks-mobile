@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { usePortfolioStore } from "@/stores/portfolioStore";
-import { formatCurrency, formatNumber, formatPercentage, formatTransactionNumber } from "@/utils/numberUtils";
+import { formatCurrency, formatPercentage, formatTransactionNumber } from "@/utils/numberUtils";
 import { Holding } from "@/types/portfolio";
 
 const { width } = Dimensions.get("window");

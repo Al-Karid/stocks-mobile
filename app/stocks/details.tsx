@@ -5,7 +5,7 @@ import { useStockRepository } from "@/data/repositories/stockRepository";
 import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useState, useEffect } from "react";
 import { Stock } from "@/types/stock";
-import { formatCurrency, formatNumber, formatPercentage } from "@/utils/numberUtils";
+import { formatCurrency, formatPercentage } from "@/utils/numberUtils";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function StocksDetailsScreen() {
