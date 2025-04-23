@@ -28,7 +28,7 @@ export const formatLocalDate = (dateStr: string | undefined) => {
     const isYesterday = date.toDateString() === yesterday.toDateString();
 
     if (isYesterday) {
-      return `Hier à ${date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`;
+      return `🟡 ${date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`;
     }
 
     const isThisWeek = (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24) < 7 && now.getDay() >= date.getDay();
