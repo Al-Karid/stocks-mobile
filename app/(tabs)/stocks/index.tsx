@@ -1,5 +1,4 @@
 import StockListing from "@/components/stocks/StockListing";
-import { FontAwesome5 } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, Text, View } from "react-native";

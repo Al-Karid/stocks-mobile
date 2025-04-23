@@ -6,7 +6,7 @@ import { StatusBar } from 'react-native';
 import DashboardHeader from '@/components/views/DashboardHeader';
 import { useWatchlistStore } from '@/stores/watchlistStore';
 import StockRow from '@/components/stocks/StockRow';
-import { router, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { provideHapticFeedback } from '@/utils/interactionUtils';
 import { usePortfolioStore } from '@/stores/portfolioStore';
 import AssetCard from '@/components/stocks/AssetCard';
