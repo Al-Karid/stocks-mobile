@@ -1,35 +1,50 @@
-import { APIStock, Stock } from "@/types/stock";
+import { useCallback } from "react";
+import { APIStock } from "@/types/stock";
 import { saveStocksToDb } from "@/data/db/stockDatabase";
 import { useStockRepository } from "@/data/repositories/stockRepository";
-import { Storage } from "expo-sqlite/kv-store"
+import { useWatchlistStore } from "@/stores/watchlistStore";
+import { usePortfolioStore } from "@/stores/portfolioStore";
+import { Storage } from "expo-sqlite/kv-store";
 
-// const API_URL = "http://192.168.1.7:8088/api/v1/web/stocks";
 const API_URL = "https://stocks.revalys.com/v1/stocks";
 
-const { updateWatchlist } = useStockRepository();
+export const useStockSync = () => {
 
-export const syncStockDataFromServer = async (): Promise<string> => {
-  try {
-    const response = await fetch(API_URL);
-    if (!response.ok) throw new Error("API error");
+  const { fetchWatchlist } = useWatchlistStore();
+  const { fetchPortfolios } = usePortfolioStore();
+  const { updateWatchlist } = useStockRepository();
 
-    const data: APIStock[] = (await response.json()) as APIStock[];
-    if (data.length === 0) throw new Error("Empty API response");
+  const syncStockDataFromServer = useCallback(async (): Promise<string> => {
 
-    await Storage.setItem("lastSync", data[0].updated_at);
+    try {
 
-    saveStocksToDb(data);
-    // data.forEach((stock) => {});
-    console.log("💾 Synced stocks from server: " + await Storage.getItem("lastSync"));
+      const response = await fetch(API_URL);
+      if (!response.ok) throw new Error("API error");
 
-    // Update the watchlist with the new stock data
-    // Because the watchlist is linked to the stocks via symbol, we need to update the watchlist
-    // after saving the new stocks to the database
-    updateWatchlist(); 
-    console.log("💾 Updated watchlist");
-    return data[0].updated_at;
-  } catch (error) {
-    console.error("⚠️ Error syncing stock data:", error);
-    return "";
-  }
+      const data: APIStock[] = (await response.json()) as APIStock[];
+      if (data.length === 0) throw new Error("Empty API response");
+
+      await Storage.setItem("lastSync", data[0].updated_at);
+
+      //1. Save stocks to the database
+      await saveStocksToDb(data);
+
+      console.log("💾 Synced stocks from server: " + await Storage.getItem("lastSync"));
+
+      //2. Update watchlist and portfolios
+      updateWatchlist();
+
+      //3. Fetch watchlist and portfolios
+      await fetchWatchlist();
+      await fetchPortfolios();
+
+      return data[0].updated_at;
+    
+    } catch (error) {
+      console.error("⚠️ Error syncing stock data:", error);
+      return "";
+    }
+  }, []);
+
+  return { syncStockDataFromServer };
 };

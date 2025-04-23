@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
 import { initDb } from '@/data/db/stockDatabase';
 import { initPortfolioDb } from '@/data/db/portfolioDatabase';
-import { syncStockDataFromServer } from '@/data/db/syncStocks';
-import { useWatchlistStore } from '@/stores/watchlistStore';
-import { usePortfolioStore } from '@/stores/portfolioStore';
+import { useStockSync } from '@/data/db/syncStocks';
 
 export const useInitDatabases = () => {
-  const { fetchWatchlist } = useWatchlistStore();
-  const { fetchPortfolios } = usePortfolioStore();
-  const [loading, setLoading] = useState(true); // facultatif pour suivre si tout est prêt
+
+  const { syncStockDataFromServer } = useStockSync();
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -20,10 +18,6 @@ export const useInitDatabases = () => {
 
         await syncStockDataFromServer();
         console.log("🔄 Stock data synchronized");
-
-        await fetchWatchlist();
-        await fetchPortfolios();
-        console.log("📚 Watchlist and portfolios fetched");
 
       } catch (err: any) {
         console.error("‼️ Error initializing app:", err);

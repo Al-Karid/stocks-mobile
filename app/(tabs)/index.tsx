@@ -10,15 +10,17 @@ import { router, useRouter } from 'expo-router';
 import { provideHapticFeedback } from '@/utils/interactionUtils';
 import { usePortfolioStore } from '@/stores/portfolioStore';
 import AssetCard from '@/components/stocks/AssetCard';
-import { syncStockDataFromServer } from '@/data/db/syncStocks';
+import { useStockSync } from '@/data/db/syncStocks';
 import { formatRelativeDate } from '@/utils/dateUtils';
 import { useInitDatabases } from '@/data/db/initDatabases';
 import { Portfolio } from '@/types/portfolio';
 import { Storage } from "expo-sqlite/kv-store";
 
 const DashboardScreen = () => {
-  const { watchlist: watchlistStore, fetchWatchlist } = useWatchlistStore();
-  const { portfolios, fetchPortfolios } = usePortfolioStore();
+
+  const { syncStockDataFromServer } = useStockSync();
+  const { watchlist: watchlistStore } = useWatchlistStore();
+  const { portfolios } = usePortfolioStore();
 
   const [refreshing, setRefreshing] = useState(false);
   const [lastSync, setLastSync] = useState<string>();
@@ -39,16 +41,6 @@ const DashboardScreen = () => {
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!loading && !error) {
-        await fetchWatchlist();
-        await fetchPortfolios();
-      }
-    };
-    fetchData();
-  }, [loading, error, fetchWatchlist, fetchPortfolios]);
-
-  useEffect(() => {
     const portfolio = portfolios.find((p) => p.isDefault);
     setDefaultPortfolio(portfolio);
   }, [portfolios]);
@@ -56,8 +48,6 @@ const DashboardScreen = () => {
   const onRefresh = async () => {
     setRefreshing(true);
     await syncStockDataFromServer();
-    await fetchWatchlist();
-    await fetchPortfolios();
     await fetchLastSyncDate();
     setRefreshing(false);
   };
