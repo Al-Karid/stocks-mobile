@@ -1,9 +1,9 @@
-import { useEffect, useState, useRef, useMemo } from "react";
-import { View, StyleSheet, Platform, Pressable, Text, SafeAreaView, FlatList } from "react-native";
-import { BottomSheetModal, BottomSheetModalProvider, BottomSheetView } from "@gorhom/bottom-sheet";
+import { useEffect, useState, useRef } from "react";
+import { View, StyleSheet, Pressable, Text, FlatList } from "react-native";
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import HoldingListing from "@/components/holdings/HoldingListing";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import { AntDesign } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 import { provideHapticFeedback } from "@/utils/interactionUtils";
 import { usePortfolioStore } from "@/stores/portfolioStore";
@@ -27,7 +27,7 @@ export default function HoldingsScreen() {
           style={{ marginRight: 5, marginTop: 3 }}
           onPress={handleNewTransaction}
         >
-          <AntDesign name="addfile" size={19} color="#007AFF" />
+          <Feather name="edit-3" size={19} color="#007AFF" />
         </Pressable>
       ),
     });
