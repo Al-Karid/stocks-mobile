@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { APIStock } from "@/types/stock";
-import { saveStocksToDb } from "@/data/db/stockDatabase";
+import { saveStocksToDb } from "@/data/databases/stocks";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 import { useWatchlistStore } from "@/stores/watchlistStore";
 import { usePortfolioStore } from "@/stores/portfolioStore";

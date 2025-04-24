@@ -4,7 +4,7 @@ import { Portfolio, Transaction } from "@/types/portfolio";
 import { Holding } from "@/types/portfolio";
 import { TransactionRequest } from "@/types/portfolio";
 import { useHoldingRepository } from "@/data/repositories/holdingRepository";
-import { useTransactionService } from "@/data/services/transactionService";
+import { useTransactionService } from "@/services/transactionService";
 import { useTransactionRepository } from "@/data/repositories/transactionRepository";
 
 const { fetchHoldings } = useHoldingRepository();

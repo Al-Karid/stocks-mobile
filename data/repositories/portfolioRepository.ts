@@ -1,6 +1,6 @@
 import { Portfolio } from "@/types/portfolio";
-import { dbPromise } from "@/data/db/db";
-import { usePortfolioService } from "@/data/services/portfolioService";
+import { dbPromise } from "@/data/providers/sqlite";
+import { usePortfolioService } from "@/services/portfolioService";
 import { useHoldingRepository } from "@/data/repositories/holdingRepository";
 import { StocksPortfolioError } from "@/types/errors";
 

@@ -1,6 +1,6 @@
-import { dbPromise } from "@/data/db/db";
+import { dbPromise } from "@/data/providers/sqlite";
 import { APIStock } from "@/types/stock";
-import { useConputeService } from "../computeService";
+import { useConputeService } from "../../services/computeService";
 import { Storage } from "expo-sqlite/kv-store";
 
 const { calculatePercentageChange } = useConputeService();

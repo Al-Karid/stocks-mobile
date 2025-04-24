@@ -10,9 +10,9 @@ import { useRouter } from 'expo-router';
 import { provideHapticFeedback } from '@/utils/interactionUtils';
 import { usePortfolioStore } from '@/stores/portfolioStore';
 import AssetCard from '@/components/stocks/AssetCard';
-import { useStockSync } from '@/data/db/syncStocks';
+import { useStockSync } from '@/data/configs/syncStocks';
 import { formatRelativeDate } from '@/utils/dateUtils';
-import { useInitDatabases } from '@/data/db/initDatabases';
+import { useInitDatabases } from '@/data/configs/initDatabases';
 import { Portfolio } from '@/types/portfolio';
 import { Storage } from "expo-sqlite/kv-store";
 

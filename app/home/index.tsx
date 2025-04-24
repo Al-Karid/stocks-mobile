@@ -3,29 +3,17 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, RefreshControl } 
 import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { initDb } from "../../data/db/stockDatabase";
-import { initPortfolioDb } from "@/data/db/portfolioDatabase";
-import { syncStockDataFromServer } from "@/data/db/syncStocks";
+import { initDb } from "../../data/databases/stocks";
+import { initPortfolioDb } from "@/data/databases/portfolios";
+import { useStockSync } from "@/data/configs/syncStocks";
 import UpdatedAt from "@/components/views/UpdatedAt";
 
 export default function HomeScreen() {
+
   const [refreshing, setRefreshing] = React.useState(false);
+  const { syncStockDataFromServer } = useStockSync();
 
   const navigateTo = (screen: string) => router.push(`/${screen}`);
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        await initDb();
-        await initPortfolioDb();
-        await syncStockDataFromServer();
-        console.log("✅ All databases initialized successfully");
-      } catch (e) {
-        console.error("❌ Failed to initialize databases", e);
-      }
-    };
-    init();
-  }, []);
 
   const onRefresh = async () => {
     setRefreshing(true);

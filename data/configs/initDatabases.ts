@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { initDb } from '@/data/db/stockDatabase';
-import { initPortfolioDb } from '@/data/db/portfolioDatabase';
-import { useStockSync } from '@/data/db/syncStocks';
+import { initDb } from '@/data/databases/stocks';
+import { initPortfolioDb } from '@/data/databases/portfolios';
+import { useStockSync } from '@/data/configs/syncStocks';
 
 export const useInitDatabases = () => {
 

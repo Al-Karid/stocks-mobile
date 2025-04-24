@@ -1,5 +1,5 @@
 //File: portfoliodb.js
-import { dbPromise } from "@/data/db/db";
+import { dbPromise } from "@/data/providers/sqlite";
 
 export const initPortfolioDb = async () => {
   

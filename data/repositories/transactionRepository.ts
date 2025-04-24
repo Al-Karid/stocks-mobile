@@ -1,5 +1,5 @@
 import { Transaction, TransactionRequest } from "@/types/portfolio";
-import { dbPromise } from "../db/db";
+import { dbPromise } from "../providers/sqlite";
 
 export const useTransactionRepository = () => {
 

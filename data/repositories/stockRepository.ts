@@ -1,4 +1,4 @@
-import { dbPromise } from "@/data/db/db";
+import { dbPromise } from "@/data/providers/sqlite";
 import { Stock } from "@/types/stock";
 
 export const useStockRepository = () => {

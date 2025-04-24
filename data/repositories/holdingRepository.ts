@@ -1,5 +1,5 @@
 import { Holding } from "@/types/portfolio";
-import { dbPromise } from "@/data/db/db"
+import { dbPromise } from "@/data/providers/sqlite"
 import { HoldingRequest } from "@/types/portfolio";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 
