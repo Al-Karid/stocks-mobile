@@ -48,7 +48,7 @@ export default function RegisterScreen() {
                     <View style={styles.row}>
                         <Ionicons name="id-card-outline" size={18} color="#666" style={styles.icon} />
                         <TextInput
-                            placeholder="Display Name"
+                            placeholder="Display name"
                             placeholderTextColor="#aaa"
                             style={styles.input}
                             value={displayName}
@@ -59,7 +59,7 @@ export default function RegisterScreen() {
                     <View style={[styles.row, styles.noBorder]}>
                         <Ionicons name="call-outline" size={18} color="#666" style={styles.icon} />
                         <TextInput
-                            placeholder="Phone Number"
+                            placeholder="Phone number"
                             placeholderTextColor="#aaa"
                             style={styles.input}
                             keyboardType="phone-pad"
@@ -134,19 +134,14 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     button: {
-        backgroundColor: '#00FF7F',
+        backgroundColor: '#000',
         paddingVertical: 14,
-        borderRadius: 12,
+        borderRadius: 8,
         alignItems: 'center',
-        shadowColor: '#00FF7F',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.3,
-        shadowRadius: 10,
-        elevation: 10,
     },
     buttonText: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#121212',
+        color: 'white',
     },
 });

@@ -1,25 +1,58 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useRef } from 'react';
+import {
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    ScrollView,
+    LayoutAnimation,
+    Platform,
+    UIManager,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import Collapsible from 'react-native-collapsible';
+
+if (Platform.OS === 'android') {
+    UIManager.setLayoutAnimationEnabledExperimental &&
+        UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export default function SettingsScreen() {
-    const handleLogin = () => console.log("Login pressed");
+    const [collapsed, setCollapsed] = useState(true);
+
     const handleLogout = () => console.log("Logout pressed");
     const handleAlertSettings = () => console.log("Alert Settings pressed");
 
     return (
-        <ScrollView style={styles.container} contentInsetAdjustmentBehavior='automatic'>
+        <ScrollView style={styles.container} contentInsetAdjustmentBehavior="automatic">
             {/* Section 1: Account */}
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Account</Text>
 
                 <View style={styles.card}>
-                    <TouchableOpacity style={styles.row}>
+                    <TouchableOpacity style={styles.row} onPress={() => setCollapsed(!collapsed)}>
                         <Ionicons name="person-outline" size={20} color="#666" style={styles.icon} />
                         <Text style={styles.text}>Al-karid</Text>
-                        <Ionicons name="chevron-forward-outline" size={18} color="#ccc" style={styles.chevron} />
+                        <Ionicons
+                            name={collapsed ? 'chevron-forward-outline' : 'chevron-up-outline'}
+                            size={18}
+                            color="#ccc"
+                            style={styles.chevron}
+                        />
                     </TouchableOpacity>
+
+
+                    <Collapsible style={styles.detailsBox} collapsed={collapsed}>
+                        <Text style={[styles.row]}>Username: alkarid_2025</Text>
+                        <Text style={styles.row}>Display Name: Al-karid</Text>
+                        <Text style={[styles.row]}>Phone: +225 0707070707</Text>
+                        <TouchableOpacity style={styles.blackButton} onPress={() => console.log("Edit pressed")}>
+                            <Ionicons name="create-outline" size={20} color="#fff" style={styles.icon} />
+                            <Text style={styles.blackButtonText}>Edit</Text>
+                        </TouchableOpacity>
+                    </Collapsible>
+
 
                     <TouchableOpacity style={styles.row} onPress={() => router.push('/settings/login')}>
                         <Ionicons name="log-in-outline" size={20} color="#666" style={styles.icon} />
@@ -57,11 +90,9 @@ export default function SettingsScreen() {
                     © 2025 Revalys Data Services
                 </Text>
             </View>
-
         </ScrollView>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -105,6 +136,18 @@ const styles = StyleSheet.create({
     chevron: {
         marginLeft: 'auto',
     },
+    detailsBox: {
+        paddingVertical: 0,
+        paddingHorizontal: 20,
+        backgroundColor: '#f9f9f9',
+        borderTopWidth: 1,
+        borderTopColor: '#eee',
+    },
+    detailText: {
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 4,
+    },
     creditsContainer: {
         marginTop: 32,
         alignItems: 'center',
@@ -114,5 +157,20 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#999',
     },
-});
+    blackButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#000',
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+        marginVertical: 12,
+    },
 
+    blackButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '500',
+    },
+});
