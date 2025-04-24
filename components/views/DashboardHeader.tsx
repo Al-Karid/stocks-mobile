@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Portfolio } from '@/types/portfolio';
-import { formatCurrency, formatNumber, formatPercentage } from '@/utils/numberUtils';
+import { formatCurrency, formatPercentage } from '@/utils/numberUtils';
+import { router, useRouter } from 'expo-router';
 
 interface DashboardHeaderProps {
   portfolio: Portfolio;
@@ -14,19 +15,23 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio }) => {
   const { performance } = portfolio;
   const { totalValue, gainLossPercentage, totalGainLoss } = performance;
 
-  // Determine color based on performance
   const isPositive = totalGainLoss >= 0;
 
   return (
     <View style={styles.header}>
       <View style={styles.headerTop}>
-        <Text style={styles.greeting}>Hello, Al-karid</Text>
+        <TouchableOpacity style={styles.userSection} onPress={() => router.push('/settings')}>
+          <Ionicons name="person-circle-outline" size={28} color="white" style={styles.userIcon} />
+          <Text style={styles.greeting}>Hello, Al-karid</Text>
+        </TouchableOpacity>
+
         <View style={styles.icons}>
           <TouchableOpacity>
             <Ionicons name="notifications-outline" size={24} color="white" style={styles.icon} />
           </TouchableOpacity>
         </View>
       </View>
+
 
       <View style={styles.portfolioSection}>
         <Text style={styles.portfolioTitle}>{portfolio.name.toUpperCase()}</Text>
@@ -110,6 +115,13 @@ const styles = StyleSheet.create({
   eyeOff: {
     marginLeft: 8,
     marginBottom: 12,
+  },
+  userSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  userIcon: {
+    marginRight: 8,
   },
 });
 
