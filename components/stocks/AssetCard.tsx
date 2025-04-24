@@ -29,14 +29,10 @@ const styles = StyleSheet.create({
     assetCard: {
         backgroundColor: 'white',
         padding: 16,
-        borderRadius: 20,
+        borderRadius: 12,
         marginRight: 10,
         marginTop: 10,
         minWidth: 125,
-        borderColor: '#e5e7eb',
-        borderWidth: 1,
-        shadowOpacity: 0.05,
-        shadowOffset: { width: 0, height: 0.5 },
     },
     assetTicker: {
         fontSize: 18,

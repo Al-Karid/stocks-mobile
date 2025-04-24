@@ -34,15 +34,10 @@ const StockRow: React.FC<StockRowProps> = ({ stock }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#ffffff',
+    backgroundColor: 'white',
     borderRadius: 12,
     padding: 14,
-    marginVertical: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0.5 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    marginVertical: 6
   },
   row: {
     flexDirection: 'row',

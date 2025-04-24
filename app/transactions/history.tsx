@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, Text } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { Transaction } from "@/types/portfolio";
 import { usePortfolioStore } from "@/stores/portfolioStore";
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 20,
     alignItems: "center",
-    // backgroundColor: "#121212", // darker background for premium look
+    backgroundColor: "#f2f2f2",
   },
 });
 

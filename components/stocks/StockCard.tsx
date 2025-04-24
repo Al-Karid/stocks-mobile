@@ -6,6 +6,7 @@ import {
   Modal,
   Pressable,
   TouchableWithoutFeedback,
+  TouchableOpacity,
 } from "react-native";
 import { ArrowUpRight, ArrowDownRight, ArrowRight } from "lucide-react-native";
 import { router } from "expo-router";
@@ -47,7 +48,7 @@ const StockCard: React.FC<StockCardProps> = ({
 
   return (
     <>
-      <TouchableWithoutFeedback
+      <TouchableOpacity
         onPress={() =>
           router.push({
             pathname: "/stocks/details",
@@ -99,7 +100,7 @@ const StockCard: React.FC<StockCardProps> = ({
             </Text>
           </View>
         </View>
-      </TouchableWithoutFeedback>
+      </TouchableOpacity>
 
       <Modal
         animationType="fade"
@@ -134,12 +135,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9fafb",
     marginBottom: 10,
     borderRadius: 12,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 3,
+    padding: 16,
     alignItems: "center",
   },
   infoContainer: {

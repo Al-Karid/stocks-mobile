@@ -58,15 +58,10 @@ const TransactionCard = ({ transaction, symbol }: Props) => {
 const styles = StyleSheet.create({
   card: {
     width: width * 0.9,
-    backgroundColor: "#1E1E1E",
+    backgroundColor: "white",
     borderRadius: 18,
     padding: 20,
     marginBottom: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 5,
   },
   header: {
     flexDirection: "row",
@@ -101,7 +96,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   value: {
-    color: "#FFF",
+    color: "#547792",
     fontSize: 16,
     fontWeight: "600",
   },

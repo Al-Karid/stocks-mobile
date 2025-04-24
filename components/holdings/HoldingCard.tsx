@@ -85,12 +85,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9fafb",
     borderRadius: 12,
     padding: 20,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    elevation: 3,
+    marginBottom: 10
   },
   header: {
     flexDirection: "row",

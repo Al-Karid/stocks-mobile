@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import {
   FlatList,
   Text,
@@ -7,8 +6,6 @@ import {
 } from "react-native";
 import StockCard from "@/components/stocks/StockCard";
 import { Stock } from "@/types/stock";
-import { useStockRepository } from "@/data/repositories/stockRepository";
-import UpdatedAt from "../views/UpdatedAt";
 
 interface StockListingProps {
   stocks: Stock[];
@@ -60,6 +57,7 @@ const StockListing: React.FC<StockListingProps> = ({stocks, refreshing, onRefres
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+    backgroundColor: "#f2f2f2"
   },
 });
 

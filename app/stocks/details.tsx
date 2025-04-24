@@ -164,12 +164,11 @@ export default function StocksDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F6F8",
-    padding: 20,
-    // justifyContent: "flex-start",
+    backgroundColor: "#f2f2f2",
+    padding: 20
   },
   headerText: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#123458",
     textAlign: "center",
@@ -180,12 +179,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#ffffff",
     borderRadius: 12,
-    padding: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 1,
-    elevation: 1,
+    padding: 24
   },
   name: {
     fontSize: 16,

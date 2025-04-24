@@ -21,9 +21,10 @@ export default function Layout() {
           <Stack.Screen
             name="stocks/details"
             options={{
-              title: "Stock Details",
+              title: "Details",
               presentation: "modal",
               animation: "slide_from_bottom",
+              headerShadowVisible: false
             }}
           />
           {/* <Stack.Screen
@@ -64,6 +65,7 @@ export default function Layout() {
               title: "Transaction History",
               presentation: "modal",
               animation: "slide_from_bottom",
+              headerShadowVisible: false
             }}
           />
         </Stack>

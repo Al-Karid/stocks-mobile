@@ -101,7 +101,7 @@ const DashboardScreen = () => {
             )}
 
             {/* CONTENT */}
-            <View style={[styles.content, { flex: 1 }]}>
+            <View style={[styles.content, { flex: 1, backgroundColor: "#f2f2f2" }]}>
 
               {/* PORTFOLIO DISTRIBUTION */}
               <View style={styles.section}>
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   section: {
     marginTop: 10,
     paddingHorizontal: 20,
-    backgroundColor: 'white',
+    backgroundColor: '#f2f2f2',
   },
   sectionHeader: {
     flexDirection: 'row',
