@@ -20,6 +20,7 @@ if (Platform.OS === 'android') {
 
 export default function SettingsScreen() {
     const [collapsed, setCollapsed] = useState(true);
+    const isRegistered = false; // Replace with actual logic to check if the user is registered
 
     const handleLogout = () => console.log("Logout pressed");
     const handleAlertSettings = () => console.log("Alert Settings pressed");
@@ -31,17 +32,19 @@ export default function SettingsScreen() {
                 <Text style={styles.sectionTitle}>Account</Text>
 
                 <View style={styles.card}>
-                    <TouchableOpacity style={styles.row} onPress={() => setCollapsed(!collapsed)}>
-                        <Ionicons name="person-outline" size={20} color="#666" style={styles.icon} />
-                        <Text style={styles.text}>Al-karid</Text>
-                        <Ionicons
-                            name={collapsed ? 'chevron-forward-outline' : 'chevron-up-outline'}
-                            size={18}
-                            color="#ccc"
-                            style={styles.chevron}
-                        />
-                    </TouchableOpacity>
 
+                    {isRegistered && (
+                        <TouchableOpacity style={styles.row} onPress={() => setCollapsed(!collapsed)}>
+                            <Ionicons name="person-outline" size={20} color="#666" style={styles.icon} />
+                            <Text style={styles.text}>Al-karid</Text>
+                            <Ionicons
+                                name={collapsed ? 'chevron-forward-outline' : 'chevron-up-outline'}
+                                size={18}
+                                color="#ccc"
+                                style={styles.chevron}
+                            />
+                        </TouchableOpacity>
+                    )}
 
                     <Collapsible style={styles.detailsBox} collapsed={collapsed}>
                         <Text style={[styles.row]}>Username: alkarid_2025</Text>
@@ -53,21 +56,24 @@ export default function SettingsScreen() {
                         </TouchableOpacity>
                     </Collapsible>
 
-
-                    <TouchableOpacity style={styles.row} onPress={() => router.push('/settings/login')}>
-                        <Ionicons name="log-in-outline" size={20} color="#666" style={styles.icon} />
-                        <Text style={styles.text}>Login</Text>
-                    </TouchableOpacity>
-
                     <TouchableOpacity style={styles.row} onPress={() => router.push('/settings/register')}>
                         <Ionicons name="person-add" size={20} color="#666" style={styles.icon} />
                         <Text style={styles.text}>Register</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={[styles.row, styles.lastRow]} onPress={handleLogout}>
-                        <Ionicons name="log-out-outline" size={20} color="#666" style={styles.icon} />
-                        <Text style={[styles.text, { color: 'red' }]}>Logout</Text>
-                    </TouchableOpacity>
+                    {isRegistered && (
+                        <TouchableOpacity style={styles.row} onPress={() => router.push('/settings/login')}>
+                            <Ionicons name="log-in-outline" size={20} color="#666" style={styles.icon} />
+                            <Text style={styles.text}>Login</Text>
+                        </TouchableOpacity>
+                    )}
+
+                    {isRegistered && (
+                        <TouchableOpacity style={[styles.row, styles.lastRow]} onPress={handleLogout}>
+                            <Ionicons name="log-out-outline" size={20} color="#666" style={styles.icon} />
+                            <Text style={[styles.text, { color: 'red' }]}>Logout</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
             </View>
 

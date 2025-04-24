@@ -15,6 +15,7 @@ export default function Layout() {
             options={{
               title: "Settings",
               headerLargeTitle: true,
+              headerBackTitle: "Dashboard",
             }}
           />
           <Stack.Screen
