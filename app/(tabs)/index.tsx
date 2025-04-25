@@ -15,12 +15,14 @@ import { formatRelativeDate } from '@/utils/dateUtils';
 import { useInitDatabases } from '@/data/configs/initDatabases';
 import { Portfolio } from '@/types/portfolio';
 import { Storage } from "expo-sqlite/kv-store";
+import { useUserStore } from '@/stores/userStore';
 
 const DashboardScreen = () => {
 
   const { syncStockDataFromServer } = useStockSync();
   const { watchlist: watchlistStore } = useWatchlistStore();
   const { portfolios } = usePortfolioStore();
+  const { user } = useUserStore();
 
   const [refreshing, setRefreshing] = useState(false);
   const [lastSync, setLastSync] = useState<string>();
@@ -93,7 +95,7 @@ const DashboardScreen = () => {
           <View style={{ flex: 1, backgroundColor: 'white', minHeight: '100%' }}>
             {/* HEADER */}
             {defaultPortfolio && defaultPortfolio.performance ? (
-              <DashboardHeader portfolio={defaultPortfolio} />
+              <DashboardHeader portfolio={defaultPortfolio} displayName={user?.name} />
             ) : (
               <View style={{ height: 200, justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={{ fontSize: 18, color: '#6b7280' }}>No portfolio available</Text>

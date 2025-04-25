@@ -7,9 +7,10 @@ import { router, useRouter } from 'expo-router';
 
 interface DashboardHeaderProps {
   portfolio: Portfolio;
+  displayName?: string;
 }
 
-const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio }) => {
+const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio, displayName }) => {
   const [isHidden, setIsHidden] = useState(false);
 
   const { performance } = portfolio;
@@ -22,7 +23,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio }) => {
       <View style={styles.headerTop}>
         <TouchableOpacity style={styles.userSection} onPress={() => router.push('/settings')}>
           <Ionicons name="person-circle-outline" size={28} color="white" style={styles.userIcon} />
-          <Text style={styles.greeting}>Hello, Al-karid</Text>
+          <Text style={styles.greeting}>Hello, {displayName ? displayName : "Investor"}</Text>
         </TouchableOpacity>
 
         <View style={styles.icons}>

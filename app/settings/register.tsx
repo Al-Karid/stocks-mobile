@@ -10,15 +10,51 @@ import {
     ScrollView
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { User } from '@/types/user';
+import { router } from 'expo-router';
+import { useUserStore } from '@/stores/userStore';
 
 export default function RegisterScreen() {
+
+    const { saveUser } = useUserStore();
+
     const [username, setUsername] = useState('');
     const [displayName, setDisplayName] = useState('');
     const [phone, setPhone] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    const canSavePassword = false;
 
     const handleRegister = () => {
-        console.log('Registering:', { username, displayName, phone });
-        // registration logic here
+
+        if (username === '' || displayName === '' || phone === '') {
+            alert("Please fill in all fields");
+            return;
+        }
+        if (!/^\d+$/.test(phone)) {
+            alert("Phone number must be numeric");
+            return;
+        }
+        if (phone.length != 10) {
+            alert("Phone number must be 10 digits long");
+            return;
+        }
+        if (username.length < 3) {
+            alert("Username must be at least 3 characters long");
+            return;
+        }
+
+        const newUser: User = {
+            username: username.toLowerCase(),
+            name: displayName,
+            phone,
+            email: '',
+            password: '',
+            createdAt: new Date().toISOString(),
+        };
+        saveUser(newUser);
+        router.back();
     };
 
     return (
@@ -69,17 +105,32 @@ export default function RegisterScreen() {
                     </View>
                 </View>
 
-                <View style={styles.section}>
-                    <View style={[styles.row, styles.noBorder]}>
-                        <Ionicons name="lock-closed-outline" size={18} color="#666" style={styles.icon} />
-                        <TextInput
-                            placeholder="Password"
-                            placeholderTextColor="#aaa"
-                            style={styles.input}
-                            secureTextEntry
-                        />
+                {canSavePassword && (
+                    <View style={styles.section}>
+                        <View style={[styles.row, styles.noBorder]}>
+                            <Ionicons name="lock-closed-outline" size={18} color="#666" style={styles.icon} />
+                            <TextInput
+                                placeholder="Password"
+                                placeholderTextColor="#aaa"
+                                value={password}
+                                onChangeText={setPassword}
+                                style={styles.input}
+                                secureTextEntry
+                            />
+                        </View>
+                        <View style={[styles.row, styles.noBorder]}>
+                            <Ionicons name="lock-closed-outline" size={18} color="#666" style={styles.icon} />
+                            <TextInput
+                                placeholder="confirm password"
+                                placeholderTextColor="#aaa"
+                                value={confirmPassword}
+                                onChangeText={setConfirmPassword}
+                                style={styles.input}
+                                secureTextEntry
+                            />
+                        </View>
                     </View>
-                </View>
+                )}
 
                 <TouchableOpacity style={styles.button} onPress={handleRegister}>
                     <Text style={styles.buttonText}>Register</Text>

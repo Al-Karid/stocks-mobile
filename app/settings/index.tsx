@@ -5,13 +5,14 @@ import {
     StyleSheet,
     TouchableOpacity,
     ScrollView,
-    LayoutAnimation,
     Platform,
     UIManager,
+    Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import Collapsible from 'react-native-collapsible';
+import { useUserStore } from '@/stores/userStore';
 
 if (Platform.OS === 'android') {
     UIManager.setLayoutAnimationEnabledExperimental &&
@@ -19,11 +20,26 @@ if (Platform.OS === 'android') {
 }
 
 export default function SettingsScreen() {
-    const [collapsed, setCollapsed] = useState(true);
-    const isRegistered = false; // Replace with actual logic to check if the user is registered
 
-    const handleLogout = () => console.log("Logout pressed");
+    const [collapsed, setCollapsed] = useState(true);
+    const { user, loggedIn, removeUser } = useUserStore();
+    const canLogin = false
+
+    const isRegistered = loggedIn && user !== null;
+
+    const handleLogout = () => removeUser();
     const handleAlertSettings = () => console.log("Alert Settings pressed");
+
+    const handleDeleteAccount = () => {
+        Alert.alert(
+            "Delete Account",
+            "Are you sure you want to delete your account? This action cannot be undone.",
+            [
+                { text: "Cancel", style: "cancel" },
+                { text: "Delete", style: "destructive", onPress: () => handleLogout() },
+            ]
+        );
+    };
 
     return (
         <ScrollView style={styles.container} contentInsetAdjustmentBehavior="automatic">
@@ -36,7 +52,7 @@ export default function SettingsScreen() {
                     {isRegistered && (
                         <TouchableOpacity style={styles.row} onPress={() => setCollapsed(!collapsed)}>
                             <Ionicons name="person-outline" size={20} color="#666" style={styles.icon} />
-                            <Text style={styles.text}>Al-karid</Text>
+                            <Text style={styles.text}>{user.name}</Text>
                             <Ionicons
                                 name={collapsed ? 'chevron-forward-outline' : 'chevron-up-outline'}
                                 size={18}
@@ -46,32 +62,36 @@ export default function SettingsScreen() {
                         </TouchableOpacity>
                     )}
 
-                    <Collapsible style={styles.detailsBox} collapsed={collapsed}>
-                        <Text style={[styles.row]}>Username: alkarid_2025</Text>
-                        <Text style={styles.row}>Display Name: Al-karid</Text>
-                        <Text style={[styles.row]}>Phone: +225 0707070707</Text>
-                        <TouchableOpacity style={styles.blackButton} onPress={() => console.log("Edit pressed")}>
-                            <Ionicons name="create-outline" size={20} color="#fff" style={styles.icon} />
-                            <Text style={styles.blackButtonText}>Edit</Text>
-                        </TouchableOpacity>
-                    </Collapsible>
-
-                    <TouchableOpacity style={styles.row} onPress={() => router.push('/settings/register')}>
-                        <Ionicons name="person-add" size={20} color="#666" style={styles.icon} />
-                        <Text style={styles.text}>Register</Text>
-                    </TouchableOpacity>
-
                     {isRegistered && (
+                        <Collapsible style={styles.detailsBox} collapsed={collapsed}>
+                            <Text style={[styles.row]}>Username: {user.username}</Text>
+                            <Text style={styles.row}>Display name: {user.name}</Text>
+                            <Text style={[styles.row]}>Phone: {user.phone}</Text>
+                            <TouchableOpacity style={styles.blackButton} onPress={() => console.log("Edit pressed")}>
+                                <Ionicons name="create-outline" size={20} color="#fff" style={styles.icon} />
+                                <Text style={styles.blackButtonText}>Edit</Text>
+                            </TouchableOpacity>
+                        </Collapsible>
+                    )}
+
+                    {canLogin && (
                         <TouchableOpacity style={styles.row} onPress={() => router.push('/settings/login')}>
                             <Ionicons name="log-in-outline" size={20} color="#666" style={styles.icon} />
                             <Text style={styles.text}>Login</Text>
                         </TouchableOpacity>
                     )}
 
+                    {!isRegistered && (
+                        <TouchableOpacity style={styles.row} onPress={() => router.push('/settings/register')}>
+                            <Ionicons name="person-add" size={20} color="#666" style={styles.icon} />
+                            <Text style={styles.text}>Register</Text>
+                        </TouchableOpacity>
+                    )}
+
                     {isRegistered && (
-                        <TouchableOpacity style={[styles.row, styles.lastRow]} onPress={handleLogout}>
+                        <TouchableOpacity style={[styles.row, styles.lastRow]} onPress={handleDeleteAccount}>
                             <Ionicons name="log-out-outline" size={20} color="#666" style={styles.icon} />
-                            <Text style={[styles.text, { color: 'red' }]}>Logout</Text>
+                            <Text style={[styles.text, { color: 'red' }]}>Delete my account</Text>
                         </TouchableOpacity>
                     )}
                 </View>
