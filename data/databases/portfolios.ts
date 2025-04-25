@@ -8,9 +8,9 @@ export const initPortfolioDb = async () => {
   try {
 
     // Fix remove the drop statements
-    await db.runAsync("drop table if exists portfolios");
-    await db.runAsync("drop table if exists transactions");
-    await db.runAsync("drop table if exists holdings");
+    // await db.runAsync("drop table if exists portfolios");
+    // await db.runAsync("drop table if exists transactions");
+    // await db.runAsync("drop table if exists holdings");
 
     // Portfolios Table
     await db.runAsync(
