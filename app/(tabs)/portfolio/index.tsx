@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Dialog from "react-native-dialog";
-import { Text, Pressable, SafeAreaView } from "react-native";
+import { Text, Pressable, SafeAreaView, Platform } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import PortfolioListing from "@/components/portfolio/PortfolioListing";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
@@ -48,17 +48,18 @@ export default function PortfolioScreen() {
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <Pressable
-          style={{ marginRight: 5, marginTop: 6 }}
-          onPress={handleOpenDialog}
-        >
-          <AntDesign name="addfolder" size={20} color="#007AFF" />
-        </Pressable>
-      ),
+      headerRight: () =>
+        Platform.OS === "ios" ? (
+          <Pressable
+            style={{ marginRight: 5, marginTop: 6 }}
+            onPress={handleOpenDialog}
+          >
+            <AntDesign name="addfolder" size={20} color="#007AFF" />
+          </Pressable>
+        ) : null,
     });
   }, [navigation]);
-
+  
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
@@ -87,6 +88,22 @@ export default function PortfolioScreen() {
             </Dialog.Container>
           </>
         </ActionSheetProvider>
+        {Platform.OS === 'android' && (
+          <Pressable
+            onPress={handleOpenDialog}
+            style={{
+              position: 'absolute',
+              bottom: 24,
+              right: 24,
+              backgroundColor: 'black',
+              borderRadius: 30,
+              padding: 16,
+              elevation: 5,
+            }}
+          >
+            <AntDesign name="addfolder" size={24} color="white" />
+          </Pressable>
+        )}
       </SafeAreaView>
     </SafeAreaProvider>
   );
