@@ -31,14 +31,15 @@ export default function HoldingsScreen() {
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <Pressable
-          style={{ marginRight: 5, marginTop: 3 }}
-          onPress={handleNewTransaction}
-        >
-          <Feather name="edit-3" size={19} color="#007AFF" />
-        </Pressable>
-      ),
+      headerRight: () =>
+        Platform.OS === "ios" ? (
+          <Pressable
+            style={{ marginRight: 5, marginTop: 3 }}
+            onPress={handleNewTransaction}
+          >
+            <Feather name="edit-3" size={19} color="#007AFF" />
+          </Pressable>
+        ) : null,
     });
 
     getHoldings(Number(portfolioId));
@@ -158,6 +159,15 @@ export default function HoldingsScreen() {
         portfolioName={portfolioName}
         onHoldingLongPress={handleHoldingLongPress}
       />
+      {Platform.OS === "android" && (
+        <Pressable
+          onPress={handleNewTransaction}
+          style={styles.fab}
+        >
+          <Feather name="plus" size={24} color="white" />
+        </Pressable>
+      )}
+
     </>
   );
 }
@@ -198,4 +208,21 @@ const styles = StyleSheet.create({
     color: "#666",
     marginBottom: 16,
   },
+  fab: {
+    position: "absolute",
+    bottom: 30,
+    right: 20,
+    backgroundColor: "#007AFF",
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5, // For Android shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3.84,
+  },
+
 });
