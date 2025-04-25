@@ -1,10 +1,11 @@
 import StockListing from "@/components/stocks/StockListing";
 import { router, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, Text, View, SafeAreaView, StatusBar } from "react-native";
+import { TouchableOpacity, Text, View, SafeAreaView } from "react-native";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 import { Stock } from "@/types/stock";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 
 export default function StocksScreen() {
   const { fetchStocks } = useStockRepository();
@@ -61,8 +62,8 @@ export default function StocksScreen() {
   }, [navigation]);
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
-        <StatusBar barStyle="dark-content" />
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+        <StatusBar style="dark" backgroundColor='white' />
         <StockListing
           stocks={filteredStocks}
           refreshing={refreshing}

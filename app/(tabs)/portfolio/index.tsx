@@ -61,7 +61,8 @@ export default function PortfolioScreen() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+        <StatusBar style="dark" backgroundColor='white' />
         <ActionSheetProvider>
           <>
             <PortfolioListing portfolios={portfolios} />
