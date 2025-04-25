@@ -70,7 +70,7 @@ export default function Layout() {
           <Stack.Screen
             name="transactions/new"
             options={{
-              title: "New Transaction",
+              title: "New transaction",
               presentation: "modal",
               animation: "slide_from_bottom",
             }}

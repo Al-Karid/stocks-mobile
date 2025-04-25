@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F1F3F6",
   },
   title: {
-    fontSize: 28,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#1A1A1A",
     marginBottom: 24,
@@ -136,12 +136,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
     borderRadius: 12,
     padding: 20,
-    marginBottom: 30,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
+    marginBottom: 30
   },
   holdingCard: {
     width: width * 0.92,
@@ -149,11 +144,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
   },
   holdingHeader: {
     flexDirection: "row",

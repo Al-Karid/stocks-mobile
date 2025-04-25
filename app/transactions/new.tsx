@@ -35,6 +35,8 @@ export default function NewTransaction() {
   const [fees, setFees] = useState("1.51");
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
   const priceInputRef = useRef<TextInput>(null);
   const feesInputRef = useRef<TextInput>(null);
 
@@ -136,14 +138,24 @@ export default function NewTransaction() {
         </View>
 
         <Text style={styles.label}>Date de la transaction</Text>
-        <DateTimePicker
-          value={transactionDate}
-          mode="date"
-          display="default"
-          onChange={(event, date) => {
-            if (date) setTransactionDate(date);
-          }}
-        />
+        <Pressable onPress={() => setShowDatePicker(true)} style={styles.dateButton}>
+          <Text style={styles.dateText}>{transactionDate.toLocaleDateString()}</Text>
+        </Pressable>
+
+        {showDatePicker && (
+          <DateTimePicker
+            value={transactionDate}
+            mode="date"
+            display="default"
+            onChange={(event, date) => {
+              setShowDatePicker(false);
+              if (event.type === "set" && date) {
+                setTransactionDate(date);
+              }
+            }}
+          />
+        )}
+
 
         <Text style={styles.label}>Quantité</Text>
         <TextInput
@@ -295,4 +307,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#388E3C",
   },
+  dateButton: {
+    padding: 10,
+    backgroundColor: "#eee",
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  dateText: {
+    fontSize: 16,
+    color: "#333",
+  }
 });

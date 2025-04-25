@@ -1,15 +1,15 @@
 import { useLocalSearchParams } from "expo-router";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { ArrowUpRight, ArrowDownRight, ArrowRight } from "lucide-react-native";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useState, useEffect } from "react";
 import { Stock } from "@/types/stock";
 import { formatCurrency, formatPercentage } from "@/utils/numberUtils";
 import { ScrollView } from "react-native-gesture-handler";
+import { Feather } from "@expo/vector-icons";
 
 export default function StocksDetailsScreen() {
-  
+
   const { symbol } = useLocalSearchParams();
   const { addStockToWatchlist, removeStockFromWatchlist } = useWatchlistStore();
   const { findStock } = useStockRepository();
@@ -76,11 +76,11 @@ export default function StocksDetailsScreen() {
             ]}
           >
             {isPositive ? (
-              <ArrowUpRight size={16} color="white" />
+              <Feather name="arrow-up-right" size={20} color="white" />
             ) : isNegative ? (
-              <ArrowDownRight size={16} color="white" />
+              <Feather name="arrow-down-right" size={20} color="white" />
             ) : (
-              <ArrowRight size={16} color="white" /> // Neutral icon for 0%
+              <Feather name="minus" size={20} color="white" />
             )}
             <Text style={styles.percentageText}>
               {isZero ? "0,00%" : formatPercentage(stock?.percentageChange!, 2)} (

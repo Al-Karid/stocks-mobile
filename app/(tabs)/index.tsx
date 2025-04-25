@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
-import { StatusBar } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import DashboardHeader from '@/components/views/DashboardHeader';
 import { useWatchlistStore } from '@/stores/watchlistStore';
 import StockRow from '@/components/stocks/StockRow';
@@ -77,7 +77,7 @@ const DashboardScreen = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: '#121212' }}>
-        <StatusBar barStyle="default" />
+        <StatusBar style="light" backgroundColor='#121212' />
         <ScrollView
           style={styles.container}
           contentContainerStyle={{ flexGrow: 1 }}
@@ -88,7 +88,7 @@ const DashboardScreen = () => {
               onRefresh={onRefresh}
               colors={["#007AFF"]}
               tintColor="#007AFF"
-              progressBackgroundColor="#121212"
+              progressBackgroundColor="white"
             />
           }
         >

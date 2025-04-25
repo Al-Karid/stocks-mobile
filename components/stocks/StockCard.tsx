@@ -8,9 +8,9 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
 } from "react-native";
-import { ArrowUpRight, ArrowDownRight, ArrowRight } from "lucide-react-native";
 import { router } from "expo-router";
 import { formatNumber } from "@/utils/numberUtils";
+import { Feather } from "@expo/vector-icons";
 
 interface StockCardProps {
   name: string;
@@ -89,11 +89,11 @@ const StockCard: React.FC<StockCardProps> = ({
             ]}
           >
             {isPositive ? (
-              <ArrowUpRight color="white" size={20} />
+              <Feather name="arrow-up-right" size={20} color="white" />
             ) : isNegative ? (
-              <ArrowDownRight color="white" size={20} />
+              <Feather name="arrow-down-right" size={20} color="white" />
             ) : (
-              <ArrowRight color="white" size={20} />
+              <Feather name="minus" size={20} color="white" />
             )}
             <Text style={styles.percentageText}>
               {isZero ? "0,00%" : percentageChange.toFixed(2) + "%"}
