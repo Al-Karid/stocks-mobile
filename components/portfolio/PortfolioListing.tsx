@@ -43,9 +43,6 @@ export default function PortfolioListing({ portfolios }: PortfolioListProps) {
     makePortfolioAsDefault(id);
   }
 
-  console.log("Rendering PortfolioListing with portfolios:", portfolios);
-
-
   return (
     <>
       <FlatList

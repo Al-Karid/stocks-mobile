@@ -100,7 +100,7 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
 const styles = StyleSheet.create({
   card: {
     paddingVertical: 25,
-    backgroundColor: "#f9fafb",
+    backgroundColor: "white",
     borderRadius: 12,
     padding: 20,
     marginBottom: 10

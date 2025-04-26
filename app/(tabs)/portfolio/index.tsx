@@ -11,6 +11,7 @@ import { useNavigation } from "expo-router";
 import { Portfolio } from "@/types/portfolio";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { usePushNotifications } from "@/utils/pushNotifications";
 
 export default function PortfolioScreen() {
 
@@ -59,10 +60,10 @@ export default function PortfolioScreen() {
         ) : null,
     });
   }, [navigation]);
-  
+
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#f2f2f2' }}>
         <StatusBar style="dark" backgroundColor='white' />
         <ActionSheetProvider>
           <>
