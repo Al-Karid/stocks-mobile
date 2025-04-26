@@ -17,10 +17,11 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.alkarid.stocks"
+      "package": "com.alkarid.stocks",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
