@@ -7,6 +7,7 @@ import { Stock } from "@/types/stock";
 import { formatCurrency, formatPercentage } from "@/utils/numberUtils";
 import { ScrollView } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
+import { globalCardStyles, globalTextStyles } from "@/styles/globalStyles";
 
 export default function StocksDetailsScreen() {
 
@@ -45,82 +46,87 @@ export default function StocksDetailsScreen() {
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
-      <View style={[styles.card, styles.header]}>
+      <View style={[globalCardStyles.card, styles.header]}>
         <Text style={styles.headerText}>{stock?.title}</Text>
       </View>
 
       {/* Price Card */}
-      <View style={styles.card}>
-        <View style={styles.row}>
-          <Text style={styles.label}>Current Price</Text>
-          <Text style={styles.value}>
-            {formatCurrency(stock?.currentPrice || 0)}
-          </Text>
-        </View>
+      <View style={globalCardStyles.card}>
+        <View style={globalTextStyles.labelValueDetailsContainer}>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Previous Close</Text>
-          <Text style={styles.value}>
-            {formatCurrency(stock?.previousClosePrice || 0)}
-          </Text>
-        </View>
-
-        <View style={styles.rowLast}>
-          <Text style={styles.label}>Change</Text>
-          <View
-            style={[
-              styles.percentageBox,
-              isPositive && styles.positiveBox,
-              isNegative && styles.negativeBox,
-              isZero && styles.neutralBox, // Apply neutral style for 0%
-            ]}
-          >
-            {isPositive ? (
-              <Feather name="arrow-up-right" size={20} color="white" />
-            ) : isNegative ? (
-              <Feather name="arrow-down-right" size={20} color="white" />
-            ) : (
-              <Feather name="minus" size={20} color="white" />
-            )}
-            <Text style={styles.percentageText}>
-              {isZero ? "0,00%" : formatPercentage(stock?.percentageChange!, 2)} (
-              {formatCurrency(Number(stock?.currentPrice) - Number(stock?.previousClosePrice))})
+          <View style={globalTextStyles.labelValueDetailsRow}>
+            <Text style={globalTextStyles.label}>Current price</Text>
+            <Text style={globalTextStyles.value}>
+              {formatCurrency(stock?.currentPrice || 0)}
             </Text>
+          </View>
+
+          <View style={globalTextStyles.labelValueDetailsRow}>
+            <Text style={globalTextStyles.label}>Previous close</Text>
+            <Text style={globalTextStyles.value}>
+              {formatCurrency(stock?.previousClosePrice || 0)}
+            </Text>
+          </View>
+
+          <View style={[globalTextStyles.labelValueDetailsRow, styles.rowLast]}>
+            <Text style={globalTextStyles.label}>Change rate</Text>
+            <View
+              style={[
+                styles.percentageBox,
+                isPositive && styles.positiveBox,
+                isNegative && styles.negativeBox,
+                isZero && styles.neutralBox, // Apply neutral style for 0%
+              ]}
+            >
+              {isPositive ? (
+                <Feather name="arrow-up-right" size={20} color="white" />
+              ) : isNegative ? (
+                <Feather name="arrow-down-right" size={20} color="white" />
+              ) : (
+                <Feather name="minus" size={20} color="white" />
+              )}
+              <Text style={styles.percentageText}>
+                {isZero ? "0,00%" : formatPercentage(stock?.percentageChange!, 2)} (
+                {formatCurrency(Number(stock?.currentPrice) - Number(stock?.previousClosePrice))})
+              </Text>
+            </View>
           </View>
         </View>
       </View>
 
       {/* Extra Info Card */}
-      <View style={[styles.card, { marginTop: 16 }]}>
-        <View style={styles.row}>
-          <Text style={styles.label}>Volume (titles)</Text>
-          <Text style={styles.value}>
-            {formatCurrency(stock?.volumeTitles || 0) || "N/A"}
-          </Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Volume ()</Text>
-          <Text style={styles.value}>
-            {formatCurrency(stock?.volumeValues || 0) || "N/A"}
-          </Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Opening Price</Text>
-          <Text style={styles.value}>
-            {formatCurrency(stock?.opening || 0) || "N/A"}
-          </Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>High</Text>
-          <Text style={styles.value}>
-            {formatCurrency(stock?.high || 0) || "N/A"}
-          </Text>
-        </View>
-        <View style={styles.rowLast}>
-          <Text style={styles.label}>Low</Text>
-          <Text style={styles.value}>
-            {formatCurrency(stock?.low || 0) || "N/A"}
-          </Text>
+      <View style={[globalCardStyles.card, { marginTop: 16 }]}>
+        <View style={globalTextStyles.labelValueDetailsContainer}>
+          <View style={globalTextStyles.labelValueDetailsRow}>
+            <Text style={globalTextStyles.label}>Volume (titles)</Text>
+            <Text style={globalTextStyles.value}>
+              {formatCurrency(stock?.volumeTitles || 0) || "N/A"}
+            </Text>
+          </View>
+          <View style={globalTextStyles.labelValueDetailsRow}>
+            <Text style={globalTextStyles.label}>Volume ()</Text>
+            <Text style={globalTextStyles.value}>
+              {formatCurrency(stock?.volumeValues || 0) || "N/A"}
+            </Text>
+          </View>
+          <View style={globalTextStyles.labelValueDetailsRow}>
+            <Text style={globalTextStyles.label}>Opening price</Text>
+            <Text style={globalTextStyles.value}>
+              {formatCurrency(stock?.opening || 0) || "N/A"}
+            </Text>
+          </View>
+          <View style={globalTextStyles.labelValueDetailsRow}>
+            <Text style={globalTextStyles.label}>High</Text>
+            <Text style={globalTextStyles.value}>
+              {formatCurrency(stock?.high || 0) || "N/A"}
+            </Text>
+          </View>
+          <View style={globalTextStyles.labelValueDetailsRow}>
+            <Text style={globalTextStyles.label}>Low</Text>
+            <Text style={globalTextStyles.value}>
+              {formatCurrency(stock?.low || 0) || "N/A"}
+            </Text>
+          </View>
         </View>
       </View>
 

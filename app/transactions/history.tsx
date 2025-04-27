@@ -41,6 +41,7 @@ const TransactionDetails = () => {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 20,
+    paddingHorizontal: 16,
     alignItems: "center",
     backgroundColor: "#f2f2f2",
   },

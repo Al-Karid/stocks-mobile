@@ -9,8 +9,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { router } from "expo-router";
-import { formatNumber } from "@/utils/numberUtils";
+import { formatCurrency, formatNumber } from "@/utils/numberUtils";
 import { Feather } from "@expo/vector-icons";
+import { globalCardStyles } from "@/styles/globalStyles";
 
 interface StockCardProps {
   name: string;
@@ -68,15 +69,15 @@ const StockCard: React.FC<StockCardProps> = ({
           })
         }
       >
-        <View style={styles.card}>
+        <View style={globalCardStyles.stockCard}>
           <View style={styles.infoContainer}>
             <Text style={styles.symbol}>{symbol.trim()}</Text>
             <Text style={styles.title}>{name}</Text>
             <Text style={styles.label}>
               <Text style={styles.labelHeader}>Cours: </Text>
-              <Text style={styles.value}>{formatNumber(currentPrice)}</Text> {"  "}
+              <Text style={styles.value}>{formatCurrency(currentPrice)}</Text> {"  "}
               <Text style={styles.labelHeader}>Veille: </Text>
-              <Text style={styles.value}>{formatNumber(previousClosePrice)}</Text>
+              <Text style={styles.value}>{formatCurrency(previousClosePrice)}</Text>
             </Text>
           </View>
 
@@ -130,14 +131,6 @@ const StockCard: React.FC<StockCardProps> = ({
 };
 
 const styles = StyleSheet.create({
-  card: {
-    flexDirection: "row",
-    backgroundColor: "#f9fafb",
-    marginBottom: 10,
-    borderRadius: 12,
-    padding: 16,
-    alignItems: "center",
-  },
   infoContainer: {
     flex: 1,
   },
@@ -164,6 +157,7 @@ const styles = StyleSheet.create({
   },
   value: {
     color: "#333",
+    fontSize: 12,
   },
   percentageContainer: {
     flexDirection: "row",

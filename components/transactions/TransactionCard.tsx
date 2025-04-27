@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
 import { Transaction } from "@/types/portfolio";
 import { formatTransactionCurrency, formatTransactionNumber } from "@/utils/numberUtils";
+import { globalTextStyles, globalCardStyles } from "@/styles/globalStyles";
 
 const { width } = Dimensions.get("window");
 
@@ -12,7 +13,7 @@ interface Props {
 
 const TransactionCard = ({ transaction, symbol }: Props) => {
   return (
-    <View style={styles.card}>
+    <View style={globalCardStyles.card}>
       <View style={styles.header}>
         <Text style={styles.symbol}>{symbol}</Text>
         <View
@@ -25,32 +26,37 @@ const TransactionCard = ({ transaction, symbol }: Props) => {
         </View>
       </View>
 
-      <View style={styles.detailRow}>
-        <Text style={styles.label}>Quantity</Text>
-        <Text style={styles.value}>{formatTransactionNumber(transaction.quantity)}</Text>
+      <View style={globalTextStyles.labelValueDetailsContainerBTop}>
+
+        <View style={globalTextStyles.labelValueDetailsRow}>
+          <Text style={globalTextStyles.label}>Quantity</Text>
+          <Text style={globalTextStyles.value}>{formatTransactionNumber(transaction.quantity)}</Text>
+        </View>
+
+        <View style={globalTextStyles.labelValueDetailsRow}>
+          <Text style={globalTextStyles.label}>Price per share</Text>
+          <Text style={globalTextStyles.value}>{formatTransactionCurrency(transaction.realPricePerShare)}</Text>
+        </View>
+
+        <View style={globalTextStyles.labelValueDetailsRow}>
+          <Text style={globalTextStyles.label}>Total cost</Text>
+          <Text style={globalTextStyles.value}>{formatTransactionCurrency(transaction.totalCost)}</Text>
+        </View>
+
+        <View style={globalTextStyles.labelValueDetailsRow}>
+          <Text style={globalTextStyles.label}>Date</Text>
+          <Text style={globalTextStyles.value}>
+            {new Date(transaction.transactionDate).toLocaleDateString()}
+          </Text>
+        </View>
+
+        <View style={globalTextStyles.labelValueDetailsRow}>
+          <Text style={globalTextStyles.label}>Fees</Text>
+          <Text style={globalTextStyles.value}>{transaction.fees}%</Text>
+        </View>
+
       </View>
 
-      <View style={styles.detailRow}>
-        <Text style={styles.label}>Price/Share</Text>
-        <Text style={styles.value}>{formatTransactionCurrency(transaction.realPricePerShare)}</Text>
-      </View>
-
-      <View style={styles.detailRow}>
-        <Text style={styles.label}>Total Cost</Text>
-        <Text style={styles.value}>{formatTransactionCurrency(transaction.totalCost)}</Text>
-      </View>
-
-      <View style={styles.detailRow}>
-        <Text style={styles.label}>Date</Text>
-        <Text style={styles.value}>
-          {new Date(transaction.transactionDate).toLocaleDateString()}
-        </Text>
-      </View>
-
-      <View style={styles.detailRow}>
-        <Text style={styles.label}>Fees</Text>
-        <Text style={styles.value}>{transaction.fees}%</Text>
-      </View>
     </View>
   );
 };

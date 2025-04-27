@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Holding } from "@/types/portfolio";
 import { FontAwesome } from "@expo/vector-icons";
 import { formatCurrency, formatPercentage } from "@/utils/numberUtils";
+import { globalCardStyles } from "@/styles/globalStyles";
 
 interface Props {
   holding: Holding;
@@ -28,7 +29,7 @@ export default function HoldingCard({ holding, onLongPress }: Props) {
 
   return (
     <TouchableOpacity onLongPress={() => onLongPress()} activeOpacity={0.4}>
-      <View style={styles.card}>
+      <View style={globalCardStyles.card}>
         {/* HEADER */}
         <View style={styles.header}>
           <View>
