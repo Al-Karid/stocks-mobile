@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
   eyeOff: {
     marginLeft: 8,
-    marginBottom: 12,
+    marginBottom: 8,
   },
   userSection: {
     flexDirection: 'row',
