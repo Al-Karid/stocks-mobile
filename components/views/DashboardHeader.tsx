@@ -23,11 +23,11 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio, displayNam
       <View style={styles.headerTop}>
         <TouchableOpacity style={styles.userSection} onPress={() => router.push('/settings')}>
           <Ionicons name="person-circle-outline" size={28} color="white" style={styles.userIcon} />
-          <Text style={styles.greeting}>Hello, {displayName ? displayName : "Investor"}</Text>
+          <Text style={styles.greeting}>Akwaba {displayName ? ", " + displayName : ""}</Text>
         </TouchableOpacity>
 
         <View style={styles.icons}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/alerts')}>
             <Ionicons name="notifications-outline" size={24} color="white" style={styles.icon} />
           </TouchableOpacity>
         </View>
