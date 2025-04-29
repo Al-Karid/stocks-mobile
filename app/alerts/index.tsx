@@ -107,6 +107,8 @@ const AlertsScreen: React.FC = () => {
                 <Switch
                   value={item.enabled}
                   onValueChange={() => toggleEnabled(item.id)}
+                  trackColor={{ false: '#ccc', true: '#000' }}
+                  thumbColor={item.enabled ? '#000' : '#f4f3f4'}
                 />
               </View>
 
