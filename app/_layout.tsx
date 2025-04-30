@@ -57,6 +57,14 @@ export default function Layout() {
               }}
             />
             <Stack.Screen
+              name="alerts/form"
+              options={{
+                title: "New Alert",
+                presentation: "modal",
+                animation: "slide_from_bottom",
+              }}
+            />
+            <Stack.Screen
               name="portfolio/details"
               options={{
                 title: "Portfolio Details",

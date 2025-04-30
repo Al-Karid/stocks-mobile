@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   FlatList,
@@ -9,17 +9,27 @@ import {
   Switch,
   TouchableOpacity,
   Platform,
+  Modal,
 } from 'react-native';
-import AlertFormModal, { AlertData } from './form';
 import { globalCardStyles } from '@/styles/globalStyles';
 import { useActionSheet } from '@expo/react-native-action-sheet';
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { router, useNavigation } from 'expo-router';
+import { AlertData } from '@/types/alerts';
+import { Colors } from '@/styles/colors';
+import { Stock } from '@/types/stock';
+import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { useStockRepository } from '@/data/repositories/stockRepository';
+import { useAlertStore } from '@/stores/alertStore';
 
 interface AlertItem extends AlertData {
   id: number;
 }
 
 const AlertsScreen: React.FC = () => {
+
+  const { alerts: alertStore, fetchAlerts, toggleAlertState } = useAlertStore();
+
   const [alerts, setAlerts] = useState<AlertItem[]>([
     { id: 1, stock: 'SOGC', name: "Société de Gestion du Coton", type: 'above', value: 5800, enabled: true },
     { id: 2, stock: 'BOAS', name: "Bank of Africa Sénégal", type: 'below', value: 7500, enabled: false },
@@ -28,6 +38,32 @@ const AlertsScreen: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingAlert, setEditingAlert] = useState<AlertItem | undefined>();
   const { showActionSheetWithOptions } = useActionSheet();
+
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const [androidModalVisible, setAndroidModalVisible] = useState(false);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const loadAlerts = async () => {
+      const result = await fetchAlerts();
+      setAlerts(result);
+    };
+    loadAlerts();
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS === 'ios') {
+      navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity onPress={() => openStockModal()}>
+            <MaterialCommunityIcons
+              style={{ marginRight: 5, marginTop: 0 }}
+              name="bell-plus-outline" size={23} color={Colors.headerBlue} />
+          </TouchableOpacity>
+        ),
+      });
+    }
+  }, [navigation]);
 
   const handleSave = (alertData: AlertData) => {
     if (editingAlert) {
@@ -53,12 +89,6 @@ const AlertsScreen: React.FC = () => {
     ]);
   };
 
-  const toggleEnabled = (id: number) => {
-    setAlerts(prev =>
-      prev.map(a => (a.id === id ? { ...a, enabled: !a.enabled } : a))
-    );
-  };
-
   const openActionSheet = (alert: AlertItem) => {
     const options = ['Edit', 'Delete', 'Cancel'];
     const destructiveButtonIndex = 1;
@@ -76,8 +106,18 @@ const AlertsScreen: React.FC = () => {
       },
       (index?: number) => {
         if (index === 0) {
-          setEditingAlert(alert);
-          setModalVisible(true);
+          // setEditingAlert(alert);
+          // setModalVisible(true);
+          router.push({
+            pathname: '/alerts/form',
+            params: {
+              stock: alert.stock,
+              type: alert.type,
+              value: alert.value,
+              enabled: alert.enabled as unknown as string,
+              id: alert.id,
+            },
+          });
         } else if (index === 1) {
           handleDelete(alert.id);
         }
@@ -85,10 +125,69 @@ const AlertsScreen: React.FC = () => {
     );
   };
 
+  const [stock, setStock] = useState<Stock>({} as Stock);
+  const [stocks, setStocks] = useState<Stock[]>([]);
+  const { fetchStocks } = useStockRepository();
+
+  useEffect(() => {
+    const loadStocks = async () => {
+      const result = await fetchStocks();
+      setStocks(result);
+    };
+    loadStocks();
+  }, []);
+
+  const openStockModal = () => {
+    Platform.OS === 'ios'
+      ? bottomSheetModalRef.current?.present()
+      : setAndroidModalVisible(true);
+  };
+
+  const closeStockModal = () => {
+    Platform.OS === 'ios'
+      ? bottomSheetModalRef.current?.dismiss()
+      : setAndroidModalVisible(false);
+  };
+
+  const handleStockSelect = (stock: Stock) => {
+    setStock(stock);
+    closeStockModal();
+    router.push({
+      pathname: '/alerts/form',
+      params: {
+        stockSymbol: stock.symbol,
+        stockTitle: stock.title,
+      },
+    });
+  };
+
+  const renderStockItem = ({ item }: { item: Stock }) => (
+    <Pressable onPress={() => handleStockSelect(item)} style={styles.stockItem}>
+      <Text style={styles.stockItemText}>{item.title}</Text>
+    </Pressable>
+  );
+
+  const renderStockSelector = () => (
+    <>
+      <Text style={styles.modalTitle}>Sélectionner une action</Text>
+      <FlatList
+        data={stocks}
+        keyExtractor={(item) => item.symbol}
+        renderItem={renderStockItem}
+        contentContainerStyle={{ paddingBottom: 20 }}
+      />
+      <View style={{ marginTop: 16 }}>
+        <Pressable onPress={closeStockModal} style={styles.modalCancelButton}>
+          <Text style={styles.modalCancelButtonText}>Annuler</Text>
+        </Pressable>
+      </View>
+    </>
+  );
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={alerts}
+        data={alertStore}
         keyExtractor={item => item.id.toString()}
         ListEmptyComponent={() => (
           <View style={{ padding: 20 }}>
@@ -104,12 +203,22 @@ const AlertsScreen: React.FC = () => {
             <View style={globalCardStyles.card}>
               <View style={styles.header}>
                 <Text style={styles.stock}>{item.stock}</Text>
-                <Switch
-                  value={item.enabled}
-                  onValueChange={() => toggleEnabled(item.id)}
-                  trackColor={{ false: '#ccc', true: '#000' }}
-                  thumbColor={item.enabled ? '#000' : '#f4f3f4'}
-                />
+                {
+                  Platform.OS === "ios" ? (
+                    <Switch
+                      value={item.enabled}
+                      onValueChange={() => toggleAlertState(item.id)}
+                    />
+                  ) : (
+                    <Switch
+                      value={item.enabled}
+                      onValueChange={() => toggleAlertState(item.id)}
+                      trackColor={{ false: '#ccc', true: '#000' }}
+                      thumbColor={item.enabled ? '#000' : '#f4f3f4'}
+                    />
+                  )
+                }
+
               </View>
 
               <View style={styles.cardContent}>
@@ -136,12 +245,21 @@ const AlertsScreen: React.FC = () => {
         </Pressable>
       )}
 
-      <AlertFormModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onSave={handleSave}
-        editingAlert={editingAlert}
-      />
+      {/* iOS Bottom Sheet */}
+      {Platform.OS === 'ios' && (
+        <BottomSheetModal ref={bottomSheetModalRef} index={0} snapPoints={['60%']}>
+          <BottomSheetView style={{ flex: 1, padding: 20 }}>
+            {renderStockSelector()}
+          </BottomSheetView>
+        </BottomSheetModal>
+      )}
+
+      {/* Android Fullscreen Modal */}
+      {Platform.OS === 'android' && (
+        <Modal visible={androidModalVisible} animationType="slide">
+          <View style={{ flex: 1, padding: 20 }}>{renderStockSelector()}</View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -149,22 +267,7 @@ const AlertsScreen: React.FC = () => {
 export default AlertsScreen;
 
 const styles = StyleSheet.create({
-  container: { padding: 20, flex: 1, backgroundColor: '#f9fafb' },
-  card: {
-    // backgroundColor: '#ffffff',
-    borderRadius: 16,
-    padding: 16,
-    marginVertical: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 12,
-    elevation: 6,
-    borderWidth: 1,
-    borderColor: '#f1f5f9',
-    marginHorizontal: 10,
-    backgroundColor: 'linear-gradient(to right, #f0f4f8, #e0e6f1)',
-  },
+  container: { padding: 20, flex: 1 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -204,5 +307,39 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3.84,
+  },
+  stockSelector: {
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    paddingVertical: 10,
+    marginBottom: 15,
+  },
+  stockSelectorText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  stockItem: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+  },
+  stockItemText: {
+    fontSize: 16,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  modalCancelButton: {
+    backgroundColor: "#FF3B30",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  modalCancelButtonText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 16,
   },
 });

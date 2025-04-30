@@ -1,7 +1,12 @@
 import { useStockRepository } from '@/data/repositories/stockRepository';
+import { Colors } from '@/styles/colors';
+import { AlertData } from '@/types/alerts';
 import { Stock } from '@/types/stock';
+import { AntDesign } from '@expo/vector-icons';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
+import { useAlertStore } from '@/stores/alertStore';
 import {
   Modal,
   View,
@@ -17,32 +22,22 @@ import {
   Pressable,
 } from 'react-native';
 
-export interface AlertData {
-  stock: string;
-  type: 'above' | 'below';
-  name?: string;
-  value: number;
-  enabled: boolean;
-}
+const AlertFormModal = () => {
 
-interface Props {
-  visible: boolean;
-  onClose: () => void;
-  onSave: (data: AlertData) => void;
-  editingAlert?: AlertData & { id: number };
-}
-
-const AlertFormModal: React.FC<Props> = ({ visible, onClose, onSave, editingAlert }) => {
+  const {stockSymbol: symbol, stockTitle: title} = useLocalSearchParams();
+  const { alerts, addAlert } = useAlertStore();
+  
   const [stock, setStock] = useState('');
   const [type, setType] = useState<'above' | 'below'>('above');
   const [value, setValue] = useState('');
   const [enabled, setEnabled] = useState(true);
 
   const [stocks, setStocks] = useState<Stock[]>([]);
-  const [stockTitle, setStockTitle] = useState('');
+  const [stockTitle, setStockTitle] = useState(title || '');
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [androidModalVisible, setAndroidModalVisible] = useState(false);
   const { fetchStocks } = useStockRepository();
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (editingAlert) {
@@ -51,9 +46,9 @@ const AlertFormModal: React.FC<Props> = ({ visible, onClose, onSave, editingAler
       setValue(String(editingAlert.value));
       setEnabled(editingAlert.enabled);
     } else {
-      setStock('');
+      setStock(title as string || '');
       setType('above');
-      setValue('');
+      setValue('2500');
       setEnabled(true);
     }
   }, [editingAlert]);
@@ -66,10 +61,29 @@ const AlertFormModal: React.FC<Props> = ({ visible, onClose, onSave, editingAler
     loadStocks();
   }, []);
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle: editingAlert ? 'Edit Alert' : 'New Alert',
+      headerLeft : () => (
+        <TouchableOpacity onPress={() => router.back()}>
+          <Text style={{ color: Colors.headerBlue, fontSize: 16 }}>Cancel</Text>
+        </TouchableOpacity>
+      ),
+      headerRight: () => (
+        <TouchableOpacity onPress={() => handleSubmit()}>
+          <Text style={{ color: Colors.headerBlue, fontSize: 16 }}>Save</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
+
   const handleSubmit = () => {
-    if (!stock || !value) return;
-    onSave({ stock, type, value: parseFloat(value), enabled });
-    onClose();
+    if (!value) return;
+    // onSave({id: 0, stock, type, value: parseFloat(value), enabled });
+    addAlert({ id: alerts!.length+1, stock, type, value: parseFloat(value), enabled });
+    console.log({id: 0, stock, type, value: parseFloat(value), enabled });
+    
+    // router.back();
   };
 
   const openStockModal = () => {
@@ -114,70 +128,73 @@ const AlertFormModal: React.FC<Props> = ({ visible, onClose, onSave, editingAler
   );
 
   return (
-    <>
-      <Modal visible={visible} animationType="slide">
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={{ flex: 1 }}
-        >
-          <View style={styles.modalWrapper}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-              <Text style={styles.title}>{editingAlert ? 'Edit Alert' : 'New Alert'}</Text>
+    <View style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={{ flex: 1 }}
+      >
+        <View style={styles.modalWrapper}>
+          <ScrollView contentContainerStyle={styles.scrollContent}>
+            <Text style={styles.label}>Action</Text>
+            <Pressable style={styles.stockSelector}>
+              <Text style={styles.stockSelectorText}>
+                {stockTitle || 'Choisir une action'}
+              </Text>
+            </Pressable>
 
-              <Text style={styles.label}>Action</Text>
-              <Pressable onPress={openStockModal} style={styles.stockSelector}>
-                <Text style={styles.stockSelectorText}>
-                  {stockTitle || 'Choisir une action'}
-                </Text>
-              </Pressable>
+            <Text style={styles.label}>Alert Type</Text>
+            <View style={styles.toggleContainer}>
+              <TouchableOpacity
+                style={[styles.toggleButton, type === 'above' && styles.selectedToggle]}
+                onPress={() => setType('above')}
+              >
+                {/* <AntDesign name="up" size={24} color="white" /> */}
+                <Text style={type === 'above' ? styles.selectedText : styles.toggleText}>Above</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.toggleButton, type === 'below' && styles.selectedToggle]}
+                onPress={() => setType('below')}
+              >
+                {/* <AntDesign name="down" size={24} color="white" /> */}
+                <Text style={type === 'below' ? styles.selectedText : styles.toggleText}>Below</Text>
+              </TouchableOpacity>
+            </View>
 
-              <Text style={styles.label}>Alert Type</Text>
-              <View style={styles.toggleContainer}>
-                <TouchableOpacity
-                  style={[styles.toggleButton, type === 'above' && styles.selectedToggle]}
-                  onPress={() => setType('above')}
-                >
-                  <Text style={type === 'above' ? styles.selectedText : styles.toggleText}>Above</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.toggleButton, type === 'below' && styles.selectedToggle]}
-                  onPress={() => setType('below')}
-                >
-                  <Text style={type === 'below' ? styles.selectedText : styles.toggleText}>Below</Text>
-                </TouchableOpacity>
-              </View>
+            <Text style={styles.label}>Target Value</Text>
+            <TextInput
+              value={value}
+              onChangeText={setValue}
+              keyboardType="numeric"
+              placeholder="e.g. 5800"
+              style={styles.input}
+            />
 
-              <Text style={styles.label}>Target Value</Text>
-              <TextInput
-                value={value}
-                onChangeText={setValue}
-                keyboardType="numeric"
-                placeholder="e.g. 5800"
-                style={styles.input}
+            <View style={styles.row}>
+              <Text style={styles.label}>Enabled</Text>
+              <Switch
+                value={enabled}
+                onValueChange={setEnabled}
+                trackColor={{ false: '#ccc', true: '#000' }}
+                thumbColor={enabled ? '#000' : '#f4f3f4'}
               />
-
-              <View style={styles.row}>
-                <Text style={styles.label}>Enabled</Text>
-                <Switch
-                  value={enabled}
-                  onValueChange={setEnabled}
-                  trackColor={{ false: '#ccc', true: '#000' }}
-                  thumbColor={enabled ? '#000' : '#f4f3f4'}
-                />
-              </View>
-            </ScrollView>
-          </View>
-        </KeyboardAvoidingView>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
-            <Text style={styles.saveText}>Save</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-            <Text style={styles.cancelText}>Cancel</Text>
-          </TouchableOpacity>
+            </View>
+          </ScrollView>
         </View>
-      </Modal>
+      </KeyboardAvoidingView>
+
+      {
+        Platform.OS === 'android' && (
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
+              <Text style={styles.saveText}>Save</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+              <Text style={styles.cancelText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        )
+      }
 
       {/* iOS Bottom Sheet */}
       {Platform.OS === 'ios' && (
@@ -194,7 +211,7 @@ const AlertFormModal: React.FC<Props> = ({ visible, onClose, onSave, editingAler
           <View style={{ flex: 1, padding: 20 }}>{renderStockSelector()}</View>
         </Modal>
       )}
-    </>
+    </View>
   );
 };
 
@@ -241,7 +258,7 @@ const styles = StyleSheet.create({
   },
   toggleButton: {
     flex: 1,
-    padding: 12,
+    padding: 16,
     alignItems: 'center',
     borderRadius: 10,
   },
