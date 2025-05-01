@@ -12,6 +12,7 @@ interface DashboardHeaderProps {
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio, displayName }) => {
   const [isHidden, setIsHidden] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(3); // Example count
 
   const { performance } = portfolio;
   const { totalValue, gainLossPercentage, totalGainLoss } = performance;
@@ -27,8 +28,13 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio, displayNam
         </TouchableOpacity>
 
         <View style={styles.icons}>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={() => {}} style={styles.notificationIconContainer}>
             <Ionicons name="notifications-outline" size={24} color="white" style={styles.icon} />
+            {notificationCount > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{notificationCount}</Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -85,6 +91,7 @@ const styles = StyleSheet.create({
   icons: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight: 5,
   },
   icon: {
     marginRight: 0,
@@ -123,6 +130,25 @@ const styles = StyleSheet.create({
   },
   userIcon: {
     marginRight: 8,
+  },
+  notificationIconContainer: {
+    position: 'relative',
+  },
+  badge: {
+    position: 'absolute',
+    top: -5,
+    right: -10,
+    backgroundColor: 'red',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  badgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
 });
 
