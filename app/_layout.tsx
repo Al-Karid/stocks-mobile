@@ -54,6 +54,8 @@ export default function Layout() {
               name="alerts/index"
               options={{
                 title: "Alerts",
+                headerLargeTitle: true,
+                headerBackTitle: "Dashboard",
               }}
             />
             <Stack.Screen

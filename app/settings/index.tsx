@@ -8,8 +8,9 @@ import {
     Platform,
     UIManager,
     Alert,
+    Switch,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Entypo, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import Collapsible from 'react-native-collapsible';
 import { useUserStore } from '@/stores/userStore';
@@ -100,9 +101,55 @@ export default function SettingsScreen() {
             {/* Section 2: Alerts */}
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Alerts</Text>
-
-                <View style={styles.card}>
+                
+                {/* <Text style={styles.sectionSubtitle}>Canaux de notification</Text> */}
+                <View style={[styles.card, { marginBottom: 12 }]}>
+                    <TouchableOpacity style={[styles.row, styles.row]} onPress={handleAlertSettings}>
+                        <Entypo name="notification" size={20} color="#666" style={styles.icon} />
+                        <Text style={styles.text}>Canal Push</Text>
+                        {
+                            Platform.OS === "ios" ? (
+                                <Switch
+                                    value={false}
+                                    onValueChange={() => { }}
+                                    style={[styles.chevron]}
+                                />
+                            ) : (
+                                <Switch
+                                    value={false}
+                                    onValueChange={() => { }}
+                                    trackColor={{ false: '#ccc', true: '#000' }}
+                                    style={[styles.chevron, { transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }]}
+                                // thumbColor={item.enabled ? '#000' : '#f4f3f4'}
+                                />
+                            )
+                        }
+                        {/* <Ionicons name="chevron-forward-outline" size={18} color="#ccc" style={styles.chevron} /> */}
+                    </TouchableOpacity>
                     <TouchableOpacity style={[styles.row, styles.lastRow]} onPress={handleAlertSettings}>
+                        <MaterialIcons name="sms" size={20} color="#666" style={styles.icon} />
+                        <Text style={styles.text}>Canal SMS</Text>
+                        {
+                            Platform.OS === "ios" ? (
+                                <Switch
+                                    value={false}
+                                    onValueChange={() => { }}
+                                    style={[styles.chevron]}
+                                />
+                            ) : (
+                                <Switch
+                                    value={false}
+                                    onValueChange={() => { }}
+                                    trackColor={{ false: '#ccc', true: '#000' }}
+                                    style={[styles.chevron, { transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }]}
+                                // thumbColor={item.enabled ? '#000' : '#f4f3f4'}
+                                />
+                            )
+                        }
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.card}>
+                    <TouchableOpacity style={[styles.row, styles.lastRow]} onPress={() => router.push('/alerts')}>
                         <Ionicons name="notifications-outline" size={20} color="#666" style={styles.icon} />
                         <Text style={styles.text}>Manage Alerts</Text>
                         <Ionicons name="chevron-forward-outline" size={18} color="#ccc" style={styles.chevron} />
@@ -134,6 +181,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 8,
         color: '#444',
+        paddingLeft: 4,
+    },
+    sectionSubtitle: {
+        fontSize: 12,
+        fontWeight: '500',
+        marginBottom: 8,
+        marginTop: 8,
+        color: '#999',
         paddingLeft: 4,
     },
     card: {

@@ -1,8 +1,8 @@
 export interface AlertData {
     id: number;
-    stock: string;
+    stockSymbol: string;
     type: 'above' | 'below';
-    name?: string;
+    stockTitle?: string;
     value: number;
     enabled: boolean;
 }

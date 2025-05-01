@@ -10,9 +10,9 @@ interface AlertStore {
 }
 
 const mokeAlerts: AlertData[] = [
-    { id: 1, stock: 'SOGC', name: "Société de Gestion du Coton", type: 'above', value: 5800, enabled: true },
-    { id: 2, stock: 'BOAS', name: "Bank of Africa Sénégal", type: 'below', value: 7500, enabled: false },
-    { id: 3, stock: 'TTLC', name: "TOTAL Côte d'Ivoire", type: 'above', value: 4000, enabled: true },
+    { id: 1, stockSymbol: 'SOGC', stockTitle: "Société de Gestion du Coton", type: 'above', value: 5800, enabled: true },
+    { id: 2, stockSymbol: 'BOAS', stockTitle: "Bank of Africa Sénégal", type: 'below', value: 7500, enabled: false },
+    { id: 3, stockSymbol: 'TTLC', stockTitle: "TOTAL Côte d'Ivoire", type: 'above', value: 4000, enabled: true },
 ]
 
 export const useAlertStore = create<AlertStore>((set) => ({

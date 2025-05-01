@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { globalCardStyles } from '@/styles/globalStyles';
 import { useActionSheet } from '@expo/react-native-action-sheet';
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { router, useNavigation } from 'expo-router';
 import { AlertData } from '@/types/alerts';
 import { Colors } from '@/styles/colors';
@@ -31,8 +31,8 @@ const AlertsScreen: React.FC = () => {
   const { alerts: alertStore, fetchAlerts, toggleAlertState } = useAlertStore();
 
   const [alerts, setAlerts] = useState<AlertItem[]>([
-    { id: 1, stock: 'SOGC', name: "Société de Gestion du Coton", type: 'above', value: 5800, enabled: true },
-    { id: 2, stock: 'BOAS', name: "Bank of Africa Sénégal", type: 'below', value: 7500, enabled: false },
+    { id: 1, stockSymbol: 'SOGC', stockTitle: "Société de Gestion du Coton", type: 'above', value: 5800, enabled: true },
+    { id: 2, stockSymbol: 'BOAS', stockTitle: "Bank of Africa Sénégal", type: 'below', value: 7500, enabled: false },
   ]);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -56,9 +56,9 @@ const AlertsScreen: React.FC = () => {
       navigation.setOptions({
         headerRight: () => (
           <TouchableOpacity onPress={() => openStockModal()}>
-            <MaterialCommunityIcons
+            <MaterialIcons
               style={{ marginRight: 5, marginTop: 0 }}
-              name="bell-plus-outline" size={23} color={Colors.headerBlue} />
+              name="notification-add" size={23} color={Colors.headerBlue} />
           </TouchableOpacity>
         ),
       });
@@ -94,15 +94,12 @@ const AlertsScreen: React.FC = () => {
     const destructiveButtonIndex = 1;
     const cancelButtonIndex = 2;
 
-    // Debugging action sheet hook to see if it's triggered correctly
-    console.log("Opening action sheet for alert:", alert);
-
     showActionSheetWithOptions(
       {
         options,
         cancelButtonIndex,
         destructiveButtonIndex,
-        title: `Manage ${alert.stock}`,
+        title: `Manage ${alert.stockSymbol}`,
       },
       (index?: number) => {
         if (index === 0) {
@@ -111,11 +108,7 @@ const AlertsScreen: React.FC = () => {
           router.push({
             pathname: '/alerts/form',
             params: {
-              stock: alert.stock,
-              type: alert.type,
-              value: alert.value,
-              enabled: alert.enabled as unknown as string,
-              id: alert.id,
+              alertId: alert.id,
             },
           });
         } else if (index === 1) {
@@ -188,6 +181,9 @@ const AlertsScreen: React.FC = () => {
     <View style={styles.container}>
       <FlatList
         data={alertStore}
+        contentContainerStyle={{ paddingTop: 16 }}
+        contentInsetAdjustmentBehavior='automatic'
+        showsVerticalScrollIndicator={false}
         keyExtractor={item => item.id.toString()}
         ListEmptyComponent={() => (
           <View style={{ padding: 20 }}>
@@ -202,7 +198,7 @@ const AlertsScreen: React.FC = () => {
           >
             <View style={globalCardStyles.card}>
               <View style={styles.header}>
-                <Text style={styles.stock}>{item.stock}</Text>
+                <Text style={styles.stock}>{item.stockSymbol}</Text>
                 {
                   Platform.OS === "ios" ? (
                     <Switch
@@ -222,9 +218,9 @@ const AlertsScreen: React.FC = () => {
               </View>
 
               <View style={styles.cardContent}>
-                <Text style={styles.cardName}>{item.name}</Text>
+                <Text style={styles.cardName}>{item.stockTitle}</Text>
                 <Text style={styles.cardCondition}>
-                  {item.type === 'above' ? 'Above' : 'Below'} {item.value}
+                  {item.type === 'above' ? 'above' : 'below'} {item.value}
                 </Text>
               </View>
             </View>

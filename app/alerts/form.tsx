@@ -24,7 +24,7 @@ import {
 
 const AlertFormModal = () => {
 
-  const {stockSymbol: symbol, stockTitle: title} = useLocalSearchParams();
+  const {stockSymbol: symbol, stockTitle: title, alertId: alertToEditId} = useLocalSearchParams();
   const { alerts, addAlert } = useAlertStore();
   
   const [stock, setStock] = useState('');
@@ -40,8 +40,10 @@ const AlertFormModal = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    if (editingAlert) {
-      setStock(editingAlert.stock);
+    if (alertToEditId) {
+      const editingAlert = alerts?.find((alert) => alert.id === Number(alertToEditId));
+      if (!editingAlert) return;
+      setStock(title as string || editingAlert.stockTitle || '');
       setType(editingAlert.type);
       setValue(String(editingAlert.value));
       setEnabled(editingAlert.enabled);
@@ -51,7 +53,7 @@ const AlertFormModal = () => {
       setValue('2500');
       setEnabled(true);
     }
-  }, [editingAlert]);
+  }, [alertToEditId]);
 
   useEffect(() => {
     const loadStocks = async () => {
@@ -63,7 +65,7 @@ const AlertFormModal = () => {
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: editingAlert ? 'Edit Alert' : 'New Alert',
+      headerTitle: alertToEditId ? 'Edit Alert' : 'New Alert',
       headerLeft : () => (
         <TouchableOpacity onPress={() => router.back()}>
           <Text style={{ color: Colors.headerBlue, fontSize: 16 }}>Cancel</Text>
@@ -80,7 +82,7 @@ const AlertFormModal = () => {
   const handleSubmit = () => {
     if (!value) return;
     // onSave({id: 0, stock, type, value: parseFloat(value), enabled });
-    addAlert({ id: alerts!.length+1, stock, type, value: parseFloat(value), enabled });
+    addAlert({ id: alerts!.length+1, stockSymbol: stock, type, value: parseFloat(value), enabled });
     console.log({id: 0, stock, type, value: parseFloat(value), enabled });
     
     // router.back();
@@ -138,7 +140,7 @@ const AlertFormModal = () => {
             <Text style={styles.label}>Action</Text>
             <Pressable style={styles.stockSelector}>
               <Text style={styles.stockSelectorText}>
-                {stockTitle || 'Choisir une action'}
+                {stockTitle || stock || 'Choisir une action'}
               </Text>
             </Pressable>
 
@@ -189,7 +191,7 @@ const AlertFormModal = () => {
               <Text style={styles.saveText}>Save</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => router.back()}>
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
           </View>
