@@ -33,11 +33,15 @@ export const useAlertStore = create<AlertStore>((set) => ({
         });
     },
     toggleAlertState: (id: number) => {
+        set((state) => ({
+            alerts: state.alerts?.map((alert) =>
+                alert.id === id ? { ...alert, enabled: !alert.enabled } : alert
+            ) || null
+        }));
         findAlertById(id).then(async (alert) => {
             if (alert) {
                 alert.enabled = !alert.enabled;
-                updateAlert(alert);
-                set({ alerts: await getAlerts() });
+                await updateAlert(alert); // Persist the update without fetching all alerts again
             }
         });
     },

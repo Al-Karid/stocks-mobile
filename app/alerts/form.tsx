@@ -40,19 +40,21 @@ export default function AlertFormModal() {
   }, [alertToEditId]);
 
   useEffect(() => {
-    navigation.setOptions({
-      headerTitle: alertToEditId ? 'Edit Alert' : 'New Alert',
-      headerLeft: () => (
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={{ color: Colors.headerBlue, fontSize: 16 }}>Cancel</Text>
-        </TouchableOpacity>
-      ),
-      headerRight: () => (
-        <TouchableOpacity onPress={() => handleSubmit()}>
-          <Text style={{ color: Colors.headerBlue, fontSize: 16 }}>Save</Text>
-        </TouchableOpacity>
-      ),
-    });
+    if (Platform.OS === 'ios') {
+      navigation.setOptions({
+        headerTitle: alertToEditId ? 'Edit Alert' : 'New Alert',
+        headerLeft: () => (
+          <TouchableOpacity onPress={() => router.back()}>
+            <Text style={{ color: Colors.headerBlue, fontSize: 16 }}>Cancel</Text>
+          </TouchableOpacity>
+        ),
+        headerRight: () => (
+          <TouchableOpacity onPress={() => handleSubmit()}>
+            <Text style={{ color: Colors.headerBlue, fontSize: 16 }}>Save</Text>
+          </TouchableOpacity>
+        )
+      });
+    }
   }, [alertThreshold, alertType, enabled]);
 
   const handleSubmit = async () => {
@@ -88,7 +90,7 @@ export default function AlertFormModal() {
               </Text>
             </Pressable>
 
-            <Text style={styles.label}>Alert Type ({alertType})</Text>
+            <Text style={styles.label}>Alert Type</Text>
             <View style={styles.toggleContainer}>
               <TouchableOpacity
                 style={[styles.toggleButton, alertType === 'above' && styles.selectedToggle]}
@@ -112,7 +114,7 @@ export default function AlertFormModal() {
               value={alertThreshold}
               onChangeText={setAlertThreshold}
             />
-            
+
             <View style={styles.row}>
               <Text style={styles.label}>Enabled</Text>
               <Switch

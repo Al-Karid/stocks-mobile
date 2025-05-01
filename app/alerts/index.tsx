@@ -186,7 +186,7 @@ const AlertsScreen: React.FC = () => {
                     />
                   ) : (
                     <Switch
-                      value={item.enabled}
+                      value={Boolean(item.enabled)}
                       onValueChange={() => toggleAlertState(item.id)}
                       trackColor={{ false: '#ccc', true: '#000' }}
                       thumbColor={item.enabled ? '#000' : '#f4f3f4'}
@@ -196,16 +196,41 @@ const AlertsScreen: React.FC = () => {
 
               </View>
 
-              <Collapsible style={styles.cardContent}>
-                <Text style={styles.cardName}>{item.stockSymbol}</Text>
-                <Text style={styles.cardCondition}>
-                  {item.type === 'above' ? 'above' : 'below'} {item.value}
+              <View style={styles.cardContent}>
+                {/* <Text style={styles.cardName}>{item.stockSymbol}</Text> */}
+                <Text
+                  style={[
+                  styles.cardCondition,
+                  { color: item.enabled ? (item.type === 'above' ? '#4CAF50' : '#F44336') : '#9E9E9E' },
+                  ]}
+                >
+                  {item.type === 'above' ? (
+                  <>
+                    <Feather name="arrow-up" size={16} color={item.enabled ? '#4CAF50' : '#9E9E9E'} /> above {item.value}
+                  </>
+                  ) : (
+                  <>
+                    <Feather name="arrow-down" size={16} color={item.enabled ? '#F44336' : '#9E9E9E'} /> below {item.value}
+                  </>
+                  )}
                 </Text>
-              </Collapsible>
+              </View>
             </View>
           </TouchableOpacity>
         )}
       />
+
+      {/* Floating Action Button */}
+      {Platform.OS === "android" && (
+        <Pressable
+          onPress={() => {
+            setAndroidModalVisible(true);
+          }}
+          style={styles.fab}
+        >
+          <Feather name="plus" size={24} color="white" />
+        </Pressable>
+      )}
 
       {/* iOS Bottom Sheet */}
       {Platform.OS === 'ios' && (
@@ -229,7 +254,7 @@ const AlertsScreen: React.FC = () => {
 export default AlertsScreen;
 
 const styles = StyleSheet.create({
-  container: { padding: 20, flex: 1 },
+  container: { padding: 20, flex: 1, paddingTop: 8 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -253,7 +278,7 @@ const styles = StyleSheet.create({
   },
   cardCondition: {
     fontSize: 16,
-    color: '#4CAF50', // Use green for 'above' type for visual cue
+    color: '#4CAF50',
   },
   fab: {
     position: "absolute",

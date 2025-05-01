@@ -27,7 +27,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio, displayNam
         </TouchableOpacity>
 
         <View style={styles.icons}>
-          <TouchableOpacity onPress={() => router.push('/alerts')}>
+          <TouchableOpacity onPress={() => {}}>
             <Ionicons name="notifications-outline" size={24} color="white" style={styles.icon} />
           </TouchableOpacity>
         </View>
