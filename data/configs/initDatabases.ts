@@ -3,6 +3,7 @@ import { initDb } from '@/data/databases/stocks';
 import { initPortfolioDb } from '@/data/databases/portfolios';
 import { useStockSync } from '@/data/configs/syncStocks';
 import { initAlertDatabase } from '@/data/databases/alerts';
+import { initSettingsDb } from '@/data/databases/settings';
 
 export const useInitDatabases = () => {
 
@@ -16,6 +17,7 @@ export const useInitDatabases = () => {
         await initDb();
         await initPortfolioDb();
         await initAlertDatabase();
+        await initSettingsDb();
         console.log("✅ Databases initialized");
 
         await syncStockDataFromServer();

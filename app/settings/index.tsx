@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
     View,
     Text,
@@ -6,7 +6,6 @@ import {
     TouchableOpacity,
     ScrollView,
     Platform,
-    UIManager,
     Alert,
     Switch,
 } from 'react-native';
@@ -14,14 +13,13 @@ import { Entypo, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import Collapsible from 'react-native-collapsible';
 import { useUserStore } from '@/stores/userStore';
-
-if (Platform.OS === 'android') {
-    UIManager.setLayoutAnimationEnabledExperimental &&
-        UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+import { useAlertStore } from '@/stores/alertStore';
+import { NotificationChannel } from '@/types/settings';
 
 export default function SettingsScreen() {
 
+    const {notificationChannels, updateNotificationChannel } = useAlertStore();
+    
     const [collapsed, setCollapsed] = useState(true);
     const { user, loggedIn, removeUser } = useUserStore();
     const canLogin = false
@@ -110,14 +108,14 @@ export default function SettingsScreen() {
                         {
                             Platform.OS === "ios" ? (
                                 <Switch
-                                    value={false}
-                                    onValueChange={() => { }}
+                                    value={notificationChannels?.push || false}
+                                    onValueChange={() => {updateNotificationChannel('push')}}
                                     style={[styles.chevron]}
                                 />
                             ) : (
                                 <Switch
-                                    value={false}
-                                    onValueChange={() => { }}
+                                    value={notificationChannels?.push || false}
+                                    onValueChange={() => {updateNotificationChannel('push')}}
                                     trackColor={{ false: '#ccc', true: '#000' }}
                                     style={[styles.chevron, { transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }]}
                                 // thumbColor={item.enabled ? '#000' : '#f4f3f4'}
@@ -132,14 +130,14 @@ export default function SettingsScreen() {
                         {
                             Platform.OS === "ios" ? (
                                 <Switch
-                                    value={false}
-                                    onValueChange={() => { }}
+                                    value={notificationChannels?.sms || false}
+                                    onValueChange={() => {updateNotificationChannel('sms')}}
                                     style={[styles.chevron]}
                                 />
                             ) : (
                                 <Switch
-                                    value={false}
-                                    onValueChange={() => { }}
+                                    value={notificationChannels?.sms || false}
+                                    onValueChange={() => {updateNotificationChannel('sms')}}
                                     trackColor={{ false: '#ccc', true: '#000' }}
                                     style={[styles.chevron, { transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }]}
                                 // thumbColor={item.enabled ? '#000' : '#f4f3f4'}

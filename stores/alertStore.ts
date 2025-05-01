@@ -1,20 +1,28 @@
 import { AlertData } from "@/types/alerts";
 import { create } from "zustand";
 import { useAlertRepository } from "@/data/repositories/alertRepository";
+import { NotificationChannel } from "@/types/settings";
+import { SettingData } from "@/types/settings";
+import { useSettingRepository } from "@/data/repositories/settingRepository";
 
 interface AlertStore {
     alerts: AlertData[] | null;
+    notificationChannels: NotificationChannel;
     fetchAlerts: () => Promise<AlertData[]>;
     addAlert: (alert: AlertData) => void;
     removeAlert: (id: number) => void;
     updateAlert: (alert: AlertData) => void;
     toggleAlertState: (id: number) => void;
+    getNotificationChannels: () => Promise<NotificationChannel>;
+    updateNotificationChannel: (channel: string) => void;
 }
 
 const { getAlerts, saveAlert, deleteAlert, updateAlert, findAlertById } = useAlertRepository();
+const { getSettings, updateSetting } = useSettingRepository();
 
-export const useAlertStore = create<AlertStore>((set) => ({
+export const useAlertStore = create<AlertStore>((set, get) => ({
     alerts: null,
+    notificationChannels: { push: false, sms: false },
     fetchAlerts: async () => {
         const fetchedAlerts = await getAlerts();
         set({ alerts: fetchedAlerts });
@@ -50,5 +58,50 @@ export const useAlertStore = create<AlertStore>((set) => ({
             const fetchedAlerts = await getAlerts();
             set({ alerts: fetchedAlerts });
         });
+    },
+    getNotificationChannels: async (): Promise<NotificationChannel> => {
+        const notificationChannels: SettingData = await getSettings("notificationChannels");
+        if (notificationChannels) {
+            let channels = JSON.parse(notificationChannels.value);
+            channels = channels.reduce((acc: NotificationChannel, channel: any) => {
+                acc[channel.key as keyof NotificationChannel] = channel.value;
+                return acc;
+            }, {} as NotificationChannel);
+            set({ notificationChannels: channels });
+            return channels;
+        } else {
+            console.error("‼️ Error fetching notification channels");
+            return {} as NotificationChannel;
+        }
+    },
+    updateNotificationChannel: async (channel: string): Promise<void> => {
+
+        set((state) => ({
+            notificationChannels: {
+                ...state.notificationChannels,
+                [channel]: !state.notificationChannels[channel as keyof NotificationChannel],
+            },
+        }));
+
+        try {
+            // 2️⃣ Get the new toggled state
+            const currentChannels = get().notificationChannels;
+
+            // 3️⃣ Prepare the data to be saved
+            const channelArray = Object.entries(currentChannels).map(([key, value]) => ({
+                key,
+                value,
+            }));
+
+            const setting: SettingData = {
+                key: "notificationChannels",
+                value: JSON.stringify(channelArray),
+            };
+
+            // 4️⃣ Save to persistent storage
+            await updateSetting(setting);
+        } catch (error) {
+            console.error("‼️ Error updating notification channel:", error);
+        }
     }
 }));
