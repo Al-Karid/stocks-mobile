@@ -1,8 +1,10 @@
+import React, { useCallback } from "react";
 import {
   FlatList,
   Text,
   StyleSheet,
   RefreshControl,
+  View,
 } from "react-native";
 import StockCard from "@/components/stocks/StockCard";
 import { Stock } from "@/types/stock";
@@ -11,18 +13,38 @@ interface StockListingProps {
   stocks: Stock[];
   refreshing: boolean;
   onRefresh: () => void;
-};
+}
 
-const StockListing: React.FC<StockListingProps> = ({stocks, refreshing, onRefresh}) => {
-  //const [refreshing, setRefreshing] = useState(false);
+const StockListing: React.FC<StockListingProps> = ({ stocks, refreshing, onRefresh }) => {
+  const renderStockCard = useCallback(({ item }: { item: Stock }) => {
+    return (
+      <StockCard
+        name={item.title.trimStart()}
+        symbol={item.symbol}
+        currentPrice={item.currentPrice}
+        previousClosePrice={item.previousClosePrice}
+        percentageChange={item.percentageChange}
+        volumeTitles={item.volumeTitles}
+        volumeValues={item.volumeValues}
+        opening={item.opening}
+        high={item.high}
+        low={item.low}
+        isInWatchlist={item.isInWatchlist ?? false}
+      />
+    );
+  }, []);
 
   return (
     <FlatList
       data={stocks}
       keyExtractor={(item) => item.id.toString()}
+      renderItem={renderStockCard}
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
-      contentInsetAdjustmentBehavior="automatic"
+      initialNumToRender={20}
+      maxToRenderPerBatch={5}
+      windowSize={5}
+      removeClippedSubviews={true}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -30,25 +52,15 @@ const StockListing: React.FC<StockListingProps> = ({stocks, refreshing, onRefres
           colors={["#007bff"]}
         />
       }
-      renderItem={({ item }) => (
-        <StockCard
-          name={item.title.trimStart()}
-          symbol={item.symbol}
-          currentPrice={item.currentPrice}
-          previousClosePrice={item.previousClosePrice}
-          percentageChange={item.percentageChange}
-          volumeTitles={item.volumeTitles}
-          volumeValues={item.volumeValues}
-          opening={item.opening}
-          high={item.high}
-          low={item.low}
-          isInWatchlist={item.isInWatchlist ?? false}
-        />
-      )}
       ListHeaderComponent={() => (
-        <Text style={{ fontSize: 12, marginBottom: 8, color: "#888", paddingLeft: 2 }}>
+        <Text style={styles.headerText}>
           {stocks.length} Stocks
         </Text>
+      )}
+      ListEmptyComponent={() => (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No stocks found.</Text>
+        </View>
       )}
     />
   );
@@ -57,8 +69,24 @@ const StockListing: React.FC<StockListingProps> = ({stocks, refreshing, onRefres
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    backgroundColor: "#f2f2f2"
+    backgroundColor: "#f2f2f2",
+  },
+  headerText: {
+    fontSize: 12,
+    marginBottom: 8,
+    color: "#888",
+    paddingLeft: 2,
+  },
+  emptyContainer: {
+    flex: 1,
+    padding: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
+    color: "#666",
+    fontSize: 14,
   },
 });
 
-export default StockListing;
+export default React.memo(StockListing);

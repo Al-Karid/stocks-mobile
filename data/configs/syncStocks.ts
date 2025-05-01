@@ -4,6 +4,7 @@ import { saveStocksToDb } from "@/data/databases/stocks";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 import { useWatchlistStore } from "@/stores/watchlistStore";
 import { usePortfolioStore } from "@/stores/portfolioStore";
+import { useStockStore } from "@/stores/stockStore";
 import { Storage } from "expo-sqlite/kv-store";
 
 const API_URL = "https://stocks.revalys.com/v1/stocks";
@@ -13,6 +14,7 @@ export const useStockSync = () => {
   const { fetchWatchlist } = useWatchlistStore();
   const { fetchPortfolios } = usePortfolioStore();
   const { updateWatchlist } = useStockRepository();
+  const { fetchStocks } = useStockStore();
 
   const syncStockDataFromServer = useCallback(async (): Promise<string> => {
 
@@ -35,6 +37,7 @@ export const useStockSync = () => {
       updateWatchlist();
 
       //3. Fetch watchlist and portfolios
+      await fetchStocks();
       await fetchWatchlist();
       await fetchPortfolios();
 

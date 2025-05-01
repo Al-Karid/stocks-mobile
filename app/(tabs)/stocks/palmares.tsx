@@ -20,9 +20,15 @@ const PalmaresScreen = () => {
     fetchPalmaresData();
   }, []);
 
+  // De-duplicate based on 'id' property
+  const uniquePalmaresData = palmaresData.filter(
+    (value, index, self) =>
+      index === self.findIndex((t) => t.id === value.id) // Keep only the first occurrence of each 'id'
+  );
+
   return (
     <FlatList
-      data={palmaresData}
+      data={uniquePalmaresData} // Use the de-duplicated data
       keyExtractor={(item) => item.id.toString()}
       contentContainerStyle={{ padding: 16 }}
       showsVerticalScrollIndicator={false}
