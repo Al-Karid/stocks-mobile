@@ -30,11 +30,6 @@ const AlertsScreen: React.FC = () => {
 
   const { alerts: alertStore, fetchAlerts, toggleAlertState } = useAlertStore();
 
-  const [alerts, setAlerts] = useState<AlertItem[]>([
-    { id: 1, stockSymbol: 'SOGC', stockTitle: "Société de Gestion du Coton", type: 'above', value: 5800, enabled: true },
-    { id: 2, stockSymbol: 'BOAS', stockTitle: "Bank of Africa Sénégal", type: 'below', value: 7500, enabled: false },
-  ]);
-
   const [modalVisible, setModalVisible] = useState(false);
   const [editingAlert, setEditingAlert] = useState<AlertItem | undefined>();
   const { showActionSheetWithOptions } = useActionSheet();
@@ -45,11 +40,11 @@ const AlertsScreen: React.FC = () => {
 
   useEffect(() => {
     const loadAlerts = async () => {
-      const result = await fetchAlerts();
-      setAlerts(result);
+      await fetchAlerts();
     };
     loadAlerts();
-  }, []);
+  }
+  , []);
 
   useEffect(() => {
     if (Platform.OS === 'ios') {
@@ -66,14 +61,7 @@ const AlertsScreen: React.FC = () => {
   }, [navigation]);
 
   const handleSave = (alertData: AlertData) => {
-    if (editingAlert) {
-      setAlerts(prev =>
-        prev.map(a => (a.id === editingAlert.id ? { ...a, ...alertData } : a))
-      );
-    } else {
-      const newId = Math.max(0, ...alerts.map(a => a.id)) + 1;
-      setAlerts(prev => [...prev, { ...alertData, id: newId }]);
-    }
+
   };
 
   const handleDelete = (id: number) => {
@@ -83,7 +71,7 @@ const AlertsScreen: React.FC = () => {
         text: 'Delete',
         style: 'destructive',
         onPress: () => {
-          setAlerts(prev => prev.filter(a => a.id !== id));
+          
         },
       },
     ]);
@@ -160,6 +148,10 @@ const AlertsScreen: React.FC = () => {
     </Pressable>
   );
 
+  const renderBooleanSwitch = (value: number) => {
+    return value === 1 
+  }
+
   const renderStockSelector = () => (
     <>
       <Text style={styles.modalTitle}>Sélectionner une action</Text>
@@ -198,11 +190,11 @@ const AlertsScreen: React.FC = () => {
           >
             <View style={globalCardStyles.card}>
               <View style={styles.header}>
-                <Text style={styles.stock}>{item.stockSymbol}</Text>
+                <Text style={styles.stock}>{item.stockSymbol} ({item.enabled})</Text>
                 {
                   Platform.OS === "ios" ? (
                     <Switch
-                      value={item.enabled}
+                      value={Boolean(item.enabled)}
                       onValueChange={() => toggleAlertState(item.id)}
                     />
                   ) : (

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { initDb } from '@/data/databases/stocks';
 import { initPortfolioDb } from '@/data/databases/portfolios';
 import { useStockSync } from '@/data/configs/syncStocks';
+import { initAlertDatabase } from '@/data/databases/alerts';
 
 export const useInitDatabases = () => {
 
@@ -14,6 +15,7 @@ export const useInitDatabases = () => {
       try {
         await initDb();
         await initPortfolioDb();
+        await initAlertDatabase();
         console.log("✅ Databases initialized");
 
         await syncStockDataFromServer();

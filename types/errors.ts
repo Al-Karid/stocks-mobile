@@ -11,3 +11,10 @@ export class StocksPortfolioError extends Error {
         this.name = "StocksPortfolioError";
     }
 }
+
+export class StocksAlertError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "StocksAlertError";
+    }
+}

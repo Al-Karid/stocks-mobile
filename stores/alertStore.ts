@@ -1,5 +1,7 @@
 import { AlertData } from "@/types/alerts";
 import { create } from "zustand";
+import { useAlertRepository } from "@/data/repositories/alertRepository";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 interface AlertStore {
     alerts: AlertData[] | null;
@@ -9,18 +11,15 @@ interface AlertStore {
     toggleAlertState: (id: number) => void;
 }
 
-const mokeAlerts: AlertData[] = [
-    { id: 1, stockSymbol: 'SOGC', stockTitle: "Société de Gestion du Coton", type: 'above', value: 5800, enabled: true },
-    { id: 2, stockSymbol: 'BOAS', stockTitle: "Bank of Africa Sénégal", type: 'below', value: 7500, enabled: false },
-    { id: 3, stockSymbol: 'TTLC', stockTitle: "TOTAL Côte d'Ivoire", type: 'above', value: 4000, enabled: true },
-]
+const { getAlerts, saveAlert, deleteAlert, updateAlert, findAlertById } = useAlertRepository();
 
 export const useAlertStore = create<AlertStore>((set) => ({
     alerts: null,
     fetchAlerts: async () => {
-        // Replace with actual fetch logic
-        const fetchedAlerts: AlertData[] = mokeAlerts;
+        const fetchedAlerts = await getAlerts();
         set({ alerts: fetchedAlerts });
+        console.log("Fetched alerts:", fetchedAlerts);
+
         return fetchedAlerts;
     },
     addAlert: (alert: AlertData) => {
@@ -33,7 +32,13 @@ export const useAlertStore = create<AlertStore>((set) => ({
             alerts: state.alerts ? state.alerts.filter((alert) => alert.id !== id) : null,
         }));
     },
-    toggleAlertState: (id: number) => set((state) => ({
-        alerts: state.alerts ? state.alerts.map((alert) => alert.id === id ? { ...alert, enabled: !alert.enabled } : alert) : null,
-    }))
+    toggleAlertState: (id: number) => {
+        findAlertById(id).then(async (alert) => {
+            if (alert) {
+                alert.enabled = !alert.enabled;
+                updateAlert(alert);
+                set({ alerts: await getAlerts() });
+            }
+        });
+    }
 }));
