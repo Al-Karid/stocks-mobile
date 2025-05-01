@@ -21,6 +21,7 @@ import { Stock } from '@/types/stock';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useStockRepository } from '@/data/repositories/stockRepository';
 import { useAlertStore } from '@/stores/alertStore';
+import Collapsible from 'react-native-collapsible';
 
 interface AlertItem extends AlertData {
   id: number;
@@ -28,10 +29,7 @@ interface AlertItem extends AlertData {
 
 const AlertsScreen: React.FC = () => {
 
-  const { alerts: alertStore, fetchAlerts, toggleAlertState } = useAlertStore();
-
-  const [modalVisible, setModalVisible] = useState(false);
-  const [editingAlert, setEditingAlert] = useState<AlertItem | undefined>();
+  const { alerts: alertStore, removeAlert, fetchAlerts, toggleAlertState } = useAlertStore();
   const { showActionSheetWithOptions } = useActionSheet();
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -44,7 +42,7 @@ const AlertsScreen: React.FC = () => {
     };
     loadAlerts();
   }
-  , []);
+    , []);
 
   useEffect(() => {
     if (Platform.OS === 'ios') {
@@ -60,24 +58,20 @@ const AlertsScreen: React.FC = () => {
     }
   }, [navigation]);
 
-  const handleSave = (alertData: AlertData) => {
-
-  };
-
-  const handleDelete = (id: number) => {
-    Alert.alert('Delete Alert', 'Are you sure?', [
+  const handleDelete = (alert: AlertData) => {
+    Alert.alert(alert.stockTitle!, 'Delete this alert ?', [
       { text: 'Cancel' },
       {
         text: 'Delete',
         style: 'destructive',
         onPress: () => {
-          
+          removeAlert(alert.id);
         },
       },
     ]);
   };
 
-  const openActionSheet = (alert: AlertItem) => {
+  const openActionSheet = (alert: AlertData) => {
     const options = ['Edit', 'Delete', 'Cancel'];
     const destructiveButtonIndex = 1;
     const cancelButtonIndex = 2;
@@ -87,12 +81,10 @@ const AlertsScreen: React.FC = () => {
         options,
         cancelButtonIndex,
         destructiveButtonIndex,
-        title: `Manage ${alert.stockSymbol}`,
+        title: `${alert.stockTitle}`,
       },
       (index?: number) => {
         if (index === 0) {
-          // setEditingAlert(alert);
-          // setModalVisible(true);
           router.push({
             pathname: '/alerts/form',
             params: {
@@ -100,13 +92,12 @@ const AlertsScreen: React.FC = () => {
             },
           });
         } else if (index === 1) {
-          handleDelete(alert.id);
+          handleDelete(alert);
         }
       }
     );
   };
 
-  const [stock, setStock] = useState<Stock>({} as Stock);
   const [stocks, setStocks] = useState<Stock[]>([]);
   const { fetchStocks } = useStockRepository();
 
@@ -131,7 +122,6 @@ const AlertsScreen: React.FC = () => {
   };
 
   const handleStockSelect = (stock: Stock) => {
-    setStock(stock);
     closeStockModal();
     router.push({
       pathname: '/alerts/form',
@@ -147,10 +137,6 @@ const AlertsScreen: React.FC = () => {
       <Text style={styles.stockItemText}>{item.title}</Text>
     </Pressable>
   );
-
-  const renderBooleanSwitch = (value: number) => {
-    return value === 1 
-  }
 
   const renderStockSelector = () => (
     <>
@@ -186,11 +172,12 @@ const AlertsScreen: React.FC = () => {
         )}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onLongPress={() => openActionSheet(item)} // Long press to show action sheet
+            onLongPress={() => openActionSheet(item)}
           >
             <View style={globalCardStyles.card}>
               <View style={styles.header}>
-                <Text style={styles.stock}>{item.stockSymbol} ({item.enabled})</Text>
+                {/* <Text style={styles.stock}>{item.stockSymbol}</Text> */}
+                <Text style={styles.cardName}>{item.stockTitle}</Text>
                 {
                   Platform.OS === "ios" ? (
                     <Switch
@@ -209,29 +196,16 @@ const AlertsScreen: React.FC = () => {
 
               </View>
 
-              <View style={styles.cardContent}>
-                <Text style={styles.cardName}>{item.stockTitle}</Text>
+              <Collapsible style={styles.cardContent}>
+                <Text style={styles.cardName}>{item.stockSymbol}</Text>
                 <Text style={styles.cardCondition}>
                   {item.type === 'above' ? 'above' : 'below'} {item.value}
                 </Text>
-              </View>
+              </Collapsible>
             </View>
           </TouchableOpacity>
         )}
       />
-
-      {/* Floating Action Button */}
-      {Platform.OS === "android" && (
-        <Pressable
-          onPress={() => {
-            setEditingAlert(undefined);
-            setModalVisible(true);
-          }}
-          style={styles.fab}
-        >
-          <Feather name="plus" size={24} color="white" />
-        </Pressable>
-      )}
 
       {/* iOS Bottom Sheet */}
       {Platform.OS === 'ios' && (
@@ -260,7 +234,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    // marginBottom: 10,
   },
   stock: {
     fontSize: 18,
@@ -271,9 +245,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: 10
   },
   cardName: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#475569',
   },
   cardCondition: {

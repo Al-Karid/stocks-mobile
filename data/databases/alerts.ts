@@ -14,7 +14,7 @@ export const initAlertDatabase = async () => {
                 stockSymbol TEXT NOT NULL,
                 stockTitle TEXT,
                 type TEXT NOT NULL,
-                value REAL NOT NULL,
+                value INTEGER NOT NULL,
                 enabled INTEGER NOT NULL DEFAULT 1,
                 UNIQUE (stockSymbol, type)
             );`
