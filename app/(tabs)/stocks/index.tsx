@@ -75,6 +75,14 @@ export default function HomeScreen() {
             <FontAwesome name="eye" size={22} color="#fff" />
           </TouchableOpacity>
 
+          <TouchableOpacity
+            style={[styles.button, styles.watchlist]}
+            onPress={() => router.push("/stocks/push")}
+          >
+            <Text style={styles.buttonText}>Test notifications</Text>
+            <FontAwesome name="eye" size={22} color="#fff" />
+          </TouchableOpacity>
+
           {/* <TouchableOpacity
             style={[styles.button, styles.portfolio]}
             onPress={() => router.push("/")}
