@@ -124,23 +124,23 @@ export default function AlertFormModal() {
                 thumbColor={enabled ? '#000' : '#f4f3f4'}
               />
             </View>
+            {
+              Platform.OS === 'android' && (
+                <View>
+                  <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
+                    <Text style={styles.saveText}>Save</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={styles.cancelButton} onPress={() => router.back()}>
+                    <Text style={styles.cancelText}>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+              )
+            }
           </ScrollView>
         </View>
       </KeyboardAvoidingView>
 
-      {
-        Platform.OS === 'android' && (
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
-              <Text style={styles.saveText}>Save</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.cancelButton} onPress={() => router.back()}>
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        )
-      }
     </View>
   );
 };
