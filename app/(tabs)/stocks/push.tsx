@@ -11,7 +11,9 @@ export default function App() {
 
   useEffect(() => {
     getDevicePushToken()
-      .then(token => setExpoPushToken(token ?? ''))
+      .then(token => {
+        setExpoPushToken(token ?? '')
+        console.log('Push token:', token);})
       .catch(err => console.error(err));
 
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
@@ -48,8 +50,8 @@ export default function App() {
             body: JSON.stringify({
               to: expoPushToken,
               sound: 'default',
-              title: 'Test Notification',
-              body: 'This is a test',
+              title: 'PALM CI fell below 2,000 FCFA',
+              body: 'PALM CI dropped to 1,980 FCFA (-3.5%)',
             }),
           });
         }}

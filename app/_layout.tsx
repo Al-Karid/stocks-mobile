@@ -4,8 +4,10 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useNotificationHandler } from '@/services/notificationService';
 
 export default function Layout() {
+  useNotificationHandler();
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ActionSheetProvider>
@@ -65,6 +67,14 @@ export default function Layout() {
                 name="alerts/index"
                 options={{
                   title: "Alerts",
+                  headerLargeTitle: true,
+                  headerBackTitle: "Dashboard",
+                }}
+              />
+              <Stack.Screen
+                name="alerts/notifications"
+                options={{
+                  title: "Notifications",
                   headerLargeTitle: true,
                   headerBackTitle: "Dashboard",
                 }}
