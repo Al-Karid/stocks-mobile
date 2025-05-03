@@ -43,7 +43,6 @@ export const usePortfolioRepository = () => {
         const holdings = await fetchHoldings(portfolio.id);
         portfolio.holdings = holdings;
       }
-      console.log("💾 Portfolios fetched successfully", portfolios);
       return portfolios;
     } catch (error) {
       console.error("‼️ Error fetching portfolios:", error);

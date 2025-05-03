@@ -18,3 +18,10 @@ export class StocksAlertError extends Error {
         this.name = "StocksAlertError";
     }
 }
+
+export class StockSettingError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "StockSettingError";
+    }
+}

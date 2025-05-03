@@ -17,7 +17,7 @@ export const useStockSync = () => {
   const { fetchPortfolios } = usePortfolioStore();
   const { updateWatchlist } = useStockRepository();
   const { fetchStocks } = useStockStore();
-  const { fetchAlerts, getNotificationChannels } = useAlertStore();
+  const { fetchAlerts, getNotificationChannels, getDevicePushToken } = useAlertStore();
   const { fetchNotifications } = useNotificationStore();
 
   const syncStockDataFromServer = useCallback(async (): Promise<string> => {
@@ -47,6 +47,7 @@ export const useStockSync = () => {
       await fetchAlerts();
       await getNotificationChannels();
       await fetchNotifications();
+      await getDevicePushToken();
 
       return data[0].updated_at;
     

@@ -7,6 +7,7 @@ import { useSettingRepository } from "@/data/repositories/settingRepository";
 
 interface AlertStore {
     alerts: AlertData[] | null;
+    devicePushToken: string | null;
     notificationChannels: NotificationChannel;
     fetchAlerts: () => Promise<AlertData[]>;
     addAlert: (alert: AlertData) => void;
@@ -14,6 +15,7 @@ interface AlertStore {
     updateAlert: (alert: AlertData) => void;
     toggleAlertState: (id: number) => void;
     getNotificationChannels: () => Promise<NotificationChannel>;
+    getDevicePushToken: () => Promise<string | null>;
     updateNotificationChannel: (channel: string) => void;
 }
 
@@ -22,6 +24,7 @@ const { getSettings, updateSetting } = useSettingRepository();
 
 export const useAlertStore = create<AlertStore>((set, get) => ({
     alerts: null,
+    devicePushToken: null,
     notificationChannels: { push: false, sms: false },
     fetchAlerts: async () => {
         const fetchedAlerts = await getAlerts();
@@ -102,6 +105,23 @@ export const useAlertStore = create<AlertStore>((set, get) => ({
             await updateSetting(setting);
         } catch (error) {
             console.error("‼️ Error updating notification channel:", error);
+        }
+    },
+    getDevicePushToken: async (): Promise<string | null> => {
+        try {
+            const token = await getSettings("devicePushToken");
+            if (token) {
+                set({ devicePushToken: token.value });
+                console.log("✅ Device push token fetched successfully:", token.value);
+                return token.value;
+            } else {
+                console.warn("‼️ Warning: Device push token not found");
+                set({ devicePushToken: null });
+                return null;
+            }
+        } catch (error) {
+            console.error("‼️ Error fetching device push token:", error);
+            return null; 
         }
     }
 }));

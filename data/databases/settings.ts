@@ -1,4 +1,6 @@
 import { dbPromise } from "@/data/providers/sqlite";
+import { getDevicePushToken } from "@/services/pushTokenService";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 export const initSettingsDb = async () => {
     const db = await dbPromise;
@@ -19,11 +21,11 @@ export const initSettingsDb = async () => {
             { key: "push", value: true },
             { key: "sms", value: false },
         ];
-        
+
         const defaultSettings = [
             { key: "theme", value: "light" },
             { key: "language", value: "en" },
-            { key: "notifications", value: "true" },
+            { key: "devicePushToken", value: await getDevicePushToken() },
             { key: "notificationChannels", value: JSON.stringify(notificationChannels) },
         ];
 
