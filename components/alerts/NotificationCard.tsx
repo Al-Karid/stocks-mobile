@@ -1,5 +1,6 @@
 // components/AlertNotificationCard.tsx
 import { globalCardStyles } from '@/styles/globalStyles';
+import { AlertType } from '@/types/alerts';
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
@@ -7,12 +8,12 @@ type Props = {
   title: string;
   description: string;
   time: string;
-  type?: 'gain' | 'loss';
+  type?: AlertType;
 };
 
 const NotificationCard = ({ title, description, time, type }: Props) => {
   return (
-    <View style={[globalCardStyles.card, type === 'gain' ? styles.gain : styles.loss]}>
+    <View style={[globalCardStyles.card, type === 'above' ? styles.gain : styles.loss]}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.description}>{description}</Text>
       <Text style={styles.time}>{time}</Text>

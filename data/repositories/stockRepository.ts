@@ -1,5 +1,6 @@
 import { dbPromise } from "@/data/providers/sqlite";
 import { Stock } from "@/types/stock";
+import { Watchlist } from "@/types/watchlist";
 
 export const useStockRepository = () => {
 

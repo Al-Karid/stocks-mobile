@@ -5,6 +5,7 @@ export const initAlertDatabase = async () => {
 
     // Drop all existing tables
     await db.execAsync("DROP TABLE IF EXISTS alerts;");
+    await db.execAsync("DROP TABLE IF EXISTS notifications;");
 
     try {
         // Alerts Table
@@ -20,6 +21,20 @@ export const initAlertDatabase = async () => {
             );`
         );
         console.log("✅ Database initialized: Alerts");
+
+        // Notifications Table
+        await db.runAsync(
+            `CREATE TABLE IF NOT EXISTS notifications (
+                id TEXT PRIMARY KEY NOT NULL,
+                title TEXT NOT NULL,
+                body TEXT NOT NULL,
+                notification_type TEXT NOT NULL,
+                stock_symbol TEXT NOT NULL,
+                timestamp TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+                UNIQUE (id)
+            );`
+        );
+        console.log("✅ Database initialized: Notifications");
 
         // Insert sample data
         await db.runAsync(

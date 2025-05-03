@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Portfolio } from '@/types/portfolio';
 import { formatCurrency, formatPercentage } from '@/utils/numberUtils';
 import { router, useRouter } from 'expo-router';
+import { useNotificationStore } from '@/stores/notificationStore';
 
 interface DashboardHeaderProps {
   portfolio: Portfolio;
@@ -11,8 +12,16 @@ interface DashboardHeaderProps {
 }
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio, displayName }) => {
+  
+  const { todayNotificationsCount } = useNotificationStore();
+  
   const [isHidden, setIsHidden] = useState(false);
-  const [notificationCount, setNotificationCount] = useState(3); // Example count
+  const [notificationCount, setNotificationCount] = useState(todayNotificationsCount);
+
+  useEffect(() => {
+    setNotificationCount(todayNotificationsCount);
+  }
+  , [todayNotificationsCount]);
 
   const { performance } = portfolio;
   const { totalValue, gainLossPercentage, totalGainLoss } = performance;
