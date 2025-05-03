@@ -111,13 +111,15 @@ export default function SettingsScreen() {
                                     value={notificationChannels?.push || false}
                                     onValueChange={() => {updateNotificationChannel('push')}}
                                     style={[styles.chevron]}
+                                    disabled={true}
                                 />
                             ) : (
                                 <Switch
                                     value={notificationChannels?.push || false}
                                     onValueChange={() => {updateNotificationChannel('push')}}
-                                    trackColor={{ false: '#ccc', true: '#000' }}
-                                    style={[styles.chevron, { transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }]}
+                                    // trackColor={{ false: '#ccc', true: '#000' }}
+                                    style={[styles.chevron]}
+                                    disabled={true}
                                 // thumbColor={item.enabled ? '#000' : '#f4f3f4'}
                                 />
                             )
@@ -133,13 +135,16 @@ export default function SettingsScreen() {
                                     value={notificationChannels?.sms || false}
                                     onValueChange={() => {updateNotificationChannel('sms')}}
                                     style={[styles.chevron]}
+                                    disabled={true}
                                 />
                             ) : (
                                 <Switch
                                     value={notificationChannels?.sms || false}
                                     onValueChange={() => {updateNotificationChannel('sms')}}
-                                    trackColor={{ false: '#ccc', true: '#000' }}
-                                    style={[styles.chevron, { transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }]}
+                                    // trackColor={{ false: '#ccc', true: '#000' }}
+                                    style={[styles.chevron]}
+                                    disabled={true}
+                                    
                                 // thumbColor={item.enabled ? '#000' : '#f4f3f4'}
                                 />
                             )
