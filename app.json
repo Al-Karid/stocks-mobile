@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Portfolio",
-    "slug": "Portfolio",
+    "slug": "stocks",
     "version": "1.0.0",
     "platforms": [
       "ios",
