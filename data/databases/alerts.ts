@@ -12,12 +12,16 @@ export const initAlertDatabase = async () => {
         await db.runAsync(
             `CREATE TABLE IF NOT EXISTS alerts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                uiid TEXT,
+                devicePushToken TEXT,
                 stockSymbol TEXT NOT NULL,
                 stockTitle TEXT,
-                type TEXT NOT NULL,
+                alertType TEXT NOT NULL CHECK(alertType IN ('above', 'below')),
                 value INTEGER NOT NULL,
                 enabled INTEGER NOT NULL DEFAULT 1,
-                UNIQUE (stockSymbol, type)
+                synced INTEGER NOT NULL DEFAULT 0,
+                notificationChannels TEXT,
+                UNIQUE (stockSymbol, alertType)
             );`
         );
         console.log("✅ Database initialized: Alerts");
@@ -36,16 +40,14 @@ export const initAlertDatabase = async () => {
         );
         console.log("✅ Database initialized: Notifications");
 
-        // Insert sample data
-        await db.runAsync(
-            `INSERT OR IGNORE INTO alerts (stockSymbol, stockTitle, type, value, enabled) 
-            VALUES ('AAPL', 'Apple Inc.', 'above', 150, 1);`
-        );
+        // // Insert sample data
+        // await db.runAsync(
+        //     `INSERT OR IGNORE INTO alerts (uiid, devicePushToken, stockSymbol, stockTitle, type, value, enabled) 
+        //     VALUES ('123e4567-e89b-12d3-a456-426614174000', 'ExponentPushToken[9EGyIJNo0EAo1maf1mR9qR]', 'AAPL', 'Apple Inc.', 'above', 150, 1);`
+        // );
 
-        await db.runAsync(
-            `INSERT OR IGNORE INTO alerts (stockSymbol, stockTitle, type, value, enabled) 
-            VALUES ('GOOGL', 'Alphabet Inc.', 'below', 2800, 1);`
-        );
+        console.log("✅ Sample data inserted into alerts table");
+        
     } catch (error) {
         console.error("❌ Error initializing database:", error);
     }

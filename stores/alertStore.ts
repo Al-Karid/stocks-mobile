@@ -32,6 +32,8 @@ export const useAlertStore = create<AlertStore>((set, get) => ({
         return fetchedAlerts;
     },
     addAlert: async (alert: AlertData) => {
+        console.log("🚀 Adding alert:", alert);
+        
         await saveAlert(alert).then(async () => {
             const fetchedAlerts = await getAlerts();
             set({ alerts: fetchedAlerts });

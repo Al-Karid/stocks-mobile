@@ -3,8 +3,8 @@ import { AlertData } from "@/types/alerts";
 import { StocksAlertError } from "@/types/errors";
 
 export const useAlertRepository = () => {
-    
-    const getAlerts = async () : Promise<AlertData[]> => {
+
+    const getAlerts = async (): Promise<AlertData[]> => {
         try {
             const db = await dbPromise;
             const alerts = await db.getAllAsync<AlertData>("SELECT * FROM alerts");
@@ -18,13 +18,35 @@ export const useAlertRepository = () => {
     const saveAlert = async (alert: AlertData): Promise<void> => {
         try {
             const db = await dbPromise;
-            await db.runAsync("INSERT OR REPLACE INTO alerts (stockSymbol, stockTitle, type, value, enabled) VALUES (?, ?, ?, ?, ?)",
-                [alert.stockSymbol, alert.stockTitle!, alert.type, alert.value, alert.enabled]
+            await db.runAsync(`
+                INSERT INTO alerts 
+                (
+                    uiid, 
+                    devicePushToken, 
+                    stockSymbol, 
+                    stockTitle, 
+                    alertType, 
+                    value, 
+                    enabled,
+                    synced,
+                    notificationChannels
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [
+                    alert.uiid ?? "",
+                    alert.devicePushToken ?? "",
+                    alert.stockSymbol ?? "",
+                    alert.stockTitle ?? "",
+                    alert.alertType ?? "",
+                    alert.value ?? 0,
+                    alert.enabled ?? false,
+                    alert.synced ?? false,
+                    JSON.stringify(alert.notificationChannels) ?? "{}"
+                ]
             );
             console.log(`💾 Alert ${alert.stockTitle} saved successfully`);
         } catch (error) {
-            console.error("‼️ Error inserting Alert:", error);
-            throw new StocksAlertError("Error inserting Alert");
+            console.error("‼️ Error saving Alert:", error);
+            throw new StocksAlertError("Error saving Alert");
         }
     }
 
@@ -39,11 +61,12 @@ export const useAlertRepository = () => {
         }
     }
 
+    
     const updateAlert = async (alert: AlertData): Promise<void> => {
         try {
             const db = await dbPromise;
-            await db.runAsync("UPDATE alerts SET type = ?, value = ?, enabled = ? WHERE id = ?",
-                [alert.type, alert.value, alert.enabled, alert.id]
+            await db.runAsync("UPDATE alerts SET alertType = ?, value = ?, enabled = ? WHERE id = ?",
+                [alert.alertType, alert.value, alert.enabled, alert.id]
             );
             console.log(`💾 Alert ${alert.stockTitle} updated successfully`);
         } catch (error) {

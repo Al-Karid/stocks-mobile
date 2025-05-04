@@ -1,10 +1,14 @@
 export interface AlertData {
     id: number;
+    uiid: string;
+    devicePushToken: string | null;
     stockSymbol: string;
-    type: 'above' | 'below';
-    stockTitle?: string;
+    stockTitle: string;
+    alertType: AlertType;
     value: number;
     enabled: boolean;
+    synced?: boolean;
+    notificationChannels: string;
 }
 
 export type AlertType = 'above' | 'below';
@@ -16,6 +20,10 @@ export interface Notification {
     notification_type: AlertType;
     stock_symbol: string;
     timestamp: string; // ISO 8601 format e.g., "2023-10-01T12:00:00Z"
+}
+
+export interface NotificationChannel {
+    [key: string]: boolean;
 }
 
 export interface NotificationDataApiResponse {

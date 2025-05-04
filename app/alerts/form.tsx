@@ -15,13 +15,16 @@ import {
   ScrollView,
   Pressable,
 } from 'react-native';
+import { getDevicePushToken } from '@/services/pushTokenService';
+// import 'react-native-get-random-values';
+// import { v4 as uuidv4 } from 'uuid';
 
 export default function AlertFormModal() {
 
   const navigation = useNavigation();
 
   const { stockSymbol, stockTitle, alertId: alertToEditId } = useLocalSearchParams();
-  const { alerts, addAlert, updateAlert } = useAlertStore();
+  const { alerts, addAlert, updateAlert, notificationChannels } = useAlertStore();
 
   const [alertType, setAlertType] = useState<'below' | 'above'>('above')
   const [alertThreshold, setAlertThreshold] = useState("2500")
@@ -33,7 +36,7 @@ export default function AlertFormModal() {
       const editingAlert = alerts?.find((alert) => alert.id === Number(alertToEditId));
       if (!editingAlert) return;
       setAlertStockTitle(editingAlert.stockTitle!);
-      setAlertType(editingAlert.type);
+      setAlertType(editingAlert.alertType);
       setAlertThreshold(String(editingAlert.value));
       setEnabled(editingAlert.enabled);
     }
@@ -58,21 +61,31 @@ export default function AlertFormModal() {
   }, [alertThreshold, alertType, enabled]);
 
   const handleSubmit = async () => {
-    const newAlert: AlertData = {
-      id: alertToEditId ? Number(alertToEditId) : 0,
-      stockSymbol: String(stockSymbol),
-      type: alertType,
-      stockTitle: String(stockTitle),
-      value: Number(alertThreshold.trim()),
-      enabled,
-    };
-    if (alertToEditId) {
-      updateAlert(newAlert);
-    } else {
-      addAlert(newAlert);
+
+    try {
+      const newAlert: AlertData = {
+        id: alertToEditId ? Number(alertToEditId) : 0,
+        //TODO use UUID after build. Deps are laready installed, waiting for build
+        uiid: alertToEditId ? String(alertToEditId) : Math.random().toString(36),
+        devicePushToken: alertToEditId ? String(alertToEditId) : await getDevicePushToken(),
+        stockSymbol: String(stockSymbol),
+        alertType: alertType,
+        stockTitle: String(stockTitle),
+        value: Number(alertThreshold.trim()),
+        enabled,
+        synced: false,
+        notificationChannels: JSON.stringify(notificationChannels),
+      };
+      if (alertToEditId) {
+        updateAlert(newAlert);
+      } else {
+        addAlert(newAlert);
+      }
+      // addAlert(newAlert);
+      router.back();
+    } catch (error) {
+      console.error("Error saving alert:", error);
     }
-    // addAlert(newAlert);
-    router.back();
   };
 
   return (
@@ -127,7 +140,7 @@ export default function AlertFormModal() {
             {
               Platform.OS === 'android' && (
                 <View>
-                  <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
+                  <TouchableOpacity style={styles.saveButton} onPress={() => handleSubmit()}>
                     <Text style={styles.saveText}>Save</Text>
                   </TouchableOpacity>
 

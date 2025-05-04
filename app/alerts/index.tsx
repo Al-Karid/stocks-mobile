@@ -201,10 +201,10 @@ const AlertsScreen: React.FC = () => {
                 <Text
                   style={[
                   styles.cardCondition,
-                  { color: item.enabled ? (item.type === 'above' ? '#4CAF50' : '#F44336') : '#9E9E9E' },
+                  { color: item.enabled ? (item.alertType === 'above' ? '#4CAF50' : '#F44336') : '#9E9E9E' },
                   ]}
                 >
-                  {item.type === 'above' ? (
+                  {item.alertType === 'above' ? (
                   <>
                     <Feather name="arrow-up" size={16} color={item.enabled ? '#4CAF50' : '#9E9E9E'} /> above {item.value}
                   </>
