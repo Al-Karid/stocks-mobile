@@ -1,14 +1,18 @@
 export interface AlertData {
     id: number;
-    uiid: string;
+    uuid: string;
     devicePushToken: string | null;
     stockSymbol: string;
     stockTitle: string;
     alertType: AlertType;
     value: number;
     enabled: boolean;
-    synced?: boolean;
+    synced: boolean;
     notificationChannels: string;
+    deleted?: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+    deletedAt?: string;
 }
 
 export type AlertType = 'above' | 'below';

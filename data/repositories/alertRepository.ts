@@ -21,7 +21,7 @@ export const useAlertRepository = () => {
             await db.runAsync(`
                 INSERT INTO alerts 
                 (
-                    uiid, 
+                    uuid, 
                     devicePushToken, 
                     stockSymbol, 
                     stockTitle, 
@@ -32,7 +32,7 @@ export const useAlertRepository = () => {
                     notificationChannels
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
-                    alert.uiid ?? "",
+                    alert.uuid ?? "",
                     alert.devicePushToken ?? "",
                     alert.stockSymbol ?? "",
                     alert.stockTitle ?? "",
@@ -65,8 +65,8 @@ export const useAlertRepository = () => {
     const updateAlert = async (alert: AlertData): Promise<void> => {
         try {
             const db = await dbPromise;
-            await db.runAsync("UPDATE alerts SET alertType = ?, value = ?, enabled = ? WHERE id = ?",
-                [alert.alertType, alert.value, alert.enabled, alert.id]
+            await db.runAsync("UPDATE alerts SET alertType = ?, value = ?, enabled = ?, synced = ? WHERE id = ?",
+                [alert.alertType, alert.value, alert.enabled, alert.synced, alert.id]
             );
             console.log(`💾 Alert ${alert.stockTitle} updated successfully`);
         } catch (error) {
@@ -88,6 +88,22 @@ export const useAlertRepository = () => {
         } catch (error) {
             console.error("‼️ Error fetching Alert by ID:", error);
             throw new StocksAlertError("Error fetching Alert by ID");
+        }
+    }
+
+    const findAllNonSyncedAlerts = async (): Promise<AlertData[]> => {
+        try {
+            const db = await dbPromise;
+            const alerts = await db.getAllAsync<AlertData>("SELECT * FROM alerts WHERE synced = 0");
+            if (alerts) {
+                return alerts;
+            } else {
+                console.info(`✅ All alerts are synced`);
+                return [];
+            }
+        } catch (error) {
+            console.error("‼️ Error fetching Alerts by synced status:", error);
+            throw new StocksAlertError("Error fetching Alerts by synced status");
         }
     }
 

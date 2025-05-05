@@ -1,0 +1,1 @@
+export const ALERT_ENDPOINT = "https://exnzy6c1rd.execute-api.us-east-1.amazonaws.com/Stage/alerts";

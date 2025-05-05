@@ -14,10 +14,11 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Pressable,
+  Alert,
 } from 'react-native';
 import { getDevicePushToken } from '@/services/pushTokenService';
-// import 'react-native-get-random-values';
-// import { v4 as uuidv4 } from 'uuid';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function AlertFormModal() {
 
@@ -30,11 +31,13 @@ export default function AlertFormModal() {
   const [alertThreshold, setAlertThreshold] = useState("2500")
   const [alertStockTitle, setAlertStockTitle] = useState(stockTitle)
   const [enabled, setEnabled] = useState(false)
+  const [alertToEdit, setAlertToEdit] = useState<AlertData | null>(null);
 
   useEffect(() => {
     if (alertToEditId) {
       const editingAlert = alerts?.find((alert) => alert.id === Number(alertToEditId));
       if (!editingAlert) return;
+      setAlertToEdit(editingAlert);
       setAlertStockTitle(editingAlert.stockTitle!);
       setAlertType(editingAlert.alertType);
       setAlertThreshold(String(editingAlert.value));
@@ -57,24 +60,27 @@ export default function AlertFormModal() {
           </TouchableOpacity>
         )
       });
-    }
-  }, [alertThreshold, alertType, enabled]);
+    }else {
+      navigation.setOptions({
+        headerTitle: alertToEditId ? 'Edit Alert' : 'New Alert'})
+  }}, [alertThreshold, alertType, enabled]);
 
   const handleSubmit = async () => {
-
     try {
       const newAlert: AlertData = {
         id: alertToEditId ? Number(alertToEditId) : 0,
-        //TODO use UUID after build. Deps are laready installed, waiting for build
-        uiid: alertToEditId ? String(alertToEditId) : Math.random().toString(36),
-        devicePushToken: alertToEditId ? String(alertToEditId) : await getDevicePushToken(),
-        stockSymbol: String(stockSymbol),
+        uuid: alertToEditId ? String(alertToEdit?.uuid) : uuidv4(),
+        devicePushToken: await getDevicePushToken(),
+        stockSymbol: alertToEditId ? alertToEdit?.stockSymbol! : String(stockSymbol),
         alertType: alertType,
-        stockTitle: String(stockTitle),
+        stockTitle: alertToEditId ? alertToEdit?.stockTitle! : String(stockTitle),
         value: Number(alertThreshold.trim()),
         enabled,
         synced: false,
         notificationChannels: JSON.stringify(notificationChannels),
+        deleted: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
       if (alertToEditId) {
         updateAlert(newAlert);
@@ -85,6 +91,11 @@ export default function AlertFormModal() {
       router.back();
     } catch (error) {
       console.error("Error saving alert:", error);
+      Alert.alert(
+        "Error",
+        "There was an error saving the alert. Please try again.",
+        [{ text: "OK" }]
+      );
     }
   };
 
