@@ -11,6 +11,8 @@ export const formatLocalDate = (dateStr: string | undefined) => {
   };
 
   export const formatRelativeDate = (dateStr: string | undefined) => {
+    console.log("dateStr", dateStr);
+    
     if (!dateStr) return "inconnue";
 
     const date = new Date(dateStr);

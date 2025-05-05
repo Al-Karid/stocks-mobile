@@ -32,8 +32,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio, displayNam
     <View style={styles.header}>
       <View style={styles.headerTop}>
         <TouchableOpacity style={styles.userSection} onPress={() => router.push('/settings')}>
-          <Ionicons name="person-circle-outline" size={28} color="white" style={styles.userIcon} />
-          <Text style={styles.greeting}>Akwaba {displayName ? ", " + displayName : ""}</Text>
+          <Ionicons name="person-circle-outline" size={28} color="gray" style={styles.userIcon} />
+          <Text style={styles.greeting}>Portfolio {displayName ? ", " + displayName : ""}</Text>
         </TouchableOpacity>
 
         <View style={styles.icons}>
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   },
   greeting: {
     fontSize: 24,
-    color: 'white',
+    color: 'gray',
     fontWeight: 'bold',
   },
   icons: {

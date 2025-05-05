@@ -1,4 +1,3 @@
-// components/AlertNotificationCard.tsx
 import { globalCardStyles } from '@/styles/globalStyles';
 import { AlertType } from '@/types/alerts';
 import React from 'react';
@@ -12,10 +11,19 @@ type Props = {
 };
 
 const NotificationCard = ({ title, description, time, type }: Props) => {
+  const isGain = type === 'above';
+
   return (
-    <View style={[globalCardStyles.card, type === 'above' ? styles.gain : styles.loss]}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{description}</Text>
+    <View style={[globalCardStyles.card, isGain ? styles.gainBorder : styles.lossBorder]}>
+      <View style={styles.header}>
+        <Text style={styles.title} numberOfLines={2}>{title}</Text>
+        {type && (
+          <View style={[styles.tag, isGain ? styles.gainTag : styles.lossTag]}>
+            <Text style={styles.tagText}>{isGain ? 'Hausse' : 'Baisse'}</Text>
+          </View>
+        )}
+      </View>
+      <Text style={styles.description} numberOfLines={3}>{description}</Text>
       <Text style={styles.time}>{time}</Text>
     </View>
   );
@@ -25,33 +33,61 @@ export default NotificationCard;
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 12,
-    marginVertical: 6,
+    backgroundColor: '#ffffff',
+    borderRadius: 18,
+    padding: 18,
+    marginVertical: 10,
     shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
     elevation: 2,
   },
-  gain: {
+  gainBorder: {
     borderLeftWidth: 4,
-    borderLeftColor: '#22c55e',
+    borderLeftColor: '#86efac', // soft green
   },
-  loss: {
+  lossBorder: {
     borderLeftWidth: 4,
-    borderLeftColor: '#ef4444',
+    borderLeftColor: '#fca5a5', // soft red
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 6,
   },
   title: {
-    fontWeight: '600',
-    fontSize: 16,
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#1f2937', // soft gray-black
+    flex: 1,
+    marginRight: 10,
   },
   description: {
-    color: '#444',
-    marginVertical: 4,
+    color: '#4b5563', // neutral gray
+    fontSize: 14,
+    marginVertical: 6,
   },
   time: {
-    color: '#888',
+    color: '#9ca3af',
     fontSize: 12,
+    marginTop: 2,
+  },
+  tag: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 999,
+  },
+  gainTag: {
+    backgroundColor: '#ecfdf5',
+  },
+  lossTag: {
+    backgroundColor: '#fef2f2',
+  },
+  tagText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#374151',
   },
 });
