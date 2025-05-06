@@ -1,5 +1,6 @@
 import { dbPromise } from "@/data/providers/sqlite";
 import { getDevicePushToken } from "@/services/pushTokenService";
+import { UserProfileSettings } from "@/types/settings";
 
 export const initSettingsDb = async () => {
     const db = await dbPromise;
@@ -21,12 +22,30 @@ export const initSettingsDb = async () => {
             { key: "sms", value: false },
         ];
 
+        const freeUserProfileSettings: UserProfileSettings = {
+            userProfile: "free",
+            maxPorfolio: 2,
+            maxWatchlist: 2,
+            maxTransactions: 10,
+            maxAlerts: 3,
+        };
+
+        const premiumUserProfileSettings: UserProfileSettings = {
+            userProfile: "premium",
+            maxPorfolio: 100,
+            maxWatchlist: 100,
+            maxTransactions: 100,
+            maxAlerts: 100,
+        };
+
         const defaultSettings = [
             { key: "theme", value: "light" },
             { key: "language", value: "en" },
             { key: "databaseInitialized", value: "false" },
             { key: "devicePushToken", value: await getDevicePushToken() },
             { key: "notificationChannels", value: JSON.stringify(notificationChannels) },
+            { key: "freeUserProfileSettings", value: JSON.stringify(freeUserProfileSettings) },
+            { key: "premiumUserProfileSettings", value: JSON.stringify(premiumUserProfileSettings) },
         ];
 
         for (const setting of defaultSettings) {
