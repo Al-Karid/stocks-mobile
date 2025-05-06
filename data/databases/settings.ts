@@ -1,6 +1,5 @@
 import { dbPromise } from "@/data/providers/sqlite";
 import { getDevicePushToken } from "@/services/pushTokenService";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 export const initSettingsDb = async () => {
     const db = await dbPromise;
