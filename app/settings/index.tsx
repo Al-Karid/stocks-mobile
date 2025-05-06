@@ -43,15 +43,15 @@ export default function SettingsScreen() {
     return (
         <ScrollView style={styles.container} contentInsetAdjustmentBehavior="automatic">
             {/* Section 1: Account */}
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Account</Text>
+            <View>
+                {/* <Text style={styles.sectionTitle}>Account</Text> */}
 
                 <View style={styles.card}>
 
                     {isRegistered && (
-                        <TouchableOpacity style={styles.row} onPress={() => setCollapsed(!collapsed)}>
+                        <TouchableOpacity style={styles.row} onPress={() => setCollapsed(!collapsed)} disabled>
                             <Ionicons name="person-outline" size={20} color="#666" style={styles.icon} />
-                            <Text style={styles.text}>{user.name}</Text>
+                            <Text style={styles.text}>{user?.name}</Text>
                             <Ionicons
                                 name={collapsed ? 'chevron-forward-outline' : 'chevron-up-outline'}
                                 size={18}
@@ -80,7 +80,7 @@ export default function SettingsScreen() {
                         </TouchableOpacity>
                     )}
 
-                    {!isRegistered && (
+                    {isRegistered && (
                         <TouchableOpacity style={styles.row} onPress={() => router.push('/settings/register')}>
                             <Ionicons name="person-add" size={20} color="#666" style={styles.icon} />
                             <Text style={styles.text}>Register</Text>
