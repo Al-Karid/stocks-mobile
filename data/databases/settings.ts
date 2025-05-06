@@ -25,6 +25,7 @@ export const initSettingsDb = async () => {
         const defaultSettings = [
             { key: "theme", value: "light" },
             { key: "language", value: "en" },
+            { key: "databaseInitialized", value: "false" },
             { key: "devicePushToken", value: await getDevicePushToken() },
             { key: "notificationChannels", value: JSON.stringify(notificationChannels) },
         ];

@@ -15,7 +15,6 @@ SplashScreen.preventAutoHideAsync();
 
 // Set the animation options. This is optional.
 SplashScreen.setOptions({
-  duration: 1000,
   fade: true,
 });
 
