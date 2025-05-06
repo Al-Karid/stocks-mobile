@@ -12,7 +12,6 @@ import { usePortfolioStore } from '@/stores/portfolioStore';
 import AssetCard from '@/components/stocks/AssetCard';
 import { useStockSync } from '@/data/configs/syncStocks';
 import { formatRelativeDate } from '@/utils/dateUtils';
-import { useInitDatabases } from '@/data/configs/initDatabases';
 import { Portfolio } from '@/types/portfolio';
 import { Storage } from "expo-sqlite/kv-store";
 import { useUserStore } from '@/stores/userStore';
@@ -28,7 +27,7 @@ const DashboardScreen = () => {
   const [lastSync, setLastSync] = useState<string>();
   const [defaultPortfolio, setDefaultPortfolio] = useState<Portfolio>();
 
-  const { loading, error } = useInitDatabases();
+  // const { loading, error } = useInitDatabases();
   const router = useRouter();
 
   const fetchLastSyncDate = async () => {
@@ -53,26 +52,6 @@ const DashboardScreen = () => {
     await fetchLastSyncDate();
     setRefreshing(false);
   };
-
-  if (loading) {
-    return (
-      <SafeAreaProvider>
-        <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#121212' }}>
-          <Text style={{ color: 'white' }}>Loading...</Text>
-        </SafeAreaView>
-      </SafeAreaProvider>
-    );
-  }
-
-  if (error) {
-    return (
-      <SafeAreaProvider>
-        <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#121212' }}>
-          <Text style={{ color: 'red' }}>Error: {error}</Text>
-        </SafeAreaView>
-      </SafeAreaProvider>
-    );
-  }
 
   return (
     <SafeAreaProvider>

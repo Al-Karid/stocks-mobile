@@ -1,38 +1,28 @@
-import { useEffect, useState } from 'react';
 import { initDb } from '@/data/databases/stocks';
 import { initPortfolioDb } from '@/data/databases/portfolios';
-import { useStockSync } from '@/data/configs/syncStocks';
 import { initAlertDatabase } from '@/data/databases/alerts';
 import { initSettingsDb } from '@/data/databases/settings';
+import { useStockSync } from '@/data/configs/syncStocks';
 
-export const useInitDatabases = () => {
-
+// This function should be used inside a component to access the sync method
+export const useAppInitializer = () => {
   const { syncStockDataFromServer } = useStockSync();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        await initDb();
-        await initPortfolioDb();
-        await initAlertDatabase();
-        await initSettingsDb();
-        console.log("✅ Databases initialized");
+  const initializeAppData = async (): Promise<void> => {
+    try {
+      await initDb();
+      await initPortfolioDb();
+      await initAlertDatabase();
+      await initSettingsDb();
+      console.log("✅ Databases initialized");
 
-        await syncStockDataFromServer();
-        console.log("🔄 Stock data synchronized");
+      await syncStockDataFromServer();
+      console.log("🔄 Stock data synchronized");
+    } catch (err: any) {
+      console.error("‼️ Error initializing app:", err);
+      throw err;
+    }
+  };
 
-      } catch (err: any) {
-        console.error("‼️ Error initializing app:", err);
-        setError(err.message || "Unknown error");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initialize();
-  }, []);
-
-  return { loading, error };
+  return { initializeAppData };
 };
