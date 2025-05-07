@@ -8,12 +8,14 @@ import { formatCurrency, formatPercentage } from "@/utils/numberUtils";
 import { ScrollView } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
 import { globalCardStyles, globalTextStyles } from "@/styles/globalStyles";
+import { useSettingsStore } from "@/stores/settingsStore";
 
 export default function StocksDetailsScreen() {
 
   const { symbol } = useLocalSearchParams();
   const { addStockToWatchlist, removeStockFromWatchlist } = useWatchlistStore();
   const { findStock } = useStockRepository();
+    const { userContraintCounts, increaseUserContraintCounts, decreaseUserContraintCounts } = useSettingsStore();
 
   const [watchlisted, setWatchlisted] = useState(false);
   const [stock, setStock] = useState<Stock | null>(null);
@@ -36,11 +38,13 @@ export default function StocksDetailsScreen() {
   const addToWatchlist = (symbol: string | undefined) => {
     addStockToWatchlist(symbol ?? "");
     setWatchlisted(true);
+    decreaseUserContraintCounts("maxWatchlist");
   };
 
   const removeFromWatchlist = (symbol: string | undefined) => {
     removeStockFromWatchlist(symbol ?? "");
     setWatchlisted(false);
+    increaseUserContraintCounts("maxWatchlist");
   };
 
   return (
@@ -143,7 +147,8 @@ export default function StocksDetailsScreen() {
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
-            style={styles.actionButton}
+            disabled={userContraintCounts.maxWatchlist <= 0}
+            style={[styles.actionButton, (userContraintCounts.maxWatchlist <= 0) && styles.actionButtonDisabled]}
             onPress={() => addToWatchlist(stock?.symbol)}
           >
             <Text style={styles.actionButtonText}>Ajouter à la Watchlist</Text>
@@ -271,6 +276,7 @@ const styles = StyleSheet.create({
   },
   actionButtonDisabled: {
     backgroundColor: "#E0E0E0",
+    opacity: 0.6, // Add opacity for a more dynamic disabled effect
   },
   actionButtonTextDisabled: {
     color: "#A0A0A0",

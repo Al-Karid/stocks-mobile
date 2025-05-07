@@ -10,6 +10,7 @@ import { useUserStore } from '@/stores/userStore';
 import { useAlertStore } from '@/stores/alertStore';
 import { useStockStore } from '@/stores/stockStore';
 import { useNotificationStore } from '@/stores/notificationStore';
+import { useSettingsStore } from '@/stores/settingsStore';
 
 // This function should be used inside a component to access the sync method
 export const useAppInitializer = () => {
@@ -20,13 +21,14 @@ export const useAppInitializer = () => {
   const { fetchStocks } = useStockStore();
   const { fetchAlerts, getNotificationChannels, getDevicePushToken } = useAlertStore();
   const { fetchNotifications } = useNotificationStore();
+  const { fetchUserContraintCounts } = useSettingsStore();
 
   const { syncStockDataFromServer } = useStockSync();
   const { getSettings, saveSetting } = useSettingRepository();
 
   const initializeAppData = async (): Promise<void> => {
     try {
-      initSettingsDb();
+      await initSettingsDb();
       const dbInitialized = await getSettings("databaseInitialized");
       if (dbInitialized.value === "true") {
         console.log("✅ Databases already initializedm skipping initialization");
@@ -36,6 +38,7 @@ export const useAppInitializer = () => {
         await fetchPortfolios();
         await fetchAlerts();
         await fetchNotifications();
+        await fetchUserContraintCounts();
       } else {
         console.log("🔄 Initializing databases...");
         await initDb();

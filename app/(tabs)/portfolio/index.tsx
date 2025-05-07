@@ -11,12 +11,21 @@ import { useNavigation } from "expo-router";
 import { Portfolio } from "@/types/portfolio";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { useSettingsStore } from "@/stores/settingsStore";
 
 export default function PortfolioScreen() {
-
   const navigation = useNavigation();
 
-  const { portfolios: portfolioStore, fetchPortfolios, addPortfolio } = usePortfolioStore();
+  const {
+    portfolios: portfolioStore,
+    fetchPortfolios,
+    addPortfolio,
+  } = usePortfolioStore();
+  const {
+    userContraintCounts,
+    increaseUserContraintCounts,
+    decreaseUserContraintCounts,
+  } = useSettingsStore();
 
   const [portfolioName, setPortfolioName] = useState("");
   const [isAddVisible, setAddVisible] = useState(false);
@@ -33,6 +42,7 @@ export default function PortfolioScreen() {
       return;
     }
     await addPortfolio(portfolioName);
+    decreaseUserContraintCounts("maxPorfolio");
     setPortfolioName("");
     setAddVisible(false);
     await fetchPortfolios();
@@ -62,8 +72,8 @@ export default function PortfolioScreen() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#f2f2f2' }}>
-        <StatusBar style="dark" backgroundColor='white' />
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#f2f2f2" }}>
+        <StatusBar style="dark" backgroundColor="white" />
         <ActionSheetProvider>
           <>
             <PortfolioListing portfolios={portfolios} />
@@ -88,14 +98,16 @@ export default function PortfolioScreen() {
             </Dialog.Container>
           </>
         </ActionSheetProvider>
-        {Platform.OS === 'android' && (
+        {Platform.OS === "android" && (
           <Pressable
+            disabled={userContraintCounts.maxPorfolio == 0}
             onPress={handleOpenDialog}
             style={{
-              position: 'absolute',
+              position: "absolute",
               bottom: 24,
               right: 24,
-              backgroundColor: 'black',
+              backgroundColor:
+                userContraintCounts.maxPorfolio == 0 ? "#E0E0E0" : "black",
               borderRadius: 30,
               padding: 16,
               elevation: 5,

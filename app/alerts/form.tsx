@@ -19,6 +19,7 @@ import {
 import { getDevicePushToken } from '@/services/pushTokenService';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
+import { useSettingsStore } from '@/stores/settingsStore';
 
 export default function AlertFormModal() {
 
@@ -26,6 +27,7 @@ export default function AlertFormModal() {
 
   const { stockSymbol, stockTitle, alertId: alertToEditId } = useLocalSearchParams();
   const { alerts, addAlert, updateAlert, notificationChannels } = useAlertStore();
+  const { decreaseUserContraintCounts } = useSettingsStore();
 
   const [alertType, setAlertType] = useState<'below' | 'above'>('above')
   const [alertThreshold, setAlertThreshold] = useState("2500")
@@ -86,6 +88,7 @@ export default function AlertFormModal() {
         updateAlert(newAlert);
       } else {
         addAlert(newAlert);
+        decreaseUserContraintCounts('maxAlerts');
       }
       // addAlert(newAlert);
       router.back();

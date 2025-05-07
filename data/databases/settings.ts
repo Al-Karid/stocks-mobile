@@ -6,6 +6,9 @@ export const initSettingsDb = async () => {
     const db = await dbPromise;
 
     try {
+
+        // await db.execAsync(`drop table if exists settings`);
+
         await db.execAsync(`
             CREATE TABLE IF NOT EXISTS settings (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,7 +30,7 @@ export const initSettingsDb = async () => {
             maxPorfolio: 2,
             maxWatchlist: 2,
             maxTransactions: 10,
-            maxAlerts: 3,
+            maxAlerts: 2,
         };
 
         const premiumUserProfileSettings: UserProfileSettings = {
@@ -38,6 +41,14 @@ export const initSettingsDb = async () => {
             maxAlerts: 100,
         };
 
+        const userProfileConstraintsCounts: UserProfileSettings = {
+            userProfile: "free",
+            maxPorfolio: 0,
+            maxWatchlist: 0,
+            maxTransactions: 0,
+            maxAlerts: 0
+        }
+
         const defaultSettings = [
             { key: "theme", value: "light" },
             { key: "language", value: "en" },
@@ -46,6 +57,7 @@ export const initSettingsDb = async () => {
             { key: "notificationChannels", value: JSON.stringify(notificationChannels) },
             { key: "freeUserProfileSettings", value: JSON.stringify(freeUserProfileSettings) },
             { key: "premiumUserProfileSettings", value: JSON.stringify(premiumUserProfileSettings) },
+            { key: "userProfileConstraintsCounts", value: JSON.stringify(freeUserProfileSettings) },
         ];
 
         for (const setting of defaultSettings) {

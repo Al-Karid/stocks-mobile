@@ -6,13 +6,20 @@ import PortfolioCard from "@/components/portfolio/PortfolioCard";
 import { handleCloseDialog } from "@/utils/dialogUtils";
 import { usePortfolioStore } from "@/stores/portfolioStore";
 import { Portfolio } from "@/types/portfolio";
+import { useSettingsStore } from "@/stores/settingsStore";
 
 interface PortfolioListProps {
   portfolios: Portfolio[];
 }
 
 export default function PortfolioListing({ portfolios }: PortfolioListProps) {
-  const { deletePortfolio, renamePortfolio, makePortfolioAsDefault } = usePortfolioStore();
+  const { deletePortfolio, renamePortfolio, makePortfolioAsDefault } =
+    usePortfolioStore();
+  const {
+    userContraintCounts,
+    increaseUserContraintCounts,
+    decreaseUserContraintCounts,
+  } = useSettingsStore();
 
   const [isRenameVisible, setRenameVisible] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -34,14 +41,15 @@ export default function PortfolioListing({ portfolios }: PortfolioListProps) {
   const handleDelete = async (id: number) => {
     try {
       await deletePortfolio(id);
+      increaseUserContraintCounts("maxPorfolio");
     } catch (error: any) {
-      Alert.alert("Error", error.message, [{ text: "OK" }])
+      Alert.alert("Error", error.message, [{ text: "OK" }]);
     }
   };
 
   const handleMakeDefault = (id: number) => {
     makePortfolioAsDefault(id);
-  }
+  };
 
   return (
     <>

@@ -22,6 +22,7 @@ import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useStockRepository } from '@/data/repositories/stockRepository';
 import { useAlertStore } from '@/stores/alertStore';
 import Collapsible from 'react-native-collapsible';
+import { useSettingsStore } from '@/stores/settingsStore';
 
 interface AlertItem extends AlertData {
   id: number;
@@ -31,6 +32,11 @@ const AlertsScreen: React.FC = () => {
 
   const { alerts: alertStore, removeAlert, fetchAlerts, toggleAlertState } = useAlertStore();
   const { showActionSheetWithOptions } = useActionSheet();
+    const {
+      userContraintCounts,
+      increaseUserContraintCounts,
+      decreaseUserContraintCounts,
+    } = useSettingsStore();
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [androidModalVisible, setAndroidModalVisible] = useState(false);
@@ -66,6 +72,7 @@ const AlertsScreen: React.FC = () => {
         style: 'destructive',
         onPress: () => {
           removeAlert(alert.id);
+          increaseUserContraintCounts('maxAlerts');
         },
       },
     ]);
@@ -223,6 +230,7 @@ const AlertsScreen: React.FC = () => {
       {/* Floating Action Button */}
       {Platform.OS === "android" && (
         <Pressable
+          disabled={userContraintCounts.maxAlerts == 0}
           onPress={() => {
             setAndroidModalVisible(true);
           }}
