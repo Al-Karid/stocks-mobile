@@ -82,7 +82,7 @@
   "buy": "Buy",
   "sell": "Sell",
   "transaction-date": "Transaction date",
-  "price-per-share-fcfa": "Price per share (FCFA)",
+  "price-per-share-fcfa": "Price per share",
   "transaction-fees": "Transaction fees",
   "total-estimated": "Total estimated",
   "save-transaction": "Save transaction",
@@ -102,5 +102,6 @@
   "create-a-portfolio-to-get-started": "Create a portfolio to get started.",
   "enter-new-name": "Enter new name",
   "company": "Company",
-  "previous-close-price": "Previous close price"
+  "previous-close-price": "Previous close price",
+  "no-stocks-found": "No stocks found."
 }

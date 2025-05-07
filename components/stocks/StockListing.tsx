@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import StockCard from "@/components/stocks/StockCard";
 import { Stock } from "@/types/stock";
+import { useTranslation } from "react-i18next";
 
 interface StockListingProps {
   stocks: Stock[];
@@ -16,6 +17,9 @@ interface StockListingProps {
 }
 
 const StockListing: React.FC<StockListingProps> = ({ stocks, refreshing, onRefresh }) => {
+
+  const { t } = useTranslation();
+
   const renderStockCard = useCallback(({ item }: { item: Stock }) => {
     return (
       <StockCard
@@ -54,12 +58,12 @@ const StockListing: React.FC<StockListingProps> = ({ stocks, refreshing, onRefre
       }
       ListHeaderComponent={() => (
         <Text style={styles.headerText}>
-          {stocks.length} Stocks
+          {stocks.length} t('stocks')
         </Text>
       )}
       ListEmptyComponent={() => (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No stocks found.</Text>
+          <Text style={styles.emptyText}>{t('no-stocks-found')}</Text>
         </View>
       )}
     />

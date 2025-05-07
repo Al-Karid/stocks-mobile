@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Dimensions } from "react-native";
 import { Transaction } from "@/types/portfolio";
 import { formatTransactionCurrency, formatTransactionNumber } from "@/utils/numberUtils";
 import { globalTextStyles, globalCardStyles } from "@/styles/globalStyles";
+import { useTranslation } from "react-i18next";
 
 const { width } = Dimensions.get("window");
 
@@ -12,6 +13,9 @@ interface Props {
 }
 
 const TransactionCard = ({ transaction, symbol }: Props) => {
+
+  const { t } = useTranslation();
+  
   return (
     <View style={globalCardStyles.card}>
       <View style={styles.header}>
@@ -29,29 +33,29 @@ const TransactionCard = ({ transaction, symbol }: Props) => {
       <View style={globalTextStyles.labelValueDetailsContainerBTop}>
 
         <View style={globalTextStyles.labelValueDetailsRow}>
-          <Text style={globalTextStyles.label}>Quantity</Text>
+          <Text style={globalTextStyles.label}>{t('quantity')}</Text>
           <Text style={globalTextStyles.value}>{formatTransactionNumber(transaction.quantity)}</Text>
         </View>
 
         <View style={globalTextStyles.labelValueDetailsRow}>
-          <Text style={globalTextStyles.label}>Price per share</Text>
+          <Text style={globalTextStyles.label}>{t('price-per-share-fcfa')}</Text>
           <Text style={globalTextStyles.value}>{formatTransactionCurrency(transaction.realPricePerShare)}</Text>
         </View>
 
         <View style={globalTextStyles.labelValueDetailsRow}>
-          <Text style={globalTextStyles.label}>Total cost</Text>
+          <Text style={globalTextStyles.label}>{t('total-cost')}</Text>
           <Text style={globalTextStyles.value}>{formatTransactionCurrency(transaction.totalCost)}</Text>
         </View>
 
         <View style={globalTextStyles.labelValueDetailsRow}>
-          <Text style={globalTextStyles.label}>Date</Text>
+          <Text style={globalTextStyles.label}>{t('transaction-date')}</Text>
           <Text style={globalTextStyles.value}>
             {new Date(transaction.transactionDate).toLocaleDateString()}
           </Text>
         </View>
 
         <View style={globalTextStyles.labelValueDetailsRow}>
-          <Text style={globalTextStyles.label}>Fees</Text>
+          <Text style={globalTextStyles.label}>{t('transaction-fees')}</Text>
           <Text style={globalTextStyles.value}>{transaction.fees}%</Text>
         </View>
 

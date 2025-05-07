@@ -5,6 +5,7 @@ import { Portfolio } from '@/types/portfolio';
 import { formatCurrency, formatPercentage } from '@/utils/numberUtils';
 import { router, useRouter } from 'expo-router';
 import { useNotificationStore } from '@/stores/notificationStore';
+import { useTranslation } from 'react-i18next';
 
 interface DashboardHeaderProps {
   portfolio: Portfolio;
@@ -13,6 +14,7 @@ interface DashboardHeaderProps {
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio, displayName }) => {
   
+  const { t } = useTranslation();
   const { todayNotificationsCount } = useNotificationStore();
   
   const [isHidden, setIsHidden] = useState(false);
@@ -33,7 +35,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio, displayNam
       <View style={styles.headerTop}>
         <TouchableOpacity style={styles.userSection} onPress={() => router.push('/settings')}>
           <Ionicons name="person-circle-outline" size={28} color="gray" style={styles.userIcon} />
-          <Text style={styles.greeting}>Portfolio {displayName ? ", " + displayName : ""}</Text>
+          <Text style={styles.greeting}>{t('portfolio')} {displayName ? ", " + displayName : ""}</Text>
         </TouchableOpacity>
 
         <View style={styles.icons}>
