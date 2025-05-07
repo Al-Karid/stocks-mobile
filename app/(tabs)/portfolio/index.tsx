@@ -83,7 +83,7 @@ export default function PortfolioScreen() {
 
             <Dialog.Container visible={isAddVisible}>
               <Dialog.Title>
-                <Text>t('create-portfolio')</Text>
+                <Text>{t('create-portfolio')}</Text>
               </Dialog.Title>
               <Dialog.Input
                 placeholder={t('please-enter-a-portfolio-name')}
@@ -95,7 +95,7 @@ export default function PortfolioScreen() {
                 onPress={() => handleCloseDialog(setAddVisible)}
               />
               <Dialog.Button
-                label={t('create-portfolio')}
+                label={t('create')}
                 onPress={() => handleSavePortfolio(portfolioName)}
               />
             </Dialog.Container>
@@ -116,7 +116,7 @@ export default function PortfolioScreen() {
               elevation: 5,
             }}
           >
-            <AntDesign name="addfolder" size={24} color="white" />
+            <AntDesign name="addfolder" size={24} color={userContraintCounts.maxPorfolio == 0 ? "black" : "white"} />
           </Pressable>
         )}
       </SafeAreaView>

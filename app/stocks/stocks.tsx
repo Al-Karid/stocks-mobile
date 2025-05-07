@@ -1,12 +1,16 @@
 import StockListing from "@/components/stocks/StockListing";
-import { router, useFocusEffect, useNavigation } from "expo-router";
+import { useNavigation } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
-import { TouchableOpacity, Text, View, SafeAreaView } from "react-native";
+import { SafeAreaView } from "react-native";
 import { useStockStore } from "@/stores/stockStore";
 import { Stock } from "@/types/stock";
 import { StatusBar } from "expo-status-bar";
+import { useTranslation } from "react-i18next";
 
 export default function StocksScreen() {
+
+  const { t } = useTranslation();
+  
   const stockStore = useStockStore((state) => state.stocks);
   const navigation = useNavigation();
 
@@ -28,9 +32,9 @@ export default function StocksScreen() {
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: "Stocks",
+      headerTitle: t('stocks'),
       headerSearchBarOptions: {
-        placeholder: "Search stocks",
+        placeholder: t('search-stocks'),
         onChangeText: (event: {
           nativeEvent: { text: React.SetStateAction<string> };
         }) => {

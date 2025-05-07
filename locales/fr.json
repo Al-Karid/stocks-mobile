@@ -21,7 +21,7 @@
   "choose-a-stock": "Choisissez une action",
   "choose-a-stock-to-process-transaction": "Choisissez une action pour effectuer une transaction.",
   "cancel": "Annuler",
-  "please-enter-a-portfolio-name": "Veuillez entrer un nom de portefeuille.",
+  "please-enter-a-portfolio-name": "Ex. Trading",
   "create-portfolio": "Créer un portefeuille",
   "watchlist": "Liste de surveillance",
   "palmares": "Palmarès",
@@ -93,7 +93,7 @@
   "rename": "Renommer",
   "make-default": "Définir par défaut",
   "delete-portfolio": "Supprimer le portefeuille",
-  "are-you-sure-you-want-to-delete-name": "Êtes-vous sûr de vouloir supprimer \"{0}\" ?",
+  "are-you-sure-you-want-to-delete-name": "Êtes-vous sûr de vouloir supprimer \"{{name}}\"?",
   "default-portfolio": "Portefeuille par défaut",
   "this-portfolio-is-already-set-as-default": "Ce portefeuille est déjà défini comme par défaut.",
   "buy-price": "Prix d'achat",
@@ -101,5 +101,8 @@
   "enter-new-name": "Entrez un nouveau nom",
   "company": "Entreprise",
   "previous-close-price": "Prix de clôture précédent",
-  "no-stocks-found": "Aucune action trouvée."
+  "no-stocks-found": "Aucune action trouvée.",
+  "create": "Créer",
+  "above-threshold": "Atteint",
+  "below-threshold": "Descend sous"
 }

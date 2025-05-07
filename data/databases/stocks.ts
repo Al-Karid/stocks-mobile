@@ -14,7 +14,7 @@ export const initDb = async () => {
     // await db.execAsync("DROP TABLE IF EXISTS watchlists;");
     // await db.execAsync("DROP TABLE IF EXISTS portfolios;");
     // await db.execAsync("DROP TABLE IF EXISTS transactions;");
-    console.log("✅ Dropped existing stocks table");
+    // console.log("✅ Dropped existing stocks table");
   } catch (error) {
     console.error("⚠️ Error dropping stocks table: ", error);
   }

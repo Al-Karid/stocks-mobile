@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   FlatList,
@@ -10,53 +10,71 @@ import {
   TouchableOpacity,
   Platform,
   Modal,
-} from 'react-native';
-import { globalCardStyles } from '@/styles/globalStyles';
-import { useActionSheet } from '@expo/react-native-action-sheet';
-import { Feather, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { router, useNavigation } from 'expo-router';
-import { AlertData } from '@/types/alerts';
-import { Colors } from '@/styles/colors';
-import { Stock } from '@/types/stock';
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import { useStockRepository } from '@/data/repositories/stockRepository';
-import { useAlertStore } from '@/stores/alertStore';
-import { useSettingsStore } from '@/stores/settingsStore';
-import { useTranslation } from 'react-i18next';
-
+} from "react-native";
+import { globalCardStyles } from "@/styles/globalStyles";
+import { useActionSheet } from "@expo/react-native-action-sheet";
+import {
+  Feather,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
+import { router, useNavigation } from "expo-router";
+import { AlertData } from "@/types/alerts";
+import { Colors } from "@/styles/colors";
+import { Stock } from "@/types/stock";
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { useStockRepository } from "@/data/repositories/stockRepository";
+import { useAlertStore } from "@/stores/alertStore";
+import { useSettingsStore } from "@/stores/settingsStore";
+import { useTranslation } from "react-i18next";
 
 const AlertsScreen: React.FC = () => {
-
   const { t } = useTranslation();
 
-  const { alerts: alertStore, removeAlert, fetchAlerts, toggleAlertState } = useAlertStore();
+  const {
+    alerts: alertStore,
+    removeAlert,
+    fetchAlerts,
+    toggleAlertState,
+  } = useAlertStore();
   const { showActionSheetWithOptions } = useActionSheet();
-    const {
-      userContraintCounts,
-      increaseUserContraintCounts,
-      decreaseUserContraintCounts,
-    } = useSettingsStore();
+  const {
+    userContraintCounts,
+    increaseUserContraintCounts,
+    decreaseUserContraintCounts,
+  } = useSettingsStore();
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [androidModalVisible, setAndroidModalVisible] = useState(false);
   const navigation = useNavigation();
+
+  const [userCanAddAlert, setUserCanAddAlert] = useState(true);
+  useEffect(() => {
+    if (userContraintCounts.maxAlerts === 0) {
+      setUserCanAddAlert(false);
+    } else {
+      setUserCanAddAlert(true);
+    }
+  }, [userContraintCounts]);
 
   useEffect(() => {
     const loadAlerts = async () => {
       await fetchAlerts();
     };
     loadAlerts();
-  }
-    , []);
+  }, []);
 
   useEffect(() => {
-    if (Platform.OS === 'ios') {
+    if (Platform.OS === "ios") {
       navigation.setOptions({
         headerRight: () => (
           <TouchableOpacity onPress={() => openStockModal()}>
             <MaterialIcons
               style={{ marginRight: 5, marginTop: 0 }}
-              name="notification-add" size={23} color={Colors.headerBlue} />
+              name="notification-add"
+              size={23}
+              color={Colors.headerBlue}
+            />
           </TouchableOpacity>
         ),
       });
@@ -64,21 +82,21 @@ const AlertsScreen: React.FC = () => {
   }, [navigation]);
 
   const handleDelete = (alert: AlertData) => {
-    Alert.alert(alert.stockTitle!, t('delete-this-alert'), [
-      { text: t('cancel') },
+    Alert.alert(alert.stockTitle!, t("delete-this-alert"), [
+      { text: t("cancel") },
       {
-        text: t('delete'),
-        style: 'destructive',
+        text: t("delete"),
+        style: "destructive",
         onPress: () => {
           removeAlert(alert.id);
-          increaseUserContraintCounts('maxAlerts');
+          increaseUserContraintCounts("maxAlerts");
         },
       },
     ]);
   };
 
   const openActionSheet = (alert: AlertData) => {
-    const options = [t('edit'), t('delete'), t('cancel')];
+    const options = [t("edit"), t("delete"), t("cancel")];
     const destructiveButtonIndex = 1;
     const cancelButtonIndex = 2;
 
@@ -92,7 +110,7 @@ const AlertsScreen: React.FC = () => {
       (index?: number) => {
         if (index === 0) {
           router.push({
-            pathname: '/alerts/form',
+            pathname: "/alerts/form",
             params: {
               alertId: alert.id,
             },
@@ -116,13 +134,13 @@ const AlertsScreen: React.FC = () => {
   }, []);
 
   const openStockModal = () => {
-    Platform.OS === 'ios'
+    Platform.OS === "ios"
       ? bottomSheetModalRef.current?.present()
       : setAndroidModalVisible(true);
   };
 
   const closeStockModal = () => {
-    Platform.OS === 'ios'
+    Platform.OS === "ios"
       ? bottomSheetModalRef.current?.dismiss()
       : setAndroidModalVisible(false);
   };
@@ -130,7 +148,7 @@ const AlertsScreen: React.FC = () => {
   const handleStockSelect = (stock: Stock) => {
     closeStockModal();
     router.push({
-      pathname: '/alerts/form',
+      pathname: "/alerts/form",
       params: {
         stockSymbol: stock.symbol,
         stockTitle: stock.title,
@@ -146,7 +164,7 @@ const AlertsScreen: React.FC = () => {
 
   const renderStockSelector = () => (
     <>
-      <Text style={styles.modalTitle}>{t('choose-a-stock')}</Text>
+      <Text style={styles.modalTitle}>{t("choose-a-stock")}</Text>
       <FlatList
         data={stocks}
         keyExtractor={(item) => item.symbol}
@@ -155,7 +173,7 @@ const AlertsScreen: React.FC = () => {
       />
       <View style={{ marginTop: 16 }}>
         <Pressable onPress={closeStockModal} style={styles.modalCancelButton}>
-          <Text style={styles.modalCancelButtonText}>{t('cancel')}</Text>
+          <Text style={styles.modalCancelButtonText}>{t("cancel")}</Text>
         </Pressable>
       </View>
     </>
@@ -166,58 +184,69 @@ const AlertsScreen: React.FC = () => {
       <FlatList
         data={alertStore}
         contentContainerStyle={{ paddingTop: 16 }}
-        contentInsetAdjustmentBehavior='automatic'
+        contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={(item) => item.id.toString()}
         ListEmptyComponent={() => (
           <View style={{ padding: 20 }}>
-            <Text style={{ textAlign: 'center', color: '#475569' }}>
-              {t('no-alerts-set-tap-the-button-to-add-one')}
+            <Text style={{ textAlign: "center", color: "#475569" }}>
+              {t("no-alerts-set-tap-the-button-to-add-one")}
             </Text>
           </View>
         )}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            onLongPress={() => openActionSheet(item)}
-          >
+          <TouchableOpacity onLongPress={() => openActionSheet(item)}>
             <View style={globalCardStyles.card}>
               <View style={styles.header}>
                 {/* <Text style={styles.stock}>{item.stockSymbol}</Text> */}
                 <Text style={styles.cardName}>{item.stockTitle}</Text>
-                {
-                  Platform.OS === "ios" ? (
-                    <Switch
-                      value={Boolean(item.enabled)}
-                      onValueChange={() => toggleAlertState(item.id)}
-                    />
-                  ) : (
-                    <Switch
-                      value={Boolean(item.enabled)}
-                      onValueChange={() => toggleAlertState(item.id)}
-                      trackColor={{ false: '#ccc', true: '#000' }}
-                      thumbColor={item.enabled ? '#000' : '#f4f3f4'}
-                    />
-                  )
-                }
-
+                {Platform.OS === "ios" ? (
+                  <Switch
+                    value={Boolean(item.enabled)}
+                    onValueChange={() => toggleAlertState(item.id)}
+                  />
+                ) : (
+                  <Switch
+                    value={Boolean(item.enabled)}
+                    onValueChange={() => toggleAlertState(item.id)}
+                    trackColor={{ false: "#ccc", true: "#000" }}
+                    thumbColor={item.enabled ? "#000" : "#f4f3f4"}
+                  />
+                )}
               </View>
 
               <View style={styles.cardContent}>
                 {/* <Text style={styles.cardName}>{item.stockSymbol}</Text> */}
                 <Text
                   style={[
-                  styles.cardCondition,
-                  { color: item.enabled ? (item.alertType === 'above' ? '#4CAF50' : '#F44336') : '#9E9E9E' },
+                    styles.cardCondition,
+                    {
+                      color: item.enabled
+                        ? item.alertType === "above"
+                          ? "#4CAF50"
+                          : "#F44336"
+                        : "#9E9E9E",
+                    },
                   ]}
                 >
-                  {item.alertType === 'above' ? (
-                  <>
-                    <Feather name="arrow-up" size={16} color={item.enabled ? '#4CAF50' : '#9E9E9E'} /> above {item.value}
-                  </>
+                  {item.alertType === "above" ? (
+                    <>
+                      <Feather
+                        name="arrow-up"
+                        size={16}
+                        color={item.enabled ? "#4CAF50" : "#9E9E9E"}
+                      />{" "}
+                      {t('above-threshold')} {item.value}
+                    </>
                   ) : (
-                  <>
-                    <Feather name="arrow-down" size={16} color={item.enabled ? '#F44336' : '#9E9E9E'} /> below {item.value}
-                  </>
+                    <>
+                      <Feather
+                        name="arrow-down"
+                        size={16}
+                        color={item.enabled ? "#F44336" : "#9E9E9E"}
+                      />{" "}
+                      {t('below-threshold')} {item.value}
+                    </>
                   )}
                 </Text>
               </View>
@@ -229,19 +258,30 @@ const AlertsScreen: React.FC = () => {
       {/* Floating Action Button */}
       {Platform.OS === "android" && (
         <Pressable
-          disabled={userContraintCounts.maxAlerts == 0}
+          disabled={!userCanAddAlert}
           onPress={() => {
             setAndroidModalVisible(true);
           }}
-          style={styles.fab}
+          style={[
+            styles.fab,
+            { backgroundColor: userCanAddAlert ? "black" : "#ccc" },
+          ]}
         >
-          <Feather name="plus" size={24} color="white" />
+          <Feather
+            name="plus"
+            size={24}
+            color={userCanAddAlert ? "white" : "black"}
+          />
         </Pressable>
       )}
 
       {/* iOS Bottom Sheet */}
-      {Platform.OS === 'ios' && (
-        <BottomSheetModal ref={bottomSheetModalRef} index={0} snapPoints={['60%']}>
+      {Platform.OS === "ios" && (
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          index={0}
+          snapPoints={["60%"]}
+        >
           <BottomSheetView style={{ flex: 1, padding: 20 }}>
             {renderStockSelector()}
           </BottomSheetView>
@@ -249,7 +289,7 @@ const AlertsScreen: React.FC = () => {
       )}
 
       {/* Android Fullscreen Modal */}
-      {Platform.OS === 'android' && (
+      {Platform.OS === "android" && (
         <Modal visible={androidModalVisible} animationType="slide">
           <View style={{ flex: 1, padding: 20 }}>{renderStockSelector()}</View>
         </Modal>
@@ -263,29 +303,29 @@ export default AlertsScreen;
 const styles = StyleSheet.create({
   container: { padding: 20, flex: 1, paddingTop: 8 },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     // marginBottom: 10,
   },
   stock: {
     fontSize: 18,
-    fontWeight: '500',
-    color: '#123456',
+    fontWeight: "500",
+    color: "#123456",
   },
   cardContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 10
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 10,
   },
   cardName: {
     fontSize: 14,
-    color: '#475569',
+    color: "#475569",
   },
   cardCondition: {
     fontSize: 16,
-    color: '#4CAF50',
+    color: "#4CAF50",
   },
   fab: {
     position: "absolute",
@@ -305,25 +345,25 @@ const styles = StyleSheet.create({
   },
   stockSelector: {
     borderBottomWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     paddingVertical: 10,
     marginBottom: 15,
   },
   stockSelectorText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   stockItem: {
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderColor: '#eee',
+    borderColor: "#eee",
   },
   stockItemText: {
     fontSize: 16,
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 12,
   },
   modalCancelButton: {

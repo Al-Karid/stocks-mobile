@@ -21,7 +21,7 @@
   "choose-a-stock": "Choose a stock",
   "choose-a-stock-to-process-transaction": "Choose a stock to process transaction.",
   "cancel": "Cancel",
-  "please-enter-a-portfolio-name": "Please enter a portfolio name.",
+  "please-enter-a-portfolio-name": "Ex. Trading",
   "create-portfolio": "Create Portfolio",
   "watchlist": "Watchlist",
   "palmares": "Palmarès",
@@ -93,7 +93,7 @@
   "rename": "Rename",
   "make-default": "Make default",
   "delete-portfolio": "Delete Portfolio",
-  "are-you-sure-you-want-to-delete-name": "Are you sure you want to delete \"{0}\" ?",
+  "are-you-sure-you-want-to-delete-name": "Are you sure you want to delete \"{{name}}\"?",
   "default-portfolio": "Default Portfolio",
   "this-portfolio-is-already-set-as-default": "This portfolio is already set as default.",
   "buy-price": "Buy Price",
@@ -101,5 +101,8 @@
   "enter-new-name": "Enter new name",
   "company": "Company",
   "previous-close-price": "Previous close price",
-  "no-stocks-found": "No stocks found."
+  "no-stocks-found": "No stocks found.",
+  "create": "Create",
+  "above-threshold": "Above",
+  "below-threshold": "Below"
 }

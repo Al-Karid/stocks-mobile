@@ -58,7 +58,7 @@ const StockListing: React.FC<StockListingProps> = ({ stocks, refreshing, onRefre
       }
       ListHeaderComponent={() => (
         <Text style={styles.headerText}>
-          {stocks.length} t('stocks')
+          {stocks.length} {t('stocks').toLocaleLowerCase()}
         </Text>
       )}
       ListEmptyComponent={() => (

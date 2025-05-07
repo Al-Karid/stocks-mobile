@@ -8,6 +8,12 @@ export const initSettingsDb = async () => {
     try {
 
         // await db.execAsync(`drop table if exists settings`);
+        const tableNames = await db.getAllAsync(`select name from sqlite_master where type='table' and name not like 'sqlite_%'`);
+        if (tableNames.length > 0) {
+            tableNames.forEach(async (table: any) => {
+                // await db.execAsync(`DROP TABLE IF EXISTS ${table.name}`);
+            })
+        }
 
         await db.execAsync(`
             CREATE TABLE IF NOT EXISTS settings (
@@ -27,7 +33,7 @@ export const initSettingsDb = async () => {
 
         const freeUserProfileSettings: UserProfileSettings = {
             userProfile: "free",
-            maxPorfolio: 2,
+            maxPorfolio: 1,
             maxWatchlist: 2,
             maxTransactions: 10,
             maxAlerts: 2,
