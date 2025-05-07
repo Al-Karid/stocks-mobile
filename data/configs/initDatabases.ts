@@ -39,6 +39,9 @@ export const useAppInitializer = () => {
         await fetchAlerts();
         await fetchNotifications();
         await fetchUserContraintCounts();
+        await getNotificationChannels();
+        await getDevicePushToken();
+        console.log("✅ Stores loaded");
       } else {
         console.log("🔄 Initializing databases...");
         await initDb();
