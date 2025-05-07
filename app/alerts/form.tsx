@@ -20,9 +20,11 @@ import { getDevicePushToken } from '@/services/pushTokenService';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { useTranslation } from 'react-i18next';
 
 export default function AlertFormModal() {
 
+  const { t } = useTranslation();
   const navigation = useNavigation();
 
   const { stockSymbol, stockTitle, alertId: alertToEditId } = useLocalSearchParams();
@@ -50,21 +52,21 @@ export default function AlertFormModal() {
   useEffect(() => {
     if (Platform.OS === 'ios') {
       navigation.setOptions({
-        headerTitle: alertToEditId ? 'Edit Alert' : 'New Alert',
+        headerTitle: alertToEditId ? t('edit-alert') : t('new-alert'),
         headerLeft: () => (
           <TouchableOpacity onPress={() => router.back()}>
-            <Text style={{ color: Colors.headerBlue, fontSize: 16 }}>Cancel</Text>
+            <Text style={{ color: Colors.headerBlue, fontSize: 16 }}>{t('cancel')}</Text>
           </TouchableOpacity>
         ),
         headerRight: () => (
           <TouchableOpacity onPress={() => handleSubmit()}>
-            <Text style={{ color: Colors.headerBlue, fontSize: 16 }}>Save</Text>
+            <Text style={{ color: Colors.headerBlue, fontSize: 16 }}>{t('save')}</Text>
           </TouchableOpacity>
         )
       });
     }else {
       navigation.setOptions({
-        headerTitle: alertToEditId ? 'Edit Alert' : 'New Alert'})
+        headerTitle: alertToEditId ? t('edit-alert') : t('new-alert')})
   }}, [alertThreshold, alertType, enabled]);
 
   const handleSubmit = async () => {
@@ -95,9 +97,9 @@ export default function AlertFormModal() {
     } catch (error) {
       console.error("Error saving alert:", error);
       Alert.alert(
-        "Error",
-        "There was an error saving the alert. Please try again.",
-        [{ text: "OK" }]
+        t('error'),
+        t('there-was-an-error-saving-the-alert-please-try-again'),
+        [{ text: t('okay') }]
       );
     }
   };
@@ -110,40 +112,40 @@ export default function AlertFormModal() {
       >
         <View style={styles.modalWrapper}>
           <ScrollView contentContainerStyle={styles.scrollContent}>
-            <Text style={styles.label}>Action</Text>
+            <Text style={styles.label}>t('stocks')</Text>
             <Pressable style={styles.stockSelector}>
               <Text style={styles.stockSelectorText}>
-                {alertStockTitle || 'Choisir une action'}
+                {alertStockTitle || t('choose-a-stock')}
               </Text>
             </Pressable>
 
-            <Text style={styles.label}>Alert Type</Text>
+            <Text style={styles.label}>{t('alert-type')}</Text>
             <View style={styles.toggleContainer}>
               <TouchableOpacity
                 style={[styles.toggleButton, alertType === 'above' && styles.selectedToggle]}
                 onPress={() => setAlertType('above')}
               >
-                <Text style={alertType === 'above' ? styles.selectedText : styles.toggleText}>Above</Text>
+                <Text style={alertType === 'above' ? styles.selectedText : styles.toggleText}>{t('above')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.toggleButton, alertType === 'below' && styles.selectedToggle]}
                 onPress={() => setAlertType('below')}
               >
-                <Text style={alertType === 'below' ? styles.selectedText : styles.toggleText}>Below</Text>
+                <Text style={alertType === 'below' ? styles.selectedText : styles.toggleText}>{t('below')}</Text>
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.label}>Target Value</Text>
+            <Text style={styles.label}>{t('target-value')}</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter target value"
+              placeholder={t('enter-target-value')}
               keyboardType="numeric"
               value={alertThreshold}
               onChangeText={setAlertThreshold}
             />
 
             <View style={styles.row}>
-              <Text style={styles.label}>Enabled</Text>
+              <Text style={styles.label}>{t('enabled')}</Text>
               <Switch
                 value={Boolean(enabled)}
                 onValueChange={setEnabled}
@@ -155,11 +157,11 @@ export default function AlertFormModal() {
               Platform.OS === 'android' && (
                 <View>
                   <TouchableOpacity style={styles.saveButton} onPress={() => handleSubmit()}>
-                    <Text style={styles.saveText}>Save</Text>
+                    <Text style={styles.saveText}>{t('save')}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity style={styles.cancelButton} onPress={() => router.back()}>
-                    <Text style={styles.cancelText}>Cancel</Text>
+                    <Text style={styles.cancelText}>{t('cancel')}</Text>
                   </TouchableOpacity>
                 </View>
               )

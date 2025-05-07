@@ -1,9 +1,13 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Platform } from 'react-native'; // Import Platform to check OS
 
 export default function TabLayout() {
+    
+    const { t } = useTranslation();
+
     return (
         <Tabs
             screenOptions={{
@@ -19,7 +23,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                    title: 'Home',
+                    title: t('home'),
                     headerShown: false,
                     tabBarIcon: ({ color, size, focused }) => (
                         <FontAwesome size={focused ? size + 3 : size} name="home" color={color} />
@@ -29,7 +33,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="portfolio"
                 options={{
-                    title: 'Portfolio',
+                    title: t('portfolio'),
                     tabBarIcon: ({ color, size, focused }) => (
                         <FontAwesome size={focused ? size + 3 : size} name="folder" color={color} />
                     ),
@@ -39,7 +43,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="stocks"
                 options={{
-                    title: 'Stocks',
+                    title: t('stocks'),
                     tabBarIcon: ({ color, size, focused }) => (
                         <MaterialIcons size={focused ? size + 3 : size} name="table-chart" color={color} />
                     ),

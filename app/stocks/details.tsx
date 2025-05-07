@@ -9,8 +9,11 @@ import { ScrollView } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
 import { globalCardStyles, globalTextStyles } from "@/styles/globalStyles";
 import { useSettingsStore } from "@/stores/settingsStore";
+import { useTranslation } from "react-i18next";
 
 export default function StocksDetailsScreen() {
+
+  const { t } = useTranslation();
 
   const { symbol } = useLocalSearchParams();
   const { addStockToWatchlist, removeStockFromWatchlist } = useWatchlistStore();
@@ -59,21 +62,21 @@ export default function StocksDetailsScreen() {
         <View style={globalTextStyles.labelValueDetailsContainer}>
 
           <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>Current price</Text>
+            <Text style={globalTextStyles.label}>{t('current-price')}</Text>
             <Text style={globalTextStyles.value}>
               {formatCurrency(stock?.currentPrice || 0)}
             </Text>
           </View>
 
           <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>Previous close</Text>
+            <Text style={globalTextStyles.label}>{t('previous-close')}</Text>
             <Text style={globalTextStyles.value}>
               {formatCurrency(stock?.previousClosePrice || 0)}
             </Text>
           </View>
 
           <View style={[globalTextStyles.labelValueDetailsRow, styles.rowLast]}>
-            <Text style={globalTextStyles.label}>Change rate</Text>
+            <Text style={globalTextStyles.label}>{t('change-rate')}</Text>
             <View
               style={[
                 styles.percentageBox,
@@ -102,31 +105,31 @@ export default function StocksDetailsScreen() {
       <View style={[globalCardStyles.card, { marginTop: 16 }]}>
         <View style={globalTextStyles.labelValueDetailsContainer}>
           <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>Volume (titles)</Text>
+            <Text style={globalTextStyles.label}>{t('volume-titles')}</Text>
             <Text style={globalTextStyles.value}>
               {formatCurrency(stock?.volumeTitles || 0) || "N/A"}
             </Text>
           </View>
           <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>Volume ()</Text>
+            <Text style={globalTextStyles.label}>{t('volume')}</Text>
             <Text style={globalTextStyles.value}>
               {formatCurrency(stock?.volumeValues || 0) || "N/A"}
             </Text>
           </View>
           <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>Opening price</Text>
+            <Text style={globalTextStyles.label}>{t('opening-price')}</Text>
             <Text style={globalTextStyles.value}>
               {formatCurrency(stock?.opening || 0) || "N/A"}
             </Text>
           </View>
           <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>High</Text>
+            <Text style={globalTextStyles.label}>{t('high')}</Text>
             <Text style={globalTextStyles.value}>
               {formatCurrency(stock?.high || 0) || "N/A"}
             </Text>
           </View>
           <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>Low</Text>
+            <Text style={globalTextStyles.label}>{t('low')}</Text>
             <Text style={globalTextStyles.value}>
               {formatCurrency(stock?.low || 0) || "N/A"}
             </Text>
@@ -142,7 +145,7 @@ export default function StocksDetailsScreen() {
             onPress={() => removeFromWatchlist(stock?.symbol)}
           >
             <Text style={styles.actionButtonRemoveText}>
-              Supprimer de la Watchlist
+              {t('remove-from-watchlist')}
             </Text>
           </TouchableOpacity>
         ) : (
@@ -151,7 +154,7 @@ export default function StocksDetailsScreen() {
             style={[styles.actionButton, (userContraintCounts.maxWatchlist <= 0) && styles.actionButtonDisabled]}
             onPress={() => addToWatchlist(stock?.symbol)}
           >
-            <Text style={styles.actionButtonText}>Ajouter à la Watchlist</Text>
+            <Text style={styles.actionButtonText}>{t('add-to-watchlist')}</Text>
           </TouchableOpacity>
         )}
 
@@ -159,13 +162,13 @@ export default function StocksDetailsScreen() {
           style={[styles.actionButton, isDisabled && styles.actionButtonDisabled]}
           disabled={isDisabled}
         >
-          <Text style={[styles.actionButtonText, isDisabled && styles.actionButtonTextDisabled]}>Ajouter au Portefeuille</Text>
+          <Text style={[styles.actionButtonText, isDisabled && styles.actionButtonTextDisabled]}>{t('add-to-portfolio')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.actionButton, isDisabled && styles.actionButtonDisabled]}
           disabled={isDisabled}
         >
-          <Text style={[styles.actionButtonText, isDisabled && styles.actionButtonTextDisabled]}>Ajouter une Alerte</Text>
+          <Text style={[styles.actionButtonText, isDisabled && styles.actionButtonTextDisabled]}>{t('add-an-alert')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

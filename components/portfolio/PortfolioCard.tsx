@@ -5,6 +5,7 @@ import { HapticButtonLongPress } from "../buttons/HapticButtonLongPress";
 import { router } from "expo-router";
 import { Portfolio } from "@/types/portfolio";
 import { formatPercentage, isPositiveNumber } from "@/utils/numberUtils";
+import { useTranslation } from "react-i18next";
 
 type PortfolioProps = {
   portfolio: Portfolio;
@@ -19,6 +20,9 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
   onDelete,
   onMakeDefault,
 }) => {
+
+  const { t } = useTranslation();
+  
   const { showActionSheetWithOptions } = useActionSheet();
   const { id, name, performance } = portfolio;
   const { gainLossPercentage, totalGainLoss } = performance || {};
@@ -26,7 +30,7 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
   const isPositive = isPositiveNumber(totalGainLoss);
 
   const onPress = () => {
-    const options = ["Details", "Rename", "Make default", "Delete", "Cancel"];
+    const options = [t('details'), t('rename'), t('make-default'), t('delete'), t('cancel')];
     const destructiveButtonIndex = 3;
     const cancelButtonIndex = 4;
 
@@ -46,11 +50,11 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
             break;
           case destructiveButtonIndex:
             Alert.alert(
-              "Delete Portfolio",
-              `Are you sure you want to delete "${name}" ?`,
+              t('delete-portfolio'),
+              t('are-you-sure-you-want-to-delete-name', { name }),
               [
-                { text: "Cancel", style: "cancel" },
-                { text: "Delete", style: "destructive", onPress: onDelete },
+                { text: t('cancel'), style: "cancel" },
+                { text: t('delete'), style: "destructive", onPress: onDelete },
               ]
             );
             break;
@@ -59,7 +63,7 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
             break;
           case 2:
             if (portfolio.isDefault) {
-              Alert.alert("Default Portfolio", "This portfolio is already set as default.");
+              Alert.alert(t('default-portfolio'), t('this-portfolio-is-already-set-as-default'));
             } else {
               onMakeDefault();
             }

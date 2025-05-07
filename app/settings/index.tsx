@@ -15,9 +15,11 @@ import Collapsible from 'react-native-collapsible';
 import { useUserStore } from '@/stores/userStore';
 import { useAlertStore } from '@/stores/alertStore';
 import { NotificationChannel } from '@/types/settings';
+import { useTranslation } from 'react-i18next';
 
 export default function SettingsScreen() {
 
+    const { t } = useTranslation();
     const {notificationChannels, updateNotificationChannel } = useAlertStore();
     
     const [collapsed, setCollapsed] = useState(true);
@@ -31,11 +33,11 @@ export default function SettingsScreen() {
 
     const handleDeleteAccount = () => {
         Alert.alert(
-            "Delete Account",
-            "Are you sure you want to delete your account? This action cannot be undone.",
+            t('delete-account'),
+            t('are-you-sure-you-want-to-delete-your-account-this-action-cannot-be-undone'),
             [
-                { text: "Cancel", style: "cancel" },
-                { text: "Delete", style: "destructive", onPress: () => handleLogout() },
+                { text: t('cancel'), style: "cancel" },
+                { text: t('delete'), style: "destructive", onPress: () => handleLogout() },
             ]
         );
     };
@@ -64,11 +66,11 @@ export default function SettingsScreen() {
                     {isRegistered && (
                         <Collapsible style={styles.detailsBox} collapsed={collapsed}>
                             <Text style={[styles.row]}>Username: {user.username}</Text>
-                            <Text style={styles.row}>Display name: {user.name}</Text>
+                            <Text style={styles.row}>{t('display-name')} {user.name}</Text>
                             <Text style={[styles.row]}>Phone: {user.phone}</Text>
                             <TouchableOpacity style={styles.blackButton} onPress={() => console.log("Edit pressed")}>
                                 <Ionicons name="create-outline" size={20} color="#fff" style={styles.icon} />
-                                <Text style={styles.blackButtonText}>Edit</Text>
+                                <Text style={styles.blackButtonText}>{t('edit')}</Text>
                             </TouchableOpacity>
                         </Collapsible>
                     )}
@@ -76,21 +78,21 @@ export default function SettingsScreen() {
                     {canLogin && (
                         <TouchableOpacity style={styles.row} onPress={() => router.push('/settings/login')}>
                             <Ionicons name="log-in-outline" size={20} color="#666" style={styles.icon} />
-                            <Text style={styles.text}>Login</Text>
+                            <Text style={styles.text}>{t('login')}</Text>
                         </TouchableOpacity>
                     )}
 
                     {isRegistered && (
                         <TouchableOpacity style={styles.row} onPress={() => router.push('/settings/register')}>
                             <Ionicons name="person-add" size={20} color="#666" style={styles.icon} />
-                            <Text style={styles.text}>Register</Text>
+                            <Text style={styles.text}>{t('register')}</Text>
                         </TouchableOpacity>
                     )}
 
                     {isRegistered && (
                         <TouchableOpacity style={[styles.row, styles.lastRow]} onPress={handleDeleteAccount}>
                             <Ionicons name="log-out-outline" size={20} color="#666" style={styles.icon} />
-                            <Text style={[styles.text, { color: 'red' }]}>Delete my account</Text>
+                            <Text style={[styles.text, { color: 'red' }]}>{t('delete-my-account')}</Text>
                         </TouchableOpacity>
                     )}
                 </View>
@@ -98,13 +100,13 @@ export default function SettingsScreen() {
 
             {/* Section 2: Alerts */}
             <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Alerts</Text>
+                <Text style={styles.sectionTitle}>{t('alerts')}</Text>
                 
                 {/* <Text style={styles.sectionSubtitle}>Canaux de notification</Text> */}
                 <View style={[styles.card, { marginBottom: 12 }]}>
                     <TouchableOpacity style={[styles.row, styles.row]} onPress={handleAlertSettings}>
                         <Entypo name="notification" size={20} color="#666" style={styles.icon} />
-                        <Text style={styles.text}>Canal Push</Text>
+                        <Text style={styles.text}>{t('push-channel')}</Text>
                         {
                             Platform.OS === "ios" ? (
                                 <Switch
@@ -128,7 +130,7 @@ export default function SettingsScreen() {
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.row, styles.lastRow]} onPress={handleAlertSettings}>
                         <MaterialIcons name="sms" size={20} color="#666" style={styles.icon} />
-                        <Text style={styles.text}>Canal SMS</Text>
+                        <Text style={styles.text}>{t('sms-channel')}</Text>
                         {
                             Platform.OS === "ios" ? (
                                 <Switch
@@ -154,7 +156,7 @@ export default function SettingsScreen() {
                 <View style={styles.card}>
                     <TouchableOpacity style={[styles.row, styles.lastRow]} onPress={() => router.push('/alerts')}>
                         <Ionicons name="notifications-outline" size={20} color="#666" style={styles.icon} />
-                        <Text style={styles.text}>Manage Alerts</Text>
+                        <Text style={styles.text}>{t('manage-alerts')}</Text>
                         <Ionicons name="chevron-forward-outline" size={18} color="#ccc" style={styles.chevron} />
                     </TouchableOpacity>
                 </View>
@@ -163,7 +165,7 @@ export default function SettingsScreen() {
             {/* Section 3: About */}
             <View style={styles.creditsContainer}>
                 <Text style={styles.creditsText}>
-                    © 2025 Revalys Data Services
+                    {t('c-2025-revalys-data-services')}
                 </Text>
             </View>
         </ScrollView>

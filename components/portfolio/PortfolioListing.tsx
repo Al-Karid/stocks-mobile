@@ -7,12 +7,16 @@ import { handleCloseDialog } from "@/utils/dialogUtils";
 import { usePortfolioStore } from "@/stores/portfolioStore";
 import { Portfolio } from "@/types/portfolio";
 import { useSettingsStore } from "@/stores/settingsStore";
+import { useTranslation } from "react-i18next";
 
 interface PortfolioListProps {
   portfolios: Portfolio[];
 }
 
 export default function PortfolioListing({ portfolios }: PortfolioListProps) {
+
+  const { t } = useTranslation();
+  
   const { deletePortfolio, renamePortfolio, makePortfolioAsDefault } =
     usePortfolioStore();
   const {
@@ -43,7 +47,7 @@ export default function PortfolioListing({ portfolios }: PortfolioListProps) {
       await deletePortfolio(id);
       increaseUserContraintCounts("maxPorfolio");
     } catch (error: any) {
-      Alert.alert("Error", error.message, [{ text: "OK" }]);
+      Alert.alert(t('error'), error.message, [{ text: t('okay') }]);
     }
   };
 
@@ -65,7 +69,7 @@ export default function PortfolioListing({ portfolios }: PortfolioListProps) {
               color: "#888",
             }}
           >
-            Create a portfolio to get started.
+            {t('create-a-portfolio-to-get-started')}
           </Text>
         )}
         renderItem={({ item }) => (
@@ -81,17 +85,17 @@ export default function PortfolioListing({ portfolios }: PortfolioListProps) {
       />
 
       <Dialog.Container visible={isRenameVisible}>
-        <Dialog.Title>Rename Portfolio</Dialog.Title>
+        <Dialog.Title>{t('rename')}</Dialog.Title>
         <Dialog.Input
-          placeholder="Enter new name"
+          placeholder={t('enter-new-name')}
           value={newName}
           onChangeText={setNewName}
         />
         <Dialog.Button
-          label="Cancel"
+          label={t('cancel')}
           onPress={() => handleCloseDialog(setRenameVisible)}
         />
-        <Dialog.Button label="Save" onPress={handleRename} />
+        <Dialog.Button label={t('save')} onPress={handleRename} />
       </Dialog.Container>
     </>
   );

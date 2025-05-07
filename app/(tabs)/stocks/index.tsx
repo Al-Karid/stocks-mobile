@@ -5,8 +5,11 @@ import { FontAwesome } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useStockSync } from "@/data/configs/syncStocks";
 import UpdatedAt from "@/components/views/UpdatedAt";
+import { useTranslation } from "react-i18next";
 
 export default function HomeScreen() {
+
+  const { t } = useTranslation();
 
   const [refreshing, setRefreshing] = React.useState(false);
   const { syncStockDataFromServer } = useStockSync()
@@ -43,7 +46,7 @@ export default function HomeScreen() {
             style={[styles.button, styles.palmares]}
             onPress={() => router.push("/stocks/palmares")}
           >
-            <Text style={styles.buttonText}>Palmarès</Text>
+            <Text style={styles.buttonText}>{t('palmares')}</Text>
             <FontAwesome name="line-chart" size={22} color="#fff" />
           </TouchableOpacity>
 
@@ -53,7 +56,7 @@ export default function HomeScreen() {
                 style={[styles.button, styles.stocks]}
                 onPress={() => router.push("/stocks/stocksios")}
               >
-                <Text style={styles.buttonText}>Stocks</Text>
+                <Text style={styles.buttonText}>{t('stocks')}</Text>
                 <FontAwesome name="list" size={22} color="#fff" />
               </TouchableOpacity>
             ) : (
@@ -61,7 +64,7 @@ export default function HomeScreen() {
                 style={[styles.button, styles.stocks]}
                 onPress={() => router.push("/stocks/stocks")}
               >
-                <Text style={styles.buttonText}>Stocks</Text>
+                <Text style={styles.buttonText}>{t('stocks')}</Text>
                 <FontAwesome name="list" size={22} color="#fff" />
               </TouchableOpacity>
             )
@@ -71,7 +74,7 @@ export default function HomeScreen() {
             style={[styles.button, styles.watchlist]}
             onPress={() => router.push("/stocks/watchlist")}
           >
-            <Text style={styles.buttonText}>Watchlist</Text>
+            <Text style={styles.buttonText}>{t('watchlist')}</Text>
             <FontAwesome name="eye" size={22} color="#fff" />
           </TouchableOpacity>
 

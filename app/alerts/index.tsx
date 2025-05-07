@@ -21,14 +21,13 @@ import { Stock } from '@/types/stock';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useStockRepository } from '@/data/repositories/stockRepository';
 import { useAlertStore } from '@/stores/alertStore';
-import Collapsible from 'react-native-collapsible';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { useTranslation } from 'react-i18next';
 
-interface AlertItem extends AlertData {
-  id: number;
-}
 
 const AlertsScreen: React.FC = () => {
+
+  const { t } = useTranslation();
 
   const { alerts: alertStore, removeAlert, fetchAlerts, toggleAlertState } = useAlertStore();
   const { showActionSheetWithOptions } = useActionSheet();
@@ -65,10 +64,10 @@ const AlertsScreen: React.FC = () => {
   }, [navigation]);
 
   const handleDelete = (alert: AlertData) => {
-    Alert.alert(alert.stockTitle!, 'Delete this alert ?', [
-      { text: 'Cancel' },
+    Alert.alert(alert.stockTitle!, t('delete-this-alert'), [
+      { text: t('cancel') },
       {
-        text: 'Delete',
+        text: t('delete'),
         style: 'destructive',
         onPress: () => {
           removeAlert(alert.id);
@@ -79,7 +78,7 @@ const AlertsScreen: React.FC = () => {
   };
 
   const openActionSheet = (alert: AlertData) => {
-    const options = ['Edit', 'Delete', 'Cancel'];
+    const options = [t('edit'), t('delete'), t('cancel')];
     const destructiveButtonIndex = 1;
     const cancelButtonIndex = 2;
 
@@ -147,7 +146,7 @@ const AlertsScreen: React.FC = () => {
 
   const renderStockSelector = () => (
     <>
-      <Text style={styles.modalTitle}>Sélectionner une action</Text>
+      <Text style={styles.modalTitle}>{t('choose-a-stock')}</Text>
       <FlatList
         data={stocks}
         keyExtractor={(item) => item.symbol}
@@ -156,7 +155,7 @@ const AlertsScreen: React.FC = () => {
       />
       <View style={{ marginTop: 16 }}>
         <Pressable onPress={closeStockModal} style={styles.modalCancelButton}>
-          <Text style={styles.modalCancelButtonText}>Annuler</Text>
+          <Text style={styles.modalCancelButtonText}>{t('cancel')}</Text>
         </Pressable>
       </View>
     </>
@@ -173,7 +172,7 @@ const AlertsScreen: React.FC = () => {
         ListEmptyComponent={() => (
           <View style={{ padding: 20 }}>
             <Text style={{ textAlign: 'center', color: '#475569' }}>
-              No alerts set. Tap the '+' button to add one.
+              {t('no-alerts-set-tap-the-button-to-add-one')}
             </Text>
           </View>
         )}

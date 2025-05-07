@@ -5,8 +5,12 @@ import { TouchableOpacity, Text, View, SafeAreaView } from "react-native";
 import { useStockStore } from "@/stores/stockStore";
 import { Stock } from "@/types/stock";
 import { StatusBar } from "expo-status-bar";
+import { useTranslation } from "react-i18next";
 
 export default function StocksScreen() {
+
+  const { t } = useTranslation();
+  
   const stockStore = useStockStore((state) => state.stocks);
   const navigation = useNavigation();
 
@@ -28,9 +32,9 @@ export default function StocksScreen() {
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: "Stocks",
+      headerTitle: t('stocks'),
       headerSearchBarOptions: {
-        placeholder: "Search stocks",
+        placeholder: t('search-stocks'),
         onChangeText: (event: {
           nativeEvent: { text: React.SetStateAction<string> };
         }) => {
@@ -43,7 +47,7 @@ export default function StocksScreen() {
             style={{ marginHorizontal: 5 }}
             onPress={() => router.push("/stocks/palmares")}
           >
-            <Text style={{ color: "#007AFF", fontSize: 14 }}>Palmarès</Text>
+            <Text style={{ color: "#007AFF", fontSize: 14 }}>{t('palmares')}</Text>
           </TouchableOpacity>
 
           <Text style={{ color: "#999", fontSize: 16 }}>|</Text>
@@ -52,7 +56,7 @@ export default function StocksScreen() {
             style={{ marginHorizontal: 5 }}
             onPress={() => router.push("/stocks/watchlist")}
           >
-            <Text style={{ color: "#007AFF", fontSize: 14 }}>Watchlist</Text>
+            <Text style={{ color: "#007AFF", fontSize: 14 }}>{t('watchlist')}</Text>
           </TouchableOpacity>
         </View>
       ),

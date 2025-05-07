@@ -16,8 +16,12 @@ import { useStockRepository } from "@/data/repositories/stockRepository";
 import { provideHapticFeedback } from "@/utils/interactionUtils";
 import { usePortfolioStore } from "@/stores/portfolioStore";
 import { Stock } from "@/types/stock";
+import { useTranslation } from "react-i18next";
 
 export default function HoldingsScreen() {
+  
+  const { t } = useTranslation();
+  
   const { portfolioId } = useLocalSearchParams();
   const navigation = useNavigation();
   const { fetchStocks } = useStockRepository();
@@ -113,9 +117,9 @@ export default function HoldingsScreen() {
 
   const renderSheetContent = () => (
     <>
-      <Text style={styles.sheetTitle}>Sélectionner une action</Text>
+      <Text style={styles.sheetTitle}>t('choose-a-stock')</Text>
       <Text style={styles.sheetSubtitle}>
-        Sélectionnez pour enregistrer une transaction.
+        t('choose-a-stock-to-process-transaction')
       </Text>
       <FlatList
         data={stocks}
@@ -125,7 +129,7 @@ export default function HoldingsScreen() {
       />
       <View style={{ marginTop: 16 }}>
         <Pressable onPress={handleCancel} style={styles.cancelButton}>
-          <Text style={styles.cancelButtonText}>Annuler</Text>
+          <Text style={styles.cancelButtonText}>t('cancel')</Text>
         </Pressable>
       </View>
     </>

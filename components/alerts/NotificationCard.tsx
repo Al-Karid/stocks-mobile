@@ -1,6 +1,7 @@
 import { globalCardStyles } from '@/styles/globalStyles';
 import { AlertType } from '@/types/alerts';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, Text, StyleSheet } from 'react-native';
 
 type Props = {
@@ -11,6 +12,8 @@ type Props = {
 };
 
 const NotificationCard = ({ title, description, time, type }: Props) => {
+
+  const { t } = useTranslation();
   const isGain = type === 'above';
 
   return (
@@ -19,7 +22,7 @@ const NotificationCard = ({ title, description, time, type }: Props) => {
         <Text style={styles.title} numberOfLines={2}>{title}</Text>
         {type && (
           <View style={[styles.tag, isGain ? styles.gainTag : styles.lossTag]}>
-            <Text style={styles.tagText}>{isGain ? 'Hausse' : 'Baisse'}</Text>
+            <Text style={styles.tagText}>{isGain ? t('increase') : t('loss')}</Text>
           </View>
         )}
       </View>

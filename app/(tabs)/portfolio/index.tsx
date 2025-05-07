@@ -12,8 +12,11 @@ import { Portfolio } from "@/types/portfolio";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useSettingsStore } from "@/stores/settingsStore";
+import { useTranslation } from "react-i18next";
 
 export default function PortfolioScreen() {
+  
+  const { t } = useTranslation();
   const navigation = useNavigation();
 
   const {
@@ -38,7 +41,7 @@ export default function PortfolioScreen() {
 
   const handleSavePortfolio = async (name: string) => {
     if (portfolioName.trim() === "") {
-      alert("Please enter a portfolio name.");
+      alert(t('please-enter-a-portfolio-name'));
       return;
     }
     await addPortfolio(portfolioName);
@@ -80,19 +83,19 @@ export default function PortfolioScreen() {
 
             <Dialog.Container visible={isAddVisible}>
               <Dialog.Title>
-                <Text>Create Portfolio</Text>
+                <Text>t('create-portfolio')</Text>
               </Dialog.Title>
               <Dialog.Input
-                placeholder="Enter portfolio name"
+                placeholder={t('please-enter-a-portfolio-name')}
                 value={portfolioName}
                 onChangeText={setPortfolioName}
               />
               <Dialog.Button
-                label="Cancel"
+                label={t('cancel')}
                 onPress={() => handleCloseDialog(setAddVisible)}
               />
               <Dialog.Button
-                label="Create"
+                label={t('create-portfolio')}
                 onPress={() => handleSavePortfolio(portfolioName)}
               />
             </Dialog.Container>

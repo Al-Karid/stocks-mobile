@@ -5,6 +5,7 @@ import { Holding } from "@/types/portfolio";
 import { FontAwesome } from "@expo/vector-icons";
 import { formatCurrency, formatPercentage } from "@/utils/numberUtils";
 import { globalCardStyles } from "@/styles/globalStyles";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   holding: Holding;
@@ -12,6 +13,9 @@ interface Props {
 }
 
 export default function HoldingCard({ holding, onLongPress }: Props) {
+
+  const { t } = useTranslation();
+  
   const {
     symbol,
     name,
@@ -56,23 +60,23 @@ export default function HoldingCard({ holding, onLongPress }: Props) {
         {/* BODY */}
         <View style={styles.details}>
           <View style={styles.row}>
-            <Text style={styles.label}>Quantité</Text>
+            <Text style={styles.label}>{t('quantity')}</Text>
             <Text style={styles.value}>{formatCurrency(quantity)}</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>CMP</Text>
+            <Text style={styles.label}>{t('cmp')}</Text>
             <Text style={styles.value}>{formatCurrency(Number(averagePrice.toFixed(0)))}</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>Cours</Text>
+            <Text style={styles.label}>{t('current-price')}</Text>
             <Text style={styles.value}>{formatCurrency(Number(currentPrice!.toFixed(0)))}</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>Coût total</Text>
+            <Text style={styles.label}>{t('total-cost')}</Text>
             <Text style={styles.value}>{formatCurrency(computedTotalCost.toFixed(0))}</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>Valeur actuelle</Text>
+            <Text style={styles.label}>{t('current-value')}</Text>
             <Text style={styles.value}>{formatCurrency(currentValue.toFixed(0))}</Text>
           </View>
         </View>

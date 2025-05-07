@@ -9,6 +9,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useState, useEffect, useCallback } from "react";
 import { useAppInitializer } from "@/data/configs/initDatabases";
 import '@/i18n'; // Import your i18n configuration
+import { useTranslation } from "react-i18next";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -19,6 +20,8 @@ SplashScreen.setOptions({
 });
 
 export default function Layout() {
+  
+  const { t } = useTranslation();
   useNotificationHandler();
   const { initializeAppData } = useAppInitializer();
   const [appIsReady, setAppIsReady] = useState(false);
@@ -61,15 +64,15 @@ export default function Layout() {
               <Stack.Screen
                 name="settings/index"
                 options={{
-                  title: "Settings",
+                  title: t('settings'),
                   headerLargeTitle: true,
-                  headerBackTitle: "Dashboard",
+                  headerBackTitle: t('dashboard'),
                 }}
               />
               <Stack.Screen
                 name="settings/login"
                 options={{
-                  title: "Login",
+                  title: t('login'),
                   presentation: "modal",
                   animation: "slide_from_bottom",
                 }}
@@ -77,7 +80,7 @@ export default function Layout() {
               <Stack.Screen
                 name="settings/register"
                 options={{
-                  title: "Register",
+                  title: t('register'),
                   presentation: "modal",
                   animation: "slide_from_bottom",
                 }}
@@ -85,7 +88,7 @@ export default function Layout() {
               <Stack.Screen
                 name="stocks/details"
                 options={{
-                  title: "Stock Details",
+                  title: t('stock-details'),
                   presentation: "modal",
                   animation: "slide_from_bottom",
                   headerShadowVisible: false,
@@ -94,7 +97,7 @@ export default function Layout() {
               <Stack.Screen
                 name="stocks/stocks"
                 options={{
-                  title: "Stocks",
+                  title: t('stocks'),
                   headerLargeTitle: true,
                   presentation: "modal",
                   animation: "slide_from_bottom",
@@ -104,23 +107,23 @@ export default function Layout() {
               <Stack.Screen
                 name="alerts/index"
                 options={{
-                  title: "Alerts",
+                  title: t('alerts'),
                   headerLargeTitle: true,
-                  headerBackTitle: "Dashboard",
+                  headerBackTitle: t('dashboard'),
                 }}
               />
               <Stack.Screen
                 name="alerts/notifications"
                 options={{
-                  title: "Notifications",
+                  title: t('notifications'),
                   headerLargeTitle: true,
-                  headerBackTitle: "Dashboard",
+                  headerBackTitle: t('dashboard'),
                 }}
               />
               <Stack.Screen
                 name="alerts/form"
                 options={{
-                  title: "New Alert",
+                  title: t('new-alert'),
                   presentation: "modal",
                   animation: "slide_from_bottom",
                 }}
@@ -128,7 +131,7 @@ export default function Layout() {
               <Stack.Screen
                 name="portfolio/details"
                 options={{
-                  title: "Portfolio Details",
+                  title: t('portfolio-details'),
                   presentation: "modal",
                   animation: "slide_from_bottom",
                 }}
@@ -136,7 +139,7 @@ export default function Layout() {
               <Stack.Screen
                 name="transactions/new"
                 options={{
-                  title: "New Transaction",
+                  title: t('new-transaction'),
                   presentation: "modal",
                   animation: "slide_from_bottom",
                 }}
@@ -144,7 +147,7 @@ export default function Layout() {
               <Stack.Screen
                 name="transactions/history"
                 options={{
-                  title: "Transaction History",
+                  title: t('transaction-history'),
                   presentation: "modal",
                   animation: "slide_from_bottom",
                   headerShadowVisible: false,

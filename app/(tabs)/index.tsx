@@ -16,8 +16,11 @@ import { Portfolio } from '@/types/portfolio';
 import { Storage } from "expo-sqlite/kv-store";
 import { useUserStore } from '@/stores/userStore';
 import { changeLanguage } from '@/utils/languageUtils';
+import { useTranslation } from 'react-i18next';
 
 const DashboardScreen = () => {
+
+  const { t } = useTranslation();
 
   const { syncStockDataFromServer } = useStockSync();
   const { watchlist: watchlistStore } = useWatchlistStore();
@@ -78,7 +81,7 @@ const DashboardScreen = () => {
               <DashboardHeader portfolio={defaultPortfolio} displayName={user?.name} />
             ) : (
               <View style={{ height: 200, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ fontSize: 18, color: '#6b7280' }}>No portfolio available</Text>
+                <Text style={{ fontSize: 18, color: '#6b7280' }}>{t('no-portfolio-available')}</Text>
               </View>
             )}
 
@@ -88,7 +91,7 @@ const DashboardScreen = () => {
               {/* PORTFOLIO DISTRIBUTION */}
               <View style={styles.section}>
                 <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionTitle}>Portfolio distribution</Text>
+                  <Text style={styles.sectionTitle}>{t('portfolio_distribution')}</Text>
                   <TouchableOpacity onPress={() => changeLanguage('fr')}>
                     <Text style={styles.seeAll}>{lastSync}</Text>
                   </TouchableOpacity>
@@ -100,7 +103,7 @@ const DashboardScreen = () => {
                       <AssetCard key={holding.symbol} holding={holding} />
                     ))
                   ) : (
-                    <Text style={{ textAlign: 'center', marginTop: 20 }}>No portfolios available</Text>
+                    <Text style={{ textAlign: 'center', marginTop: 20 }}>{t('no-portfolios-available')}</Text>
                   )}
                 </ScrollView>
               </View>
@@ -108,7 +111,7 @@ const DashboardScreen = () => {
               {/* WATCHLIST */}
               <View style={[styles.section, { marginTop: 20 }]}>
                 <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionTitle}>My watchlist</Text>
+                  <Text style={styles.sectionTitle}>{t('my-watchlist')}</Text>
                   <TouchableOpacity onPress={() => { provideHapticFeedback(); router.push('/stocks'); }}>
                     <Ionicons name="add-circle-outline" size={24} color="#6b7280" />
                   </TouchableOpacity>
@@ -119,7 +122,7 @@ const DashboardScreen = () => {
                     <StockRow key={stock.id} stock={stock} />
                   ))
                 ) : (
-                  <Text style={{ textAlign: 'center', marginTop: 20 }}>No stocks in watchlist</Text>
+                  <Text style={{ textAlign: 'center', marginTop: 20 }}>{t('no-stocks-in-watchlist')}</Text>
                 )}
               </View>
             </View>

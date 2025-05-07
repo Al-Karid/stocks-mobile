@@ -17,8 +17,12 @@ import { useConputeService } from "@/services/computeService";
 import { usePortfolioStore } from "@/stores/portfolioStore";
 import { formatNumber } from "@/utils/numberUtils";
 import Toast from "react-native-toast-message";
+import { useTranslation } from "react-i18next";
 
 export default function NewTransaction() {
+
+  const { t } = useTranslation();
+  
   const { portfolioId, symbol, title } = useLocalSearchParams<{
     portfolioId?: string;
     symbol?: string;
@@ -60,11 +64,11 @@ export default function NewTransaction() {
       const realPricePerShare = computeRealPricePerShare(parsedPrice, parsedFees);
 
       if (isNaN(parsedQuantity) || isNaN(parsedPrice) || isNaN(parsedFees)) {
-        throw new Error("Veuillez entrer des valeurs valides.");
+        throw new Error(t('please-enter-a-valid-input'));
       }
 
       if (parsedQuantity <= 0) {
-        throw new Error("La quantité doit être supérieure à 0.");
+        throw new Error(t('quantity-must-be-higher-than-0'));
       }
 
       const newTransaction = {
@@ -86,15 +90,15 @@ export default function NewTransaction() {
       await addTransaction(newTransaction);
       Toast.show({
         type: "success",
-        text1: "Succès",
-        text2: "Transaction enregistrée !",
+        text1: t('success'),
+        text2: t('transaction-saved'),
         position: "bottom"
       });
       router.back();
     } catch (error: any) {
       Alert.alert(
-        "Erreur",
-        error.message || "Une erreur est survenue lors de l'enregistrement de la transaction."
+        t('error'),
+        error.message || t('an-error-has-accured-while-saving-the-transaction')
       );
     }
   };
@@ -110,11 +114,11 @@ export default function NewTransaction() {
       >
         {symbol && (
           <Text style={styles.sectionTitle}>
-            {title ?? "Action"} ({symbol})
+            {title ?? t('stock')} ({symbol})
           </Text>
         )}
 
-        <Text style={styles.label}>Type de transaction</Text>
+        <Text style={styles.label}>{t('transaction-type')}</Text>
         <View style={styles.typeSelector}>
           {(["BUY", "SELL"] as TransactionType[]).map((value) => (
             <Pressable
@@ -131,13 +135,13 @@ export default function NewTransaction() {
                   type === value && styles.typeButtonTextSelected,
                 ]}
               >
-                {value === "BUY" ? "Achat" : "Vente"}
+                {value === "BUY" ? t('buy') : t('sell')}
               </Text>
             </Pressable>
           ))}
         </View>
 
-        <Text style={styles.label}>Date de la transaction</Text>
+        <Text style={styles.label}>{t('transaction-date')}</Text>
         <Pressable onPress={() => setShowDatePicker(true)} style={styles.dateButton}>
           <Text style={styles.dateText}>{transactionDate.toLocaleDateString()}</Text>
         </Pressable>
@@ -157,7 +161,7 @@ export default function NewTransaction() {
         )}
 
 
-        <Text style={styles.label}>Quantité</Text>
+        <Text style={styles.label}>{t('quantity')}</Text>
         <TextInput
           style={[
             styles.input,
@@ -170,10 +174,9 @@ export default function NewTransaction() {
           onFocus={() => setFocusedField("quantity")}
           onBlur={() => setFocusedField(null)}
           onSubmitEditing={() => priceInputRef.current?.focus()}
-          placeholder="Ex: 100"
         />
 
-        <Text style={styles.label}>Prix par action (FCFA)</Text>
+        <Text style={styles.label}>{t('price-per-share-fcfa')}</Text>
         <TextInput
           ref={priceInputRef}
           style={[
@@ -187,10 +190,9 @@ export default function NewTransaction() {
           onFocus={() => setFocusedField("pricePerShare")}
           onBlur={() => setFocusedField(null)}
           onSubmitEditing={() => feesInputRef.current?.focus()}
-          placeholder="Ex: 500"
         />
 
-        <Text style={styles.label}>Frais de transaction</Text>
+        <Text style={styles.label}>{t('transaction-fees')}</Text>
         <TextInput
           ref={feesInputRef}
           style={[styles.input, focusedField === "fees" && styles.inputFocused]}
@@ -200,17 +202,16 @@ export default function NewTransaction() {
           onChangeText={setCleanFees}
           onFocus={() => setFocusedField("fees")}
           onBlur={() => setFocusedField(null)}
-          placeholder="Par défaut 1.2"
         />
 
         <View style={styles.totalContainer}>
-          <Text style={styles.totalLabel}>Total estimé</Text>
+          <Text style={styles.totalLabel}>{t('total-estimated')}</Text>
           <Text style={styles.totalValue}>{formatNumber(total.toFixed(2))} FCFA</Text>
         </View>
 
         <Pressable style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>
-            Enregistrer la transaction
+            {t('save-transaction')}
           </Text>
         </Pressable>
       </ScrollView>

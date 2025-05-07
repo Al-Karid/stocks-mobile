@@ -3,6 +3,7 @@ import React from "react";
 import { FlatList, StyleSheet, View, Text } from "react-native";
 import { Holding } from "@/types/portfolio";
 import HoldingCard from "./HoldingCard";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   holdings: Holding[];
@@ -11,6 +12,9 @@ interface Props {
 }
 
 export default function HoldingListing({ holdings, portfolioName, onHoldingLongPress }: Props) {
+
+  const { t } = useTranslation();
+  
   return (
     <FlatList
       data={holdings}
@@ -22,7 +26,7 @@ export default function HoldingListing({ holdings, portfolioName, onHoldingLongP
       ListEmptyComponent={() => (
         <View style={{ alignItems: "center", marginTop: 20 }}>
           <Text style={{ fontStyle: "italic", color: "#888", textAlign: "center" }}>
-            Your transactions will appear here.
+            {t('your-transactions-will-appear-here')}
           </Text>
         </View>
       )}

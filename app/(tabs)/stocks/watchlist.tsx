@@ -1,9 +1,13 @@
 import StockCard from "@/components/stocks/StockCard";
 import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Text, StyleSheet, FlatList } from "react-native";
 
 const WatchlistScreen: React.FC = () => {
+
+  const { t } = useTranslation();
+
   const { watchlist, fetchWatchlist } = useWatchlistStore();
   const [updatedAt, setUpdatedAt] = useState<string>("");
 
@@ -32,7 +36,7 @@ const WatchlistScreen: React.FC = () => {
             color: "#888",
           }}
         >
-          Select a stock to add to your watchlist.
+          {t('select-a-stock-to-add-to-your-watchlist')}
         </Text>
       )}
       renderItem={({ item }) => (

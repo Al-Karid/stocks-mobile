@@ -12,6 +12,7 @@ import { router } from "expo-router";
 import { formatCurrency, formatNumber } from "@/utils/numberUtils";
 import { Feather } from "@expo/vector-icons";
 import { globalCardStyles } from "@/styles/globalStyles";
+import { useTranslation } from "react-i18next";
 
 interface StockCardProps {
   name: string;
@@ -40,6 +41,9 @@ const StockCard: React.FC<StockCardProps> = ({
   low,
   isInWatchlist,
 }) => {
+
+  const { t } = useTranslation();
+  
   const [modalVisible, setModalVisible] = useState(false);
   const isPositive = percentageChange > 0;
   const isNegative = percentageChange < 0;
@@ -115,13 +119,13 @@ const StockCard: React.FC<StockCardProps> = ({
         >
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>{symbol}</Text>
-            <Text style={styles.modalText}>Nom complet : {name}</Text>
-            <Text style={styles.modalText}>Prix actuel : {currentPrice}</Text>
+            <Text style={styles.modalText}>{t('company')}: {name}</Text>
+            <Text style={styles.modalText}>{t('current-price')}:  {currentPrice}</Text>
             <Text style={styles.modalText}>
-              Clôture précédente : {previousClosePrice}
+              {t('previous-close-price')}: {previousClosePrice}
             </Text>
             <Text style={styles.modalText}>
-              Variation : {percentageChange.toFixed(2)}%
+              {t('change-rate')}: {percentageChange.toFixed(2)}%
             </Text>
           </View>
         </Pressable>

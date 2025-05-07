@@ -4,9 +4,12 @@ import { View, Text, StyleSheet, SectionList } from 'react-native';
 import NotificationCard from '@/components/alerts/NotificationCard';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { groupNotifications } from '@/utils/notificationUtils';
+import { useTranslation } from 'react-i18next';
 
 
 const NotificationScreen = () => {
+
+  const { t } = useTranslation();
   
   const { notifications } = useNotificationStore();
   const grouped = useMemo(() => groupNotifications(notifications ?? []), [notifications]);
@@ -31,7 +34,7 @@ const NotificationScreen = () => {
         contentContainerStyle={{ paddingBottom: 20 }}
         ListEmptyComponent={() => (
           <View style={{ flex: 1, margin: 20, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={{ fontSize: 16, color: '#888' }}>No notifications yet</Text>
+            <Text style={{ fontSize: 16, color: '#888' }}>{t('no-notifications-yet')}</Text>
           </View>
         )}
         stickySectionHeadersEnabled={false}

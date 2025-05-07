@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
-import { Swipeable } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 interface Holding {
   symbol: string;
@@ -16,17 +16,8 @@ interface PortfolioHoldingProps {
 }
 
 export default function PortfolioHolding({ item }: PortfolioHoldingProps) {
-  const navigation = useNavigation();
 
-  // Function to render hidden "Settings" button on swipe
-  const renderRightActions = () => (
-    <TouchableOpacity
-      style={styles.settingsButton}
-      // onPress={() => navigation.navigate("HoldingSettings", { item })}
-    >
-      <Text style={styles.settingsText}>≡</Text>
-    </TouchableOpacity>
-  );
+  const { t } = useTranslation();
 
   return (
     <View style={styles.holdingCard}>
@@ -35,10 +26,10 @@ export default function PortfolioHolding({ item }: PortfolioHoldingProps) {
         <Text style={styles.holdingTitle}>{item.symbol}</Text>
         <Text style={styles.holdingText}>Quantity: {item.quantity}</Text>
         <Text style={styles.holdingText}>
-          Buy Price: {item.averagePurchasePrice} FCFA
+          {t('buy-price')}: {item.averagePurchasePrice} FCFA
         </Text>
         <Text style={styles.holdingText}>
-          Current Price: {item.currentPrice} FCFA
+          {t('current-price')}: {item.currentPrice} FCFA
         </Text>
       </View>
 

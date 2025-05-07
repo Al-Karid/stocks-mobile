@@ -5,10 +5,13 @@ import { usePortfolioStore } from "@/stores/portfolioStore";
 import { formatCurrency, formatPercentage, formatTransactionNumber } from "@/utils/numberUtils";
 import { Holding } from "@/types/portfolio";
 import { globalCardStyles, globalTextStyles } from "@/styles/globalStyles";
+import { useTranslation } from "react-i18next";
 
 const { width } = Dimensions.get("window");
 
 const PortfolioDetails = () => {
+
+  const { t } = useTranslation();
   const { portfolioId } = useLocalSearchParams();
   const { portfolios, getHoldings } = usePortfolioStore();
   const [holdings, setHoldings] = useState<Holding[]>([]);
@@ -26,7 +29,7 @@ const PortfolioDetails = () => {
   if (!portfolio) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.errorText}>Portfolio not found</Text>
+        <Text style={styles.errorText}>{t('portfolio-not-found')}</Text>
       </View>
     );
   }
@@ -36,18 +39,18 @@ const PortfolioDetails = () => {
       <Text style={styles.title}>{portfolio.name.toLocaleUpperCase()}</Text>
 
       <View style={globalCardStyles.card}>
-        <Text style={styles.sectionTitle}>Performance</Text>
+        <Text style={styles.sectionTitle}>{t('performance')}</Text>
         <View style={globalTextStyles.labelValueDetailsContainerBTop}>
           <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>Total value</Text>
+            <Text style={globalTextStyles.label}>{t('total-value')}</Text>
             <Text style={globalTextStyles.value}>{formatCurrency(portfolio.performance.totalValue)}</Text>
           </View>
           <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>Total cost</Text>
+            <Text style={globalTextStyles.label}>{t('total-cost')}</Text>
             <Text style={globalTextStyles.value}>{formatCurrency(portfolio.performance.totalCost)}</Text>
           </View>
           <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>Total gain/loss</Text>
+            <Text style={globalTextStyles.label}>{t('total-gain-loss')}</Text>
             <Text
               style={[
                 globalTextStyles.value,
@@ -58,7 +61,7 @@ const PortfolioDetails = () => {
             </Text>
           </View>
           <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>Total gain/loss rate</Text>
+            <Text style={globalTextStyles.label}>{t('total-gain-loss-rate')}</Text>
             <Text
               style={[
                 globalTextStyles.value,
@@ -71,7 +74,7 @@ const PortfolioDetails = () => {
         </View>
       </View>
 
-      <Text style={styles.holdingSectionTitle}>Holdings</Text>
+      <Text style={styles.holdingSectionTitle}>{t('holdings')}</Text>
 
       {holdings.map((holding) => (
         <View key={holding.symbol} style={globalCardStyles.card}>
@@ -81,7 +84,7 @@ const PortfolioDetails = () => {
           </View>
           <View style={globalTextStyles.labelValueDetailsContainer}>
             <View style={globalTextStyles.labelValueDetailsRow}>
-              <Text style={globalTextStyles.label}>Quantity</Text>
+              <Text style={globalTextStyles.label}>{t('quantity')}</Text>
               <Text style={globalTextStyles.value}>{formatTransactionNumber(holding.quantity)}</Text>
             </View>
             <View style={globalTextStyles.labelValueDetailsRow}>
