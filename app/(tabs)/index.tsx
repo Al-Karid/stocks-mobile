@@ -103,7 +103,7 @@ const DashboardScreen = () => {
                       <AssetCard key={holding.symbol} holding={holding} />
                     ))
                   ) : (
-                    <Text style={{ textAlign: 'center', marginTop: 20 }}>{t('no-portfolios-available')}</Text>
+                    <Text style={{ textAlign: 'center', marginTop: 20 }}>{t('no-portfolio-available')}</Text>
                   )}
                 </ScrollView>
               </View>

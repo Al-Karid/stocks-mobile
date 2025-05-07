@@ -112,7 +112,7 @@ export default function AlertFormModal() {
       >
         <View style={styles.modalWrapper}>
           <ScrollView contentContainerStyle={styles.scrollContent}>
-            <Text style={styles.label}>t('stocks')</Text>
+            <Text style={styles.label}>{t('stocks')}</Text>
             <Pressable style={styles.stockSelector}>
               <Text style={styles.stockSelectorText}>
                 {alertStockTitle || t('choose-a-stock')}

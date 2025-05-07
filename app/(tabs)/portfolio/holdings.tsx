@@ -117,9 +117,9 @@ export default function HoldingsScreen() {
 
   const renderSheetContent = () => (
     <>
-      <Text style={styles.sheetTitle}>t('choose-a-stock')</Text>
+      <Text style={styles.sheetTitle}>{t('choose-a-stock')}</Text>
       <Text style={styles.sheetSubtitle}>
-        t('choose-a-stock-to-process-transaction')
+        {t('choose-a-stock-to-process-transaction')}
       </Text>
       <FlatList
         data={stocks}
@@ -129,7 +129,7 @@ export default function HoldingsScreen() {
       />
       <View style={{ marginTop: 16 }}>
         <Pressable onPress={handleCancel} style={styles.cancelButton}>
-          <Text style={styles.cancelButtonText}>t('cancel')</Text>
+          <Text style={styles.cancelButtonText}>{t('cancel')}</Text>
         </Pressable>
       </View>
     </>
