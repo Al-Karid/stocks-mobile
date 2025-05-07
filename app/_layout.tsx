@@ -6,9 +6,9 @@ import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useNotificationHandler } from "@/services/notificationService";
 import * as SplashScreen from "expo-splash-screen";
-import { Entypo } from "@expo/vector-icons";
 import { useState, useEffect, useCallback } from "react";
 import { useAppInitializer } from "@/data/configs/initDatabases";
+import '@/i18n'; // Import your i18n configuration
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();

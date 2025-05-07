@@ -15,6 +15,7 @@ import { formatRelativeDate } from '@/utils/dateUtils';
 import { Portfolio } from '@/types/portfolio';
 import { Storage } from "expo-sqlite/kv-store";
 import { useUserStore } from '@/stores/userStore';
+import { changeLanguage } from '@/utils/languageUtils';
 
 const DashboardScreen = () => {
 
@@ -88,7 +89,7 @@ const DashboardScreen = () => {
               <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                   <Text style={styles.sectionTitle}>Portfolio distribution</Text>
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={() => changeLanguage('fr')}>
                     <Text style={styles.seeAll}>{lastSync}</Text>
                   </TouchableOpacity>
                 </View>
