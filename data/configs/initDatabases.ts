@@ -46,6 +46,7 @@ export const useAppInitializer = () => {
         await initAlertDatabase();
         console.log("✅ Databases initialized");
         await syncStockDataFromServer();
+        await fetchUserContraintCounts();
         console.log("🔄 Stock data synchronized");
         await saveSetting({ key: "databaseInitialized", value: "true" });
         console.log("✅ Database initialization flag set");
