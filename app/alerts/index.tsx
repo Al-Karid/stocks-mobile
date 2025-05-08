@@ -321,7 +321,8 @@ const styles = StyleSheet.create({
   },
   cardName: {
     fontSize: 14,
-    color: "#475569",
+    color: "black",
+    fontWeight: "bold",
   },
   cardCondition: {
     fontSize: 16,

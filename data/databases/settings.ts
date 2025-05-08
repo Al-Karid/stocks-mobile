@@ -35,8 +35,8 @@ export const initSettingsDb = async () => {
             userProfile: "free",
             maxPorfolio: 1,
             maxWatchlist: 2,
-            maxTransactions: 10,
-            maxAlerts: 2,
+            maxTransactions: 50,
+            maxAlerts: 1,
         };
 
         const premiumUserProfileSettings: UserProfileSettings = {
