@@ -59,7 +59,7 @@ export const initSettingsDb = async () => {
             { key: "theme", value: "light" },
             { key: "language", value: "en" },
             { key: "databaseInitialized", value: "false" },
-            { key: "devicePushToken", value: await getDevicePushToken() },
+            { key: "devicePushToken", value: await getDevicePushToken() || "" },
             { key: "notificationChannels", value: JSON.stringify(notificationChannels) },
             { key: "freeUserProfileSettings", value: JSON.stringify(freeUserProfileSettings) },
             { key: "premiumUserProfileSettings", value: JSON.stringify(premiumUserProfileSettings) },

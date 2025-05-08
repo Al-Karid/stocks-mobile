@@ -15,6 +15,7 @@ import {
   ScrollView,
   Pressable,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { getDevicePushToken } from '@/services/pushTokenService';
 import 'react-native-get-random-values';
@@ -31,11 +32,12 @@ export default function AlertFormModal() {
   const { alerts, addAlert, updateAlert, notificationChannels } = useAlertStore();
   const { decreaseUserContraintCounts } = useSettingsStore();
 
-  const [alertType, setAlertType] = useState<'below' | 'above'>('above')
-  const [alertThreshold, setAlertThreshold] = useState("2500")
-  const [alertStockTitle, setAlertStockTitle] = useState(stockTitle)
-  const [enabled, setEnabled] = useState(false)
+  const [alertType, setAlertType] = useState<'below' | 'above'>('above');
+  const [alertThreshold, setAlertThreshold] = useState("2500");
+  const [alertStockTitle, setAlertStockTitle] = useState(stockTitle);
+  const [enabled, setEnabled] = useState(false);
   const [alertToEdit, setAlertToEdit] = useState<AlertData | null>(null);
+  const [isLoading, setIsLoading] = useState(false); // New loading state
 
   useEffect(() => {
     if (alertToEditId) {
@@ -70,6 +72,7 @@ export default function AlertFormModal() {
   }}, [alertThreshold, alertType, enabled]);
 
   const handleSubmit = async () => {
+    setIsLoading(true); // Start loading
     try {
       const newAlert: AlertData = {
         id: alertToEditId ? Number(alertToEditId) : 0,
@@ -93,7 +96,6 @@ export default function AlertFormModal() {
         decreaseUserContraintCounts('maxAlerts');
       }
       // addAlert(newAlert);
-      router.back();
     } catch (error) {
       console.error("Error saving alert:", error);
       Alert.alert(
@@ -101,6 +103,9 @@ export default function AlertFormModal() {
         t('there-was-an-error-saving-the-alert-please-try-again'),
         [{ text: t('okay') }]
       );
+    } finally {
+      setIsLoading(false); // Stop loading
+      router.back();
     }
   };
 
@@ -111,62 +116,68 @@ export default function AlertFormModal() {
         style={{ flex: 1 }}
       >
         <View style={styles.modalWrapper}>
-          <ScrollView contentContainerStyle={styles.scrollContent}>
-            <Text style={styles.label}>{t('stocks')}</Text>
-            <Pressable style={styles.stockSelector}>
-              <Text style={styles.stockSelectorText}>
-                {alertStockTitle || t('choose-a-stock')}
-              </Text>
-            </Pressable>
-
-            <Text style={styles.label}>{t('alert-type')}</Text>
-            <View style={styles.toggleContainer}>
-              <TouchableOpacity
-                style={[styles.toggleButton, alertType === 'above' && styles.selectedToggle]}
-                onPress={() => setAlertType('above')}
-              >
-                <Text style={alertType === 'above' ? styles.selectedText : styles.toggleText}>{t('above')}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.toggleButton, alertType === 'below' && styles.selectedToggle]}
-                onPress={() => setAlertType('below')}
-              >
-                <Text style={alertType === 'below' ? styles.selectedText : styles.toggleText}>{t('below')}</Text>
-              </TouchableOpacity>
+          {isLoading ? ( // Show spinner when loading
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <ActivityIndicator size="large" color="black" />
             </View>
+          ) : (
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+              <Text style={styles.label}>{t('stocks')}</Text>
+              <Pressable style={styles.stockSelector}>
+                <Text style={styles.stockSelectorText}>
+                  {alertStockTitle || t('choose-a-stock')}
+                </Text>
+              </Pressable>
 
-            <Text style={styles.label}>{t('target-value')}</Text>
-            <TextInput
-              style={styles.input}
-              placeholder={t('enter-target-value')}
-              keyboardType="numeric"
-              value={alertThreshold}
-              onChangeText={setAlertThreshold}
-            />
+              <Text style={styles.label}>{t('alert-type')}</Text>
+              <View style={styles.toggleContainer}>
+                <TouchableOpacity
+                  style={[styles.toggleButton, alertType === 'above' && styles.selectedToggle]}
+                  onPress={() => setAlertType('above')}
+                >
+                  <Text style={alertType === 'above' ? styles.selectedText : styles.toggleText}>{t('above')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.toggleButton, alertType === 'below' && styles.selectedToggle]}
+                  onPress={() => setAlertType('below')}
+                >
+                  <Text style={alertType === 'below' ? styles.selectedText : styles.toggleText}>{t('below')}</Text>
+                </TouchableOpacity>
+              </View>
 
-            <View style={styles.row}>
-              <Text style={styles.label}>{t('enabled')}</Text>
-              <Switch
-                value={Boolean(enabled)}
-                onValueChange={setEnabled}
-                trackColor={{ false: '#ccc', true: '#000' }}
-                thumbColor={enabled ? '#000' : '#f4f3f4'}
+              <Text style={styles.label}>{t('target-value')}</Text>
+              <TextInput
+                style={styles.input}
+                placeholder={t('enter-target-value')}
+                keyboardType="numeric"
+                value={alertThreshold}
+                onChangeText={setAlertThreshold}
               />
-            </View>
-            {
-              Platform.OS === 'android' && (
-                <View>
-                  <TouchableOpacity style={styles.saveButton} onPress={() => handleSubmit()}>
-                    <Text style={styles.saveText}>{t('save')}</Text>
-                  </TouchableOpacity>
 
-                  <TouchableOpacity style={styles.cancelButton} onPress={() => router.back()}>
-                    <Text style={styles.cancelText}>{t('cancel')}</Text>
-                  </TouchableOpacity>
-                </View>
-              )
-            }
-          </ScrollView>
+              <View style={styles.row}>
+                <Text style={styles.label}>{t('enabled')}</Text>
+                <Switch
+                  value={Boolean(enabled)}
+                  onValueChange={setEnabled}
+                  trackColor={{ false: '#ccc', true: '#000' }}
+                  thumbColor={enabled ? '#000' : '#f4f3f4'}
+                />
+              </View>
+              {
+                Platform.OS === 'android' && (
+                  <View>
+                    <TouchableOpacity style={styles.saveButton} onPress={() => handleSubmit()}>
+                      <Text style={styles.saveText}>{t('save')}</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.cancelButton} onPress={() => router.back()}>
+                      <Text style={styles.cancelText}>{t('cancel')}</Text>
+                    </TouchableOpacity>
+                  </View>
+                )
+              }
+            </ScrollView>
+          )}
         </View>
       </KeyboardAvoidingView>
 

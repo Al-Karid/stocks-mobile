@@ -11,6 +11,7 @@ import { useAlertStore } from '@/stores/alertStore';
 import { useStockStore } from '@/stores/stockStore';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 // This function should be used inside a component to access the sync method
 export const useAppInitializer = () => {
@@ -43,6 +44,15 @@ export const useAppInitializer = () => {
         await getDevicePushToken();
         console.log("✅ Stores loaded");
       } else {
+
+        const devicePushToken = await getSettings("devicePushToken");
+        if (!devicePushToken.value || devicePushToken.value === "" || devicePushToken.value === "null" || devicePushToken.value === "undefined" || devicePushToken.value === null) {
+          console.log("🔄 Device push token not found, generating a new one...");
+          const newDevicePushToken = await getDevicePushToken();
+          await saveSetting({ key: "devicePushToken", value: newDevicePushToken || "" });
+          await getNotificationChannels();
+        }
+
         console.log("🔄 Initializing databases...");
         await initDb();
         await initPortfolioDb();
