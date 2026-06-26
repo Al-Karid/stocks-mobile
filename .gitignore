@@ -4,6 +4,10 @@
 node_modules/
 .vscode/
 
+ios/
+
+android/
+
 # Expo
 .expo/
 dist/
