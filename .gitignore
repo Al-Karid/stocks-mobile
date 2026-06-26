@@ -8,6 +8,8 @@ ios/
 
 android/
 
+build/
+
 # Expo
 .expo/
 dist/

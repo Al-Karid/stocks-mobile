@@ -7,9 +7,18 @@
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web",
     "test": "jest --watchAll",
-    "lint": "expo lint"
+    "prebuild": "expo prebuild",
+    "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
+    "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
+    "web": "expo start --web",
+    "dev": "expo run:ios --device",
+    "release": "npx expo run:ios --device 00008140-001504DE1E93801C --configuration Release",
+    "release:a": "npx expo run:android --device --variant=release",
+    "preview:p:a": "eas build --platform android --profile preview --local",
+    "release:p:a": "eas build --platform android --profile production --local",
+    "bump-version": "node scripts/bump-version.js",
+    "push-update:android": "eas update --platform android"
   },
   "jest": {
     "preset": "jest-expo"
