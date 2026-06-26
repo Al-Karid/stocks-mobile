@@ -47,12 +47,12 @@ export const initSettingsDb = async () => {
             maxAlerts: 100,
         };
 
-        const userProfileConstraintsCounts: UserProfileSettings = {
+        const initialUserProfileConstraintsCounts: UserProfileSettings = {
             userProfile: "free",
-            maxPorfolio: 0,
-            maxWatchlist: 0,
-            maxTransactions: 0,
-            maxAlerts: 0
+            maxPorfolio: 1,
+            maxWatchlist: 2,
+            maxTransactions: 50,
+            maxAlerts: 1
         }
 
         const defaultSettings = [
@@ -63,12 +63,12 @@ export const initSettingsDb = async () => {
             { key: "notificationChannels", value: JSON.stringify(notificationChannels) },
             { key: "freeUserProfileSettings", value: JSON.stringify(freeUserProfileSettings) },
             { key: "premiumUserProfileSettings", value: JSON.stringify(premiumUserProfileSettings) },
-            { key: "userProfileConstraintsCounts", value: JSON.stringify(freeUserProfileSettings) },
+            { key: "userProfileConstraintsCounts", value: JSON.stringify(initialUserProfileConstraintsCounts) },
         ];
 
         for (const setting of defaultSettings) {
             await db.runAsync(
-                `INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)`,
+                `INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)`,
                 [setting.key, setting.value]
             );
         }

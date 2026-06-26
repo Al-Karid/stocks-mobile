@@ -59,8 +59,8 @@ const DashboardScreen = () => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#121212' }}>
-        <StatusBar style="light" backgroundColor='#121212' />
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
+        <StatusBar style="dark" backgroundColor='#ffffff' />
         <ScrollView
           style={styles.container}
           contentContainerStyle={{ flexGrow: 1 }}

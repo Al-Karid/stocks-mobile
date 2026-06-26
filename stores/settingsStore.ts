@@ -16,10 +16,10 @@ const { getSettings, updateSetting } = useSettingRepository();
 export const useSettingsStore = create<SettingsStore>((set) => ({
     userContraintCounts: {
         userProfile: "free" as "free" | "premium",
-        maxPorfolio: 0,
-        maxWatchlist: 0,
-        maxTransactions: 0,
-        maxAlerts: 0
+        maxPorfolio: 2,
+        maxWatchlist: 2,
+        maxTransactions: 50,
+        maxAlerts: 1
     },
     increaseUserContraintCounts: (item: keyof UserProfileSettings) => {
         set((state) => {
