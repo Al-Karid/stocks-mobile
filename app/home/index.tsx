@@ -13,7 +13,9 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = React.useState(false);
   const { syncStockDataFromServer } = useStockSync();
 
-  const navigateTo = (screen: string) => router.push(`/${screen}`);
+  const navigateTo = (screen: string) => {
+    router.push(`/${screen}` as any);
+  };
 
   const onRefresh = async () => {
     setRefreshing(true);

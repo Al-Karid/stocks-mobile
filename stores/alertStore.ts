@@ -183,9 +183,9 @@ export const useAlertStore = create<AlertStore>((set, get) => ({
         });
     },
     getNotificationChannels: async (): Promise<NotificationChannel> => {
-        const notificationChannels: SettingData = await getSettings("notificationChannels");
-        if (notificationChannels) {
-            let channels = JSON.parse(notificationChannels.value);
+        const notificationChannelsSetting = await getSettings("notificationChannels");
+        if (notificationChannelsSetting?.value) {
+            let channels = JSON.parse(notificationChannelsSetting.value);
             channels = channels.reduce((acc: NotificationChannel, channel: any) => {
                 acc[channel.key as keyof NotificationChannel] = channel.value;
                 return acc;

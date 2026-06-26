@@ -11,7 +11,7 @@ import { useAlertStore } from '@/stores/alertStore';
 import { useStockStore } from '@/stores/stockStore';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { useSettingsStore } from '@/stores/settingsStore';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+import { isDatabaseInitializedSetting } from '@/data/configs/databaseInitState';
 
 // This function should be used inside a component to access the sync method
 export const useAppInitializer = () => {
@@ -30,9 +30,12 @@ export const useAppInitializer = () => {
   const initializeAppData = async (): Promise<void> => {
     try {
       await initSettingsDb();
-      const dbInitialized = await getSettings("databaseInitialized");
-      if (dbInitialized.value === "true") {
-        console.log("✅ Databases already initializedm skipping initialization");
+
+      const dbInitializedSetting = await getSettings("databaseInitialized").catch(() => null);
+      const isInitialized = isDatabaseInitializedSetting(dbInitializedSetting?.value ?? null);
+
+      if (isInitialized) {
+        console.log("✅ Databases already initialized; skipping initialization");
         console.log("🔄 Loading Stores");
         await fetchStocks();
         await fetchWatchlist();
@@ -43,27 +46,27 @@ export const useAppInitializer = () => {
         await getNotificationChannels();
         await getDevicePushToken();
         console.log("✅ Stores loaded");
-      } else {
-
-        const devicePushToken = await getSettings("devicePushToken");
-        if (!devicePushToken.value || devicePushToken.value === "" || devicePushToken.value === "null" || devicePushToken.value === "undefined" || devicePushToken.value === null) {
-          console.log("🔄 Device push token not found, generating a new one...");
-          const newDevicePushToken = await getDevicePushToken();
-          await saveSetting({ key: "devicePushToken", value: newDevicePushToken || "" });
-          await getNotificationChannels();
-        }
-
-        console.log("🔄 Initializing databases...");
-        await initDb();
-        await initPortfolioDb();
-        await initAlertDatabase();
-        console.log("✅ Databases initialized");
-        await syncStockDataFromServer();
-        await fetchUserContraintCounts();
-        console.log("🔄 Stock data synchronized");
-        await saveSetting({ key: "databaseInitialized", value: "true" });
-        console.log("✅ Database initialization flag set");
+        return;
       }
+
+      const devicePushToken = await getSettings("devicePushToken").catch(() => null);
+      if (!devicePushToken?.value || devicePushToken.value === "" || devicePushToken.value === "null" || devicePushToken.value === "undefined" || devicePushToken.value === null) {
+        console.log("🔄 Device push token not found, generating a new one...");
+        const newDevicePushToken = await getDevicePushToken();
+        await saveSetting({ key: "devicePushToken", value: newDevicePushToken || "" });
+        await getNotificationChannels();
+      }
+
+      console.log("🔄 Initializing databases...");
+      await initDb();
+      await initPortfolioDb();
+      await initAlertDatabase();
+      console.log("✅ Databases initialized");
+      await syncStockDataFromServer();
+      await fetchUserContraintCounts();
+      console.log("🔄 Stock data synchronized");
+      await saveSetting({ key: "databaseInitialized", value: "true" });
+      console.log("✅ Database initialization flag set");
     } catch (err: any) {
       console.error("‼️ Error initializing app:", err);
       throw err;

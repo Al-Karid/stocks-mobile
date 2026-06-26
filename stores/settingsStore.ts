@@ -77,6 +77,11 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
     },
     fetchUserContraintCounts: async () => {
         const userProfileSettings = await getSettings("userProfileConstraintsCounts");
+        if (!userProfileSettings?.value) {
+            console.warn("⚠️ User profile constraints settings not found; keeping defaults");
+            return;
+        }
+
         const parsedUserProfileSettings = JSON.parse(userProfileSettings.value) as UserProfileSettings;
         set({ userContraintCounts: parsedUserProfileSettings });
         console.log("User profile settings fetched:", parsedUserProfileSettings);

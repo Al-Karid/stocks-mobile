@@ -4,14 +4,14 @@ import { StockSettingError } from "@/types/errors";
 
 export const useSettingRepository = () => {
 
-    const getSettings = async (key: string): Promise<SettingData> => {
+    const getSettings = async (key: string): Promise<SettingData | null> => {
         try {
             const db = await dbPromise;
             const rows = await db.getFirstAsync("SELECT * FROM settings WHERE key = ?", [key]);
-            return rows as SettingData;
+            return rows as SettingData | null;
         } catch (error: any) {
             console.error("‼️ Error fetching settings:", error);
-            throw new StockSettingError(`Error fetching settings [${key}]: " ${error.message}`);
+            return null;
         }
     }
 
