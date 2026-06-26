@@ -64,6 +64,7 @@ export const initSettingsDb = async () => {
             { key: "freeUserProfileSettings", value: JSON.stringify(freeUserProfileSettings) },
             { key: "premiumUserProfileSettings", value: JSON.stringify(premiumUserProfileSettings) },
             { key: "userProfileConstraintsCounts", value: JSON.stringify(initialUserProfileConstraintsCounts) },
+            { key: "autoUpdatesEnabled", value: "true" },
         ];
 
         for (const setting of defaultSettings) {

@@ -16,17 +16,23 @@ import { useUserStore } from '@/stores/userStore';
 import { useAlertStore } from '@/stores/alertStore';
 import { NotificationChannel } from '@/types/settings';
 import { useTranslation } from 'react-i18next';
+import { useSettingsStore } from '@/stores/settingsStore';
 
 export default function SettingsScreen() {
 
     const { t } = useTranslation();
     const {notificationChannels, updateNotificationChannel } = useAlertStore();
+    const { autoUpdatesEnabled, setAutoUpdatesEnabled, fetchAutoUpdatesEnabled } = useSettingsStore();
     
     const [collapsed, setCollapsed] = useState(true);
     const { user, loggedIn, removeUser } = useUserStore();
     const canLogin = false
 
     const isRegistered = loggedIn && user !== null;
+
+    useEffect(() => {
+        fetchAutoUpdatesEnabled();
+    }, [fetchAutoUpdatesEnabled]);
 
     const handleLogout = () => removeUser();
     const handleAlertSettings = () => console.log("Alert Settings pressed");
@@ -98,7 +104,23 @@ export default function SettingsScreen() {
                 </View>
             </View>
 
-            {/* Section 2: Alerts */}
+            {/* Section 2: Updates */}
+            <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Updates</Text>
+                <View style={styles.card}>
+                    <View style={[styles.row, styles.lastRow]}>
+                        <Ionicons name="cloud-download-outline" size={20} color="#666" style={styles.icon} />
+                        <Text style={styles.text}>Auto update</Text>
+                        <Switch
+                            value={autoUpdatesEnabled}
+                            onValueChange={(value) => setAutoUpdatesEnabled(value)}
+                            style={styles.chevron}
+                        />
+                    </View>
+                </View>
+            </View>
+
+            {/* Section 3: Alerts */}
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>{t('alerts')}</Text>
                 
@@ -162,7 +184,7 @@ export default function SettingsScreen() {
                 </View>
             </View>
 
-            {/* Section 3: About */}
+            {/* Section 4: About */}
             <View style={styles.creditsContainer}>
                 <Text style={styles.creditsText}>
                     {t('c-2025-revalys-data-services')}

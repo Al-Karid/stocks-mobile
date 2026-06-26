@@ -12,6 +12,7 @@ import { useStockStore } from '@/stores/stockStore';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { isDatabaseInitializedSetting } from '@/data/configs/databaseInitState';
+import * as Updates from 'expo-updates';
 
 // This function should be used inside a component to access the sync method
 export const useAppInitializer = () => {
@@ -22,7 +23,7 @@ export const useAppInitializer = () => {
   const { fetchStocks } = useStockStore();
   const { fetchAlerts, getNotificationChannels, getDevicePushToken } = useAlertStore();
   const { fetchNotifications } = useNotificationStore();
-  const { fetchUserContraintCounts } = useSettingsStore();
+  const { fetchUserContraintCounts, fetchAutoUpdatesEnabled } = useSettingsStore();
 
   const { syncStockDataFromServer } = useStockSync();
   const { getSettings, saveSetting } = useSettingRepository();
@@ -43,6 +44,7 @@ export const useAppInitializer = () => {
         await fetchAlerts();
         await fetchNotifications();
         await fetchUserContraintCounts();
+        await fetchAutoUpdatesEnabled();
         await getNotificationChannels();
         await getDevicePushToken();
         console.log("✅ Stores loaded");
@@ -64,9 +66,24 @@ export const useAppInitializer = () => {
       console.log("✅ Databases initialized");
       await syncStockDataFromServer();
       await fetchUserContraintCounts();
+      await fetchAutoUpdatesEnabled();
       console.log("🔄 Stock data synchronized");
       await saveSetting({ key: "databaseInitialized", value: "true" });
       console.log("✅ Database initialization flag set");
+
+      const autoUpdatesEnabledSetting = await getSettings("autoUpdatesEnabled").catch(() => null);
+      const shouldAutoUpdate = autoUpdatesEnabledSetting?.value !== "false";
+      if (shouldAutoUpdate) {
+        try {
+          const update = await Updates.checkForUpdateAsync();
+          if (update.isAvailable) {
+            await Updates.fetchUpdateAsync();
+            await Updates.reloadAsync();
+          }
+        } catch (updateError) {
+          console.warn("⚠️ Auto-update check failed:", updateError);
+        }
+      }
     } catch (err: any) {
       console.error("‼️ Error initializing app:", err);
       throw err;
