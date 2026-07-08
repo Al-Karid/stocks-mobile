@@ -99,11 +99,15 @@ const DashboardScreen = () => {
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {defaultPortfolio?.holdings && defaultPortfolio.holdings.length > 0 ? (
-                    defaultPortfolio.holdings.map((holding) => (
+                    defaultPortfolio.holdings.slice(0, 2).map((holding) => (
                       <AssetCard key={holding.symbol} holding={holding} />
                     ))
                   ) : (
-                    <Text style={{ textAlign: 'center', marginTop: 20 }}>{t('no-portfolio-available')}</Text>
+                    <View style={styles.emptyPortfolioCard}>
+                      <Ionicons name="folder-open-outline" size={24} color="#8b5cf6" />
+                      <Text style={styles.emptyPortfolioTitle}>Your portfolio is empty</Text>
+                      <Text style={styles.emptyPortfolioText}>Add a holding to see it here.</Text>
+                    </View>
                   )}
                 </ScrollView>
               </View>
@@ -118,11 +122,17 @@ const DashboardScreen = () => {
                 </View>
 
                 {watchlistStore.length > 0 ? (
-                  watchlistStore.map((stock) => (
+                  watchlistStore.slice(0, 2).map((stock) => (
                     <StockRow key={stock.id} stock={stock} />
                   ))
                 ) : (
-                  <Text style={{ textAlign: 'center', marginTop: 20 }}>{t('no-stocks-in-watchlist')}</Text>
+                  <View style={styles.emptyWatchlistCard}>
+                    <Text style={styles.emptyWatchlistTitle}>Your watchlist is empty</Text>
+                    <Text style={styles.emptyWatchlistText}>Add a few stocks to follow them here.</Text>
+                    <TouchableOpacity style={styles.seeMoreButton} onPress={() => { provideHapticFeedback(); router.push('/stocks'); }}>
+                      <Text style={styles.seeMoreButtonText}>Browse stocks</Text>
+                    </TouchableOpacity>
+                  </View>
                 )}
               </View>
             </View>
@@ -168,6 +178,58 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     fontSize: 11,
     paddingVertical: 5,
+  },
+  emptyPortfolioCard: {
+    width: 220,
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: '#ffffff',
+    marginRight: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 120,
+  },
+  emptyPortfolioTitle: {
+    marginTop: 8,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111827',
+    textAlign: 'center',
+  },
+  emptyPortfolioText: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#6b7280',
+    textAlign: 'center',
+  },
+  emptyWatchlistCard: {
+    padding: 16,
+    borderRadius: 14,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+  },
+  emptyWatchlistTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  emptyWatchlistText: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#6b7280',
+    textAlign: 'center',
+  },
+  seeMoreButton: {
+    marginTop: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: '#111827',
+  },
+  seeMoreButtonText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '600',
   },
 });
 
