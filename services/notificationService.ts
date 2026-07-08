@@ -12,7 +12,7 @@ export function useNotificationHandler() {
   const handleNotification = (notification: Notifications.Notification) => {
     const id = notification.request.identifier;
     const { title, body, data } = notification.request.content;
-    const typedData = data as NotificationDataApiResponse;
+    const typedData = data as unknown as NotificationDataApiResponse;
 
     const notificationToSave: Notification = {
       id,
@@ -33,7 +33,7 @@ export function useNotificationHandler() {
       if (lastNotificationResponse) {
         handleNotification(lastNotificationResponse.notification);
 
-        const data = lastNotificationResponse.notification.request.content.data as NotificationDataApiResponse;
+        const data = lastNotificationResponse.notification.request.content.data as unknown as NotificationDataApiResponse;
         if (data.stock_symbol) {
           router.push({ pathname: "/stocks/details", params: { symbol: data.stock_symbol } });
         }
@@ -49,7 +49,7 @@ export function useNotificationHandler() {
     const responseSubscription = Notifications.addNotificationResponseReceivedListener(response => {
       handleNotification(response.notification);
 
-      const data = response.notification.request.content.data as NotificationDataApiResponse;
+      const data = response.notification.request.content.data as unknown as NotificationDataApiResponse;
       if (data.stock_symbol) {
         router.push({ pathname: "/stocks/details", params: { symbol: data.stock_symbol } });
       }
