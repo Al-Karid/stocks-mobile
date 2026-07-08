@@ -67,7 +67,7 @@ export default function PortfolioScreen() {
             style={{ marginRight: 5, marginTop: 6 }}
             onPress={handleOpenDialog}
           >
-            <AntDesign name="addfolder" size={20} color="#007AFF" />
+            <AntDesign name="folder" size={20} color="#007AFF" />
           </Pressable>
         ) : null,
     });
@@ -116,7 +116,7 @@ export default function PortfolioScreen() {
               elevation: 5,
             }}
           >
-            <AntDesign name="addfolder" size={24} color={userContraintCounts.maxPorfolio == 0 ? "black" : "white"} />
+            <AntDesign name="folder" size={24} color={userContraintCounts.maxPorfolio == 0 ? "black" : "white"} />
           </Pressable>
         )}
       </SafeAreaView>
