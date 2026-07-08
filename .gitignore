@@ -27,6 +27,9 @@ expo-env.d.ts
 # Metro
 .metro-health-check*
 
+# NativeWind
+.nativewind/
+
 # debug
 npm-debug.*
 yarn-debug.*
