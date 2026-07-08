@@ -80,7 +80,7 @@
   "buy": "Acheter",
   "sell": "Vendre",
   "transaction-date": "Date de la transaction",
-  "price-per-share-fcfa": "Prix unitaire (XOF)",
+  "price-per-share-fcfa": "Prix CMP (XOF)",
   "transaction-fees": "Frais de transaction",
   "total-estimated": "Total estimé",
   "save-transaction": "Enregistrer la transaction",

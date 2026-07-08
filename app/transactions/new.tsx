@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -9,11 +9,13 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from "react-native";
-import { useHeaderHeight } from "@react-navigation/elements";
+import { useHeaderHeight, HeaderButton } from "@react-navigation/elements";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { TransactionType } from "@/types/portfolio";
-import { useLocalSearchParams, router } from "expo-router";
+import { Feather } from "@expo/vector-icons";
+import { useLocalSearchParams, router, useNavigation } from "expo-router";
 import { useConputeService } from "@/services/computeService";
 import { usePortfolioStore } from "@/stores/portfolioStore";
 import { formatNumber } from "@/utils/numberUtils";
@@ -24,6 +26,7 @@ import TransactionTypeSelector from "@/components/transactions/TransactionTypeSe
 export default function NewTransaction() {
   const { t } = useTranslation();
   const headerHeight = useHeaderHeight();
+  const navigation = useNavigation();
 
   const { portfolioId, symbol, title } = useLocalSearchParams<{
     portfolioId?: string;
@@ -38,10 +41,12 @@ export default function NewTransaction() {
   const [transactionDate, setTransactionDate] = useState(new Date());
   const [quantity, setQuantity] = useState("10");
   const [pricePerShare, setPricePerShare] = useState("1000");
-  const [fees, setFees] = useState("1.51");
+  // Will not be used since CMP will be used instead for asset price
+  const [fees, setFees] = useState("0");
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const priceInputRef = useRef<TextInput>(null);
   const feesInputRef = useRef<TextInput>(null);
@@ -58,7 +63,24 @@ export default function NewTransaction() {
     setFees(parsedValue);
   };
 
+  useEffect(() => {
+    if (Platform.OS === "ios") {
+      navigation.setOptions({
+        headerRight: () => (
+          <HeaderButton onPress={handleSubmit}>
+            {isSaving ? (
+              <ActivityIndicator size="small" color="#000" />
+            ) : (
+              <Feather name="check" size={20} color="#000" />
+            )}
+          </HeaderButton>
+        ),
+      });
+    }
+  }, [navigation, isSaving, t]);
+
   const handleSubmit = async () => {
+    setIsSaving(true);
     try {
       const parsedQuantity = parseFloat(quantity);
       const parsedPrice = parseFloat(pricePerShare);
@@ -109,6 +131,8 @@ export default function NewTransaction() {
         t("error"),
         error.message || t("an-error-has-accured-while-saving-the-transaction"),
       );
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -135,72 +159,85 @@ export default function NewTransaction() {
           <TransactionTypeSelector type={type} onSelect={setType} />
         </View>
 
-        <Text style={styles.label}>{t("transaction-date")}</Text>
-        <Pressable
-          onPress={() => setShowDatePicker(true)}
-          style={styles.dateButton}
-        >
-          <Text style={styles.dateText}>
-            {transactionDate.toLocaleDateString()}
-          </Text>
-        </Pressable>
+        {__DEV__ && (
+          <>
+            <Text style={styles.label}>{t("transaction-date")}</Text>
+            <Pressable
+              onPress={() => setShowDatePicker(true)}
+              style={styles.dateButton}
+            >
+              <Text style={styles.dateText}>
+                {transactionDate.toLocaleDateString()}
+              </Text>
+            </Pressable>
 
-        {showDatePicker && (
-          <DateTimePicker
-            value={transactionDate}
-            mode="date"
-            display="default"
-            onChange={(event, date) => {
-              setShowDatePicker(false);
-              if (event.type === "set" && date) {
-                setTransactionDate(date);
-              }
-            }}
-          />
+            {showDatePicker && (
+              <DateTimePicker
+                value={transactionDate}
+                mode="date"
+                display="default"
+                onChange={(event, date) => {
+                  setShowDatePicker(false);
+                  if (event.type === "set" && date) {
+                    setTransactionDate(date);
+                  }
+                }}
+              />
+            )}
+          </>
         )}
 
-        <Text style={styles.label}>{t("quantity")}</Text>
-        <TextInput
-          style={[
-            styles.input,
-            focusedField === "quantity" && styles.inputFocused,
-          ]}
-          keyboardType="numeric"
-          returnKeyType="done"
-          value={quantity}
-          onChangeText={setQuantity}
-          onFocus={() => setFocusedField("quantity")}
-          onBlur={() => setFocusedField(null)}
-          onSubmitEditing={() => priceInputRef.current?.focus()}
-        />
+        <View style={styles.row}>
+          <View style={styles.halfField}>
+            <Text style={styles.label}>{t("quantity")}</Text>
+            <TextInput
+              style={[
+                styles.input,
+                focusedField === "quantity" && styles.inputFocused,
+              ]}
+              keyboardType="numeric"
+              returnKeyType="done"
+              value={quantity}
+              onChangeText={setQuantity}
+              onFocus={() => setFocusedField("quantity")}
+              onBlur={() => setFocusedField(null)}
+              onSubmitEditing={() => priceInputRef.current?.focus()}
+            />
+          </View>
 
-        <Text style={styles.label}>{t("price-per-share-fcfa")}</Text>
-        <TextInput
-          ref={priceInputRef}
-          style={[
-            styles.input,
-            focusedField === "pricePerShare" && styles.inputFocused,
-          ]}
-          keyboardType="numeric"
-          returnKeyType="done"
-          value={pricePerShare}
-          onChangeText={setPricePerShare}
-          onFocus={() => setFocusedField("pricePerShare")}
-          onBlur={() => setFocusedField(null)}
-          onSubmitEditing={() => feesInputRef.current?.focus()}
-        />
+          <View style={styles.halfField}>
+            <Text style={styles.label}>{t("price-per-share-fcfa")}</Text>
+            <TextInput
+              ref={priceInputRef}
+              style={[
+                styles.input,
+                focusedField === "pricePerShare" && styles.inputFocused,
+              ]}
+              keyboardType="numeric"
+              returnKeyType="done"
+              value={pricePerShare}
+              onChangeText={setPricePerShare}
+              onFocus={() => setFocusedField("pricePerShare")}
+              onBlur={() => setFocusedField(null)}
+            />
+          </View>
+        </View>
 
-        <Text style={styles.label}>{t("transaction-fees")}</Text>
-        <TextInput
-          ref={feesInputRef}
-          style={[styles.input, focusedField === "fees" && styles.inputFocused]}
-          keyboardType="numeric"
-          returnKeyType="done"
-          value={fees}
-          onChangeText={setCleanFees}
-          onFocus={() => setFocusedField("fees")}
-          onBlur={() => setFocusedField(null)}
-        />
+        {__DEV__ && (
+          <>
+            <Text style={styles.label}>{t("transaction-fees")}</Text>
+            <TextInput
+              ref={feesInputRef}
+              style={[styles.input, focusedField === "fees" && styles.inputFocused]}
+              keyboardType="numeric"
+              returnKeyType="done"
+              value={fees}
+              onChangeText={setCleanFees}
+              onFocus={() => setFocusedField("fees")}
+              onBlur={() => setFocusedField(null)}
+            />
+          </>
+        )}
 
         <View style={styles.totalContainer}>
           <Text style={styles.totalLabel}>{t("total-estimated")}</Text>
@@ -209,9 +246,11 @@ export default function NewTransaction() {
           </Text>
         </View>
 
-        <Pressable style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>{t("save-transaction")}</Text>
-        </Pressable>
+        {Platform.OS !== "ios" && (
+          <Pressable style={styles.submitButton} onPress={handleSubmit}>
+            <Text style={styles.submitButtonText}>{t("save-transaction")}</Text>
+          </Pressable>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -226,7 +265,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     marginBottom: 12,
-    color: "#007AFF",
+    color: "#000",
     textAlign: "center",
   },
   label: {
@@ -245,7 +284,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   inputFocused: {
-    borderColor: "#007AFF",
+    borderColor: "#000",
     borderWidth: 2,
     backgroundColor: "#fff",
   },
@@ -254,9 +293,16 @@ const styles = StyleSheet.create({
     gap: 12,
     marginTop: 8,
   },
+  row: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  halfField: {
+    flex: 1,
+  },
   submitButton: {
-    backgroundColor: "#28A745",
-    paddingVertical: 14,
+    backgroundColor: "#000",
+    paddingVertical: 20,
     borderRadius: 10,
     marginTop: 30,
     alignItems: "center",
@@ -269,22 +315,22 @@ const styles = StyleSheet.create({
   totalContainer: {
     marginTop: 24,
     padding: 12,
-    backgroundColor: "#e9fce8",
-    borderRadius: 8,
+    backgroundColor: "#fff",
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#b6e2b3",
+    borderColor: "#000",
     alignItems: "center",
   },
   totalLabel: {
     fontSize: 14,
-    color: "#4CAF50",
+    color: "#000",
     fontWeight: "500",
   },
   totalValue: {
     marginTop: 4,
     fontSize: 20,
     fontWeight: "bold",
-    color: "#388E3C",
+    color: "#000",
   },
   dateButton: {
     padding: 10,

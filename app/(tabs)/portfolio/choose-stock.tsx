@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
-import { View, Pressable, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Pressable, Text, FlatList } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useStockRepository } from '@/data/repositories/stockRepository';
 import { Stock } from '@/types/stock';
-import { useTranslation } from 'react-i18next';
 
 export default function ChooseStockScreen() {
-  const { t } = useTranslation();
   const { portfolioId } = useLocalSearchParams();
   const { fetchStocks } = useStockRepository();
   const [stocks, setStocks] = useState<Stock[]>([]);
@@ -15,33 +13,51 @@ export default function ChooseStockScreen() {
     fetchStocks().then(setStocks);
   }, []);
 
-  const handleSelect = (symbol: string) => {
-    const stock = stocks.find((s) => s.symbol.trim() === symbol.trim());
+  const handleSelect = (item: Stock) => {
     router.back();
     router.push({
       pathname: '/transactions/new',
       params: {
         portfolioId,
-        symbol,
-        title: stock?.title,
+        symbol: item.symbol,
+        title: item.title,
       },
     });
   };
 
   const renderStockItem = ({ item }: { item: Stock }) => (
     <Pressable
-      onPress={() => handleSelect(item.symbol)}
-      style={({ pressed }) => [
-        styles.stockItem,
-        pressed && styles.stockItemPressed,
-      ]}
+      onPress={() => handleSelect(item)}
+      className="flex-row items-center px-5 py-4 border-b border-gray-100 active:bg-gray-50"
     >
-      <Text style={styles.stockItemText}>{item.title}</Text>
+      <View className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center mr-3">
+        <Text className="text-sm font-bold text-gray-500">
+          {item.symbol.slice(0, 2)}
+        </Text>
+      </View>
+      <View className="flex-1">
+        <Text className="text-base font-semibold text-gray-900">
+          {item.symbol}
+        </Text>
+        <Text className="text-xs text-gray-400 mt-0.5">
+          {item.title}
+        </Text>
+      </View>
+      <View className="items-end mr-3">
+        <Text className="text-base font-semibold text-gray-900">
+          {item.currentPrice?.toLocaleString()} FCFA
+        </Text>
+        <View className="flex-row items-center mt-0.5">
+          <Text className={`text-xs font-semibold ${item.percentageChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {item.percentageChange >= 0 ? '▲' : '▼'} {Math.abs(item.percentageChange).toFixed(2)}%
+          </Text>
+        </View>
+      </View>
     </Pressable>
   );
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1">
       <FlatList
         data={stocks}
         keyExtractor={(item) => item.id.toString()}
@@ -51,22 +67,3 @@ export default function ChooseStockScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  stockItem: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderBottomWidth: 0.15,
-  },
-  stockItemPressed: {
-    backgroundColor: '#f0f0f0',
-  },
-  stockItemText: {
-    fontSize: 16,
-    color: '#333',
-  },
-});

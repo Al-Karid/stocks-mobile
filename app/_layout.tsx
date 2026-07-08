@@ -68,6 +68,7 @@ export default function Layout() {
                   title: t('settings'),
                   headerLargeTitle: true,
                   headerBackTitle: t('dashboard'),
+                  headerBackButtonDisplayMode: "minimal"
                 }}
               />
               <Stack.Screen

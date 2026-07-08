@@ -80,7 +80,7 @@
   "buy": "Buy",
   "sell": "Sell",
   "transaction-date": "Transaction date",
-  "price-per-share-fcfa": "Price per share",
+  "price-per-share-fcfa": "CMP Price (XOF)",
   "transaction-fees": "Transaction fees",
   "total-estimated": "Total estimated",
   "save-transaction": "Save transaction",
