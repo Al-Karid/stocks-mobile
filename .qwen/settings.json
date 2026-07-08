@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(docs.expo.dev)",
+      "Agent(Explore)",
+      "WebFetch(expo.dev)",
+      "Bash(npm install)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(cat *)"
+    ]
+  },
+  "$version": 4
+}

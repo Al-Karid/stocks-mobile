@@ -10,7 +10,7 @@ const fallbackLng = 'en';
 
 // Charger langue sauvegardée dans AsyncStorage ou SecureStore si besoin
 // Pour simplifier ici, on prend celle de l'appareil
-const defaultLng = Localization.locale.split('-')[0]; // 'fr' from 'fr-FR'
+const defaultLng = Localization.getLocales()[0]?.languageCode ?? fallbackLng;
 
 i18n
   .use(initReactI18next)
