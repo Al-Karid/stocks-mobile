@@ -18,7 +18,8 @@
     "preview:p:a": "eas build --platform android --profile preview --local",
     "release:p:a": "eas build --platform android --profile production --local",
     "bump-version": "node scripts/bump-version.js",
-    "push-update:android": "eas update --platform android"
+    "push-update:android": "eas update --platform android",
+    "sign:ios": "xcodebuild -workspace ios/Portfolio.xcworkspace -scheme Portfolio -allowProvisioningUpdates"
   },
   "jest": {
     "preset": "jest-expo"
