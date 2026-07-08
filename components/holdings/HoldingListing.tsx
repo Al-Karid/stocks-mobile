@@ -7,14 +7,13 @@ import { useTranslation } from "react-i18next";
 
 interface Props {
   holdings: Holding[];
-  portfolioName: string;
   onHoldingLongPress: (symbol: string) => void;
 }
 
-export default function HoldingListing({ holdings, portfolioName, onHoldingLongPress }: Props) {
+export default function HoldingListing({ holdings, onHoldingLongPress }: Props) {
 
   const { t } = useTranslation();
-  
+
   return (
     <FlatList
       data={holdings}
@@ -32,7 +31,7 @@ export default function HoldingListing({ holdings, portfolioName, onHoldingLongP
       )}
       ListHeaderComponent={() => (
         <View style={{ marginBottom: 8 }}>
-          <Text style={styles.portfolioName}>{portfolioName.toLocaleUpperCase()}</Text>
+          <Text style={styles.portfolioName}>Actions</Text>
         </View>
       )}
     />

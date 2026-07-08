@@ -160,7 +160,6 @@ export default function HoldingsScreen() {
 
       <HoldingListing
         holdings={holdings}
-        portfolioName={portfolioName}
         onHoldingLongPress={handleHoldingLongPress}
       />
       {Platform.OS === "android" && (

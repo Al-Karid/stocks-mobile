@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { useHeaderHeight } from "@react-navigation/elements";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { TransactionType } from "@/types/portfolio";
 import { useLocalSearchParams, router } from "expo-router";
@@ -18,11 +19,12 @@ import { usePortfolioStore } from "@/stores/portfolioStore";
 import { formatNumber } from "@/utils/numberUtils";
 import Toast from "react-native-toast-message";
 import { useTranslation } from "react-i18next";
+import TransactionTypeSelector from "@/components/transactions/TransactionTypeSelector";
 
 export default function NewTransaction() {
-
   const { t } = useTranslation();
-  
+  const headerHeight = useHeaderHeight();
+
   const { portfolioId, symbol, title } = useLocalSearchParams<{
     portfolioId?: string;
     symbol?: string;
@@ -54,21 +56,24 @@ export default function NewTransaction() {
   const setCleanFees = (value: string) => {
     const parsedValue = value.replace(",", ".");
     setFees(parsedValue);
-  }
+  };
 
   const handleSubmit = async () => {
     try {
       const parsedQuantity = parseFloat(quantity);
       const parsedPrice = parseFloat(pricePerShare);
       const parsedFees = parseFloat(fees);
-      const realPricePerShare = computeRealPricePerShare(parsedPrice, parsedFees);
+      const realPricePerShare = computeRealPricePerShare(
+        parsedPrice,
+        parsedFees,
+      );
 
       if (isNaN(parsedQuantity) || isNaN(parsedPrice) || isNaN(parsedFees)) {
-        throw new Error(t('please-enter-a-valid-input'));
+        throw new Error(t("please-enter-a-valid-input"));
       }
 
       if (parsedQuantity <= 0) {
-        throw new Error(t('quantity-must-be-higher-than-0'));
+        throw new Error(t("quantity-must-be-higher-than-0"));
       }
 
       const newTransaction = {
@@ -81,8 +86,12 @@ export default function NewTransaction() {
         transactionDate: transactionDate,
         quantity: type === "BUY" ? parsedQuantity : -parsedQuantity,
         pricePerShare: type === "BUY" ? parsedPrice : -parsedPrice,
-        realPricePerShare: type === "BUY" ? realPricePerShare : -realPricePerShare,
-        totalCost: type === "BUY" ? computeTotalCost(parsedQuantity, realPricePerShare) : -computeTotalCost(parsedQuantity, realPricePerShare),
+        realPricePerShare:
+          type === "BUY" ? realPricePerShare : -realPricePerShare,
+        totalCost:
+          type === "BUY"
+            ? computeTotalCost(parsedQuantity, realPricePerShare)
+            : -computeTotalCost(parsedQuantity, realPricePerShare),
         fees: isNaN(parsedFees) ? 1.51 : parsedFees,
         notes: null,
       };
@@ -90,15 +99,15 @@ export default function NewTransaction() {
       await addTransaction(newTransaction);
       Toast.show({
         type: "success",
-        text1: t('success'),
-        text2: t('transaction-saved'),
-        position: "bottom"
+        text1: t("success"),
+        text2: t("transaction-saved"),
+        position: "bottom",
       });
       router.back();
     } catch (error: any) {
       Alert.alert(
-        t('error'),
-        error.message || t('an-error-has-accured-while-saving-the-transaction')
+        t("error"),
+        error.message || t("an-error-has-accured-while-saving-the-transaction"),
       );
     }
   };
@@ -109,41 +118,31 @@ export default function NewTransaction() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView
-        contentContainerStyle={styles.container}
+        contentContainerStyle={[
+          styles.container,
+          { paddingTop: Platform.select({ ios: headerHeight + 20 }) },
+        ]}
         keyboardShouldPersistTaps="handled"
       >
         {symbol && (
           <Text style={styles.sectionTitle}>
-            {title ?? t('stock')} ({symbol})
+            {title ?? t("stock")} ({symbol})
           </Text>
         )}
 
-        <Text style={styles.label}>{t('transaction-type')}</Text>
+        <Text style={styles.label}>{t("transaction-type")}</Text>
         <View style={styles.typeSelector}>
-          {(["BUY", "SELL"] as TransactionType[]).map((value) => (
-            <Pressable
-              key={value}
-              style={[
-                styles.typeButton,
-                type === value && styles.typeButtonSelected,
-              ]}
-              onPress={() => setType(value)}
-            >
-              <Text
-                style={[
-                  styles.typeButtonText,
-                  type === value && styles.typeButtonTextSelected,
-                ]}
-              >
-                {value === "BUY" ? t('buy') : t('sell')}
-              </Text>
-            </Pressable>
-          ))}
+          <TransactionTypeSelector type={type} onSelect={setType} />
         </View>
 
-        <Text style={styles.label}>{t('transaction-date')}</Text>
-        <Pressable onPress={() => setShowDatePicker(true)} style={styles.dateButton}>
-          <Text style={styles.dateText}>{transactionDate.toLocaleDateString()}</Text>
+        <Text style={styles.label}>{t("transaction-date")}</Text>
+        <Pressable
+          onPress={() => setShowDatePicker(true)}
+          style={styles.dateButton}
+        >
+          <Text style={styles.dateText}>
+            {transactionDate.toLocaleDateString()}
+          </Text>
         </Pressable>
 
         {showDatePicker && (
@@ -160,8 +159,7 @@ export default function NewTransaction() {
           />
         )}
 
-
-        <Text style={styles.label}>{t('quantity')}</Text>
+        <Text style={styles.label}>{t("quantity")}</Text>
         <TextInput
           style={[
             styles.input,
@@ -176,7 +174,7 @@ export default function NewTransaction() {
           onSubmitEditing={() => priceInputRef.current?.focus()}
         />
 
-        <Text style={styles.label}>{t('price-per-share-fcfa')}</Text>
+        <Text style={styles.label}>{t("price-per-share-fcfa")}</Text>
         <TextInput
           ref={priceInputRef}
           style={[
@@ -192,7 +190,7 @@ export default function NewTransaction() {
           onSubmitEditing={() => feesInputRef.current?.focus()}
         />
 
-        <Text style={styles.label}>{t('transaction-fees')}</Text>
+        <Text style={styles.label}>{t("transaction-fees")}</Text>
         <TextInput
           ref={feesInputRef}
           style={[styles.input, focusedField === "fees" && styles.inputFocused]}
@@ -205,14 +203,14 @@ export default function NewTransaction() {
         />
 
         <View style={styles.totalContainer}>
-          <Text style={styles.totalLabel}>{t('total-estimated')}</Text>
-          <Text style={styles.totalValue}>{formatNumber(total.toFixed(2))} FCFA</Text>
+          <Text style={styles.totalLabel}>{t("total-estimated")}</Text>
+          <Text style={styles.totalValue}>
+            {formatNumber(total.toFixed(2))} FCFA
+          </Text>
         </View>
 
         <Pressable style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>
-            {t('save-transaction')}
-          </Text>
+          <Text style={styles.submitButtonText}>{t("save-transaction")}</Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -256,26 +254,6 @@ const styles = StyleSheet.create({
     gap: 12,
     marginTop: 8,
   },
-  typeButton: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    alignItems: "center",
-    backgroundColor: "#f0f0f0",
-  },
-  typeButtonSelected: {
-    backgroundColor: "#007AFF",
-    borderColor: "#007AFF",
-  },
-  typeButtonText: {
-    color: "#333",
-    fontWeight: "500",
-  },
-  typeButtonTextSelected: {
-    color: "#fff",
-  },
   submitButton: {
     backgroundColor: "#28A745",
     paddingVertical: 14,
@@ -317,5 +295,5 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 16,
     color: "#333",
-  }
+  },
 });

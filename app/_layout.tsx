@@ -140,7 +140,9 @@ export default function Layout() {
                 name="transactions/new"
                 options={{
                   title: t('new-transaction'),
-                  presentation: "modal",
+                  presentation: undefined,
+                  headerBackButtonDisplayMode: "minimal",
+                  headerTransparent: true,
                   animation: "slide_from_bottom",
                 }}
               />
