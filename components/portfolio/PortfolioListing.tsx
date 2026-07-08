@@ -1,6 +1,6 @@
 // PortfolioListing.tsx
 import React, { useState } from "react";
-import { Alert, FlatList, StyleSheet, Text } from "react-native";
+import { Alert, FlatList, Platform, StyleSheet, Text } from "react-native";
 import Dialog from "react-native-dialog";
 import PortfolioCard from "@/components/portfolio/PortfolioCard";
 import { handleCloseDialog } from "@/utils/dialogUtils";
@@ -30,14 +30,34 @@ export default function PortfolioListing({ portfolios }: PortfolioListProps) {
   const [newName, setNewName] = useState("");
 
   const showRenameDialog = (id: number, currentName: string) => {
+    if (Platform.OS === 'ios') {
+      Alert.prompt(
+        t('rename'),
+        '',
+        [
+          { text: t('cancel'), style: 'cancel' },
+          {
+            text: t('save'),
+            isPreferred: true,
+            onPress: async (name?: string) => {
+              if (name && name.trim()) {
+                await renamePortfolio(id, name.trim());
+              }
+            },
+          },
+        ],
+        'plain-text',
+        currentName,
+      );
+      return;
+    }
     setSelectedId(id);
     setNewName(currentName);
     setRenameVisible(true);
   };
 
-  const handleRename = () => {
-    renamePortfolio(selectedId!, newName);
-    console.log(`Renamed portfolio ${selectedId} to: ${newName}`);
+  const handleRename = async () => {
+    await renamePortfolio(selectedId!, newName);
     handleCloseDialog(setRenameVisible);
     setSelectedId(null);
   };
@@ -84,19 +104,21 @@ export default function PortfolioListing({ portfolios }: PortfolioListProps) {
         contentInsetAdjustmentBehavior="automatic"
       />
 
-      <Dialog.Container visible={isRenameVisible}>
-        <Dialog.Title>{t('rename')}</Dialog.Title>
-        <Dialog.Input
-          placeholder={t('enter-new-name')}
-          value={newName}
-          onChangeText={setNewName}
-        />
-        <Dialog.Button
-          label={t('cancel')}
-          onPress={() => handleCloseDialog(setRenameVisible)}
-        />
-        <Dialog.Button label={t('save')} onPress={handleRename} />
-      </Dialog.Container>
+      {Platform.OS === 'android' && (
+        <Dialog.Container visible={isRenameVisible}>
+          <Dialog.Title>{t('rename')}</Dialog.Title>
+          <Dialog.Input
+            placeholder={t('enter-new-name')}
+            value={newName}
+            onChangeText={setNewName}
+          />
+          <Dialog.Button
+            label={t('cancel')}
+            onPress={() => handleCloseDialog(setRenameVisible)}
+          />
+          <Dialog.Button label={t('save')} onPress={handleRename} />
+        </Dialog.Container>
+      )}
     </>
   );
 }

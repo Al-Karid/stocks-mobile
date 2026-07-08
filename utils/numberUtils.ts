@@ -17,16 +17,19 @@ export function formatNumber(value: number | string, toFixed: number = 0): strin
 
 export const formatPercentage = (value: number, toFixed: number = 1) => {
   if (isNaN(value)) {
-    return "+0.00%";
+    return "+ 0.00%";
   }
   if (value === 0) {
-    return "+0.00%";
+    return "+ 0.00%";
   }
   const percent = new Intl.NumberFormat("fr-FR", {
     style: "percent",
     maximumFractionDigits: toFixed,
   }).format(value / 100);
-  return value >= 0 ? `+${percent}` : percent;
+  if (value >= 0) {
+    return `+ ${percent}`;
+  }
+  return percent.startsWith('-') ? '- ' + percent.slice(1) : percent;
 }
 
 export const formatTransactionNumber = (number: number) => {
@@ -51,8 +54,9 @@ export const formatCurrency = (value: number | string, toFixed: number = 0, curr
     maximumFractionDigits: toFixed,
   }).format(num);
 
-  const numberWithCurrencyPrefix = currency + " " + currencyDecimal;
-  const numberWithCurrencySuffix = currencyDecimal + " " + currency;
+  const spacedDecimal = currencyDecimal.startsWith('-') ? '- ' + currencyDecimal.slice(1) : currencyDecimal;
+  const numberWithCurrencyPrefix = currency + " " + spacedDecimal;
+  const numberWithCurrencySuffix = spacedDecimal + " " + currency;
 
   return currencyPrefixed ? numberWithCurrencyPrefix : numberWithCurrencySuffix;
 }
