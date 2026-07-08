@@ -1,62 +1,97 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
   ScrollView,
   Text,
-  SafeAreaView,
-  StatusBar,
+  RefreshControl,
 } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import DashboardHeader from '@/components/views/DashboardHeader';
+import PortfolioDistribution from '@/components/views/PortfolioDistribution';
+import WatchlistSection from '@/components/views/WatchlistSection';
+import { usePortfolioStore } from '@/stores/portfolioStore';
+import { useUserStore } from '@/stores/userStore';
+import { useStockSync } from '@/data/configs/syncStocks';
+import { formatRelativeDate } from '@/utils/dateUtils';
+import { Portfolio } from '@/types/portfolio';
+import { Storage } from 'expo-sqlite/kv-store';
+import { useTranslation } from 'react-i18next';
 
 const HEADER_HEIGHT = 300;
 
 export default function StabilizedOverscrollScreen() {
+  const { t } = useTranslation();
+  const { syncStockDataFromServer } = useStockSync();
+  const { portfolios } = usePortfolioStore();
+  const { user } = useUserStore();
+  const [defaultPortfolio, setDefaultPortfolio] = useState<Portfolio>();
+  const [lastSync, setLastSync] = useState<string>();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchLastSyncDate = async () => {
+    const lastSyncDate = await Storage.getItem('lastSync');
+    if (lastSyncDate) {
+      setLastSync(formatRelativeDate(lastSyncDate));
+    }
+  };
+
+  useEffect(() => {
+    fetchLastSyncDate();
+  }, []);
+
+  useEffect(() => {
+    const portfolio = portfolios.find((p) => p.isDefault);
+    setDefaultPortfolio(portfolio);
+  }, [portfolios]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await syncStockDataFromServer();
+    await fetchLastSyncDate();
+    setRefreshing(false);
+  };
+
   return (
     <View style={styles.container}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor="#3B42C4"
-      />
+      <StatusBar style="light" />
 
       {/* Static background shown during top overscroll */}
       <View style={styles.topBackground} />
 
-      {/* <SafeAreaView style={styles.safeArea}> */}
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.contentContainer}
-          bounces
-          overScrollMode="always"
-          showsVerticalScrollIndicator={false}
-          contentInsetAdjustmentBehavior="never"
-        >
-          {/* HEADER */}
-          <View style={styles.header}>
-            <View style={styles.headerTopActions}>
-              <View style={styles.gearIcon} />
-              <View style={styles.dots} />
-            </View>
-
-            <View style={styles.qrCard}>
-              <Text style={styles.qrText}>[ QR Code Canvas ]</Text>
-            </View>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
+        bounces
+        overScrollMode="always"
+        showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="never"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#007AFF']}
+            tintColor="#007AFF"
+            progressBackgroundColor="white"
+          />
+        }
+      >
+        {/* HEADER */}
+        {defaultPortfolio && defaultPortfolio.performance ? (
+          <DashboardHeader portfolio={defaultPortfolio} displayName={user?.name} />
+        ) : (
+          <View style={{ height: 200, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 18, color: '#6b7280' }}>{t('no-portfolio-available')}</Text>
           </View>
+        )}
 
-          {/* BODY */}
-          <View style={styles.whiteBody}>
-            <Text style={styles.sectionTitle}>Activités récentes</Text>
+        {/* BODY */}
+        <View style={styles.whiteBody}>
+          <PortfolioDistribution portfolio={defaultPortfolio} lastSync={lastSync} />
 
-            {Array.from({ length: 12 }).map((_, i) => (
-              <View key={i} style={styles.mockRow}>
-                <Text style={styles.mockText}>
-                  Transfert vers carte prépayée
-                </Text>
-                <Text style={styles.mockAmount}>-2.000F</Text>
-              </View>
-            ))}
-          </View>
-        </ScrollView>
-      {/* </SafeAreaView> */}
+          <WatchlistSection />
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -64,11 +99,7 @@ export default function StabilizedOverscrollScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-
-  safeArea: {
-    flex: 1,
+    backgroundColor: '#f2f2f2',
   },
 
   topBackground: {
@@ -77,7 +108,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: HEADER_HEIGHT + 100,
-    backgroundColor: '#3B42C4',
+    backgroundColor: '#121212',
   },
 
   scrollView: {
@@ -90,90 +121,15 @@ const styles = StyleSheet.create({
     marginTop: 40
   },
 
-  header: {
-    height: HEADER_HEIGHT,
-    backgroundColor: '#3B42C4',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 30,
-  },
-
-  headerTopActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: 40,
-  },
-
-  gearIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
-    backgroundColor: 'rgba(255,255,255,0.25)',
-  },
-
-  dots: {
-    width: 80,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'rgba(255,255,255,0.25)',
-  },
-
-  qrCard: {
-    flex: 1,
-    marginTop: 20,
-    borderRadius: 20,
-    backgroundColor: '#61A3EF',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  qrText: {
-    color: '#FFF',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-
   whiteBody: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-
-    // overlap the header
+    backgroundColor: '#f2f2f2',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     marginTop: -32,
-
     paddingTop: 32,
     paddingHorizontal: 20,
     paddingBottom: 40,
-
-    // keeps rounded corners visible
     minHeight: 600,
   },
 
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 16,
-    color: '#1A1A1A',
-  },
-
-  mockRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 20,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ECECEC',
-  },
-
-  mockText: {
-    fontSize: 14,
-    color: '#2C3E50',
-  },
-
-  mockAmount: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#2980B9',
-  },
 });

@@ -104,5 +104,8 @@
   "no-stocks-found": "No stocks found.",
   "create": "Create",
   "above-threshold": "Above",
-  "below-threshold": "Below"
+  "below-threshold": "Below",
+  "empty-watchlist-title": "Your watchlist is empty",
+  "empty-watchlist-text": "Add a few stocks to follow them here.",
+  "browse-stocks": "Browse stocks"
 }

@@ -1,62 +1,116 @@
 import { Holding } from '@/types/portfolio';
 import { provideHapticFeedback } from '@/utils/interactionUtils';
-import { formatNumber, formatPercentage } from '@/utils/numberUtils';
+import { formatCurrency, formatPercentage } from '@/utils/numberUtils';
 import { router } from 'expo-router';
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface AssetCardProps {
-    holding: Holding;
+  holding: Holding;
 }
 
 const AssetCard: React.FC<AssetCardProps> = ({ holding }) => {
-    const { symbol: ticker, gainLoss: amount, totalCost, portfolioId } = holding;
-    const isPositive = amount >= 0;
-    const change = totalCost ? ((amount / totalCost) * 100) : 0;
+  const { symbol: ticker, gainLoss: amount, totalCost, portfolioId } = holding;
+  const isPositive = amount >= 0;
+  const change = totalCost ? ((amount / totalCost) * 100) : 0;
 
-    return (
-        <TouchableOpacity onLongPress={() => { provideHapticFeedback(); router.push({ pathname: '/portfolio/holdings', params: { portfolioId } }); }}>
-            <View style={styles.assetCard}>
-                <Text style={styles.assetTicker}>{ticker}</Text>
-                <Text style={styles.assetAmount}>{formatNumber(amount, 0)} XOF</Text>
-                <Text style={isPositive ? styles.assetChangePositive : styles.assetChangeNegative}>{formatPercentage(change, 2)}</Text>
-            </View>
-        </TouchableOpacity>
-    );
+  return (
+    <TouchableOpacity
+      style={styles.wrapper}
+      onLongPress={() => {
+        provideHapticFeedback();
+        router.push({ pathname: '/portfolio/holdings', params: { portfolioId } });
+      }}
+      activeOpacity={0.7}
+    >
+      <View style={styles.card}>
+        <View style={styles.topRow}>
+          <View style={styles.tickerBadge}>
+            <Text style={styles.tickerText}>{ticker}</Text>
+          </View>
+          <Ionicons
+            name={isPositive ? 'trending-up' : 'trending-down'}
+            size={18}
+            color={isPositive ? '#16a34a' : '#dc2626'}
+          />
+        </View>
+
+        <Text style={styles.amount}>{formatCurrency(amount, 0, 'XOF', false)}</Text>
+
+        <View style={styles.bottomRow}>
+          <View style={[styles.changeBadge, isPositive ? styles.changeBadgePositive : styles.changeBadgeNegative]}>
+            <Text style={[styles.changeText, isPositive ? styles.changeTextPositive : styles.changeTextNegative]}>
+              {formatPercentage(change, 2)}
+            </Text>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 };
 
 const styles = StyleSheet.create({
-    assetCard: {
-        backgroundColor: 'white',
-        padding: 16,
-        borderRadius: 12,
-        marginRight: 10,
-        marginTop: 10,
-        minWidth: 125,
-    },
-    assetTicker: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    assetAmount: {
-        marginTop: 10,
-        fontSize: 16,
-        color: '#374151', // gray-700
-        fontWeight: '600',
-        textAlign: 'right',
-    },
-    assetChangePositive: {
-        marginTop: 6,
-        color: '#16a34a',
-        fontWeight: 'bold',
-        textAlign: 'right',
-    },
-    assetChangeNegative: {
-        marginTop: 6,
-        color: 'red',
-        fontWeight: 'bold',
-        textAlign: 'right',
-    },
+  wrapper: {
+    marginRight: 10,
+    marginTop: 10,
+  },
+  card: {
+    minWidth: 140,
+    padding: 16,
+    borderRadius: 14,
+    backgroundColor: '#ffffff',
+  },
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  tickerBadge: {
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  tickerText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1f2937',
+    letterSpacing: 0.5,
+  },
+  amount: {
+    marginTop: 12,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+    textAlign: 'right',
+  },
+  bottomRow: {
+    marginTop: 8,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  changeBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  changeBadgePositive: {
+    backgroundColor: '#dcfce7',
+  },
+  changeBadgeNegative: {
+    backgroundColor: '#fee2e2',
+  },
+  changeText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  changeTextPositive: {
+    color: '#16a34a',
+  },
+  changeTextNegative: {
+    color: '#dc2626',
+  },
 });
 
 export default AssetCard;
