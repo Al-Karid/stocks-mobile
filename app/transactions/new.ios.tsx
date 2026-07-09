@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -51,42 +51,14 @@ export default function NewTransaction() {
   const subtotal = parsedQuantity * parsedPrice;
   const total = subtotal + subtotal * (parsedFees / 100);
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <HeaderButton onPress={handleSubmit}>
-          {isSaving ? (
-            <ActivityIndicator size="small" color="#000" />
-          ) : (
-            <Feather name="check" size={20} color="#000" />
-          )}
-        </HeaderButton>
-      ),
-    });
-  }, [navigation, isSaving, t]);
-
-  useEffect(() => {
-    if (!symbol) return;
-    fetchStocks().then((stocks) => {
-      const stock = stocks.find((s) => s.symbol.trim() === String(symbol).trim());
-      if (stock) {
-        setCurrentStockPrice(stock.currentPrice);
-      }
-    });
-  }, [symbol]);
-
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     setIsSaving(true);
     try {
       const parsedQuantity = parseFloat(quantity);
       const parsedPrice = parseFloat(pricePerShare);
-      const parsedFees = parseFloat(fees);
-      const realPricePerShare = computeRealPricePerShare(
-        parsedPrice,
-        parsedFees,
-      );
+      const realPricePerShare = computeRealPricePerShare(parsedPrice, 0);
 
-      if (isNaN(parsedQuantity) || isNaN(parsedPrice) || isNaN(parsedFees)) {
+      if (isNaN(parsedQuantity) || isNaN(parsedPrice)) {
         throw new Error(t("please-enter-a-valid-input"));
       }
 
@@ -110,7 +82,7 @@ export default function NewTransaction() {
           type === "BUY"
             ? computeTotalCost(parsedQuantity, realPricePerShare)
             : -computeTotalCost(parsedQuantity, realPricePerShare),
-        fees: isNaN(parsedFees) ? 1.51 : parsedFees,
+        fees: 0,
         notes: null,
       };
 
@@ -130,7 +102,31 @@ export default function NewTransaction() {
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [quantity, pricePerShare, type, transactionDate, symbol, title, portfolioId, t, computeRealPricePerShare, computeTotalCost, addTransaction]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <HeaderButton onPress={handleSubmit}>
+          {isSaving ? (
+            <ActivityIndicator size="small" color="#000" />
+          ) : (
+            <Feather name="check" size={20} color="#000" />
+          )}
+        </HeaderButton>
+      ),
+    });
+  }, [navigation, isSaving, handleSubmit]);
+
+  useEffect(() => {
+    if (!symbol) return;
+    fetchStocks().then((stocks) => {
+      const stock = stocks.find((s) => s.symbol.trim() === String(symbol).trim());
+      if (stock) {
+        setCurrentStockPrice(stock.currentPrice);
+      }
+    });
+  }, [symbol]);
 
   return (
     <KeyboardAvoidingView
