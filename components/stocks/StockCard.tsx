@@ -38,8 +38,7 @@ const StockCard: React.FC<StockCardProps> = ({
 
   return (
     <TouchableOpacity
-      className="bg-white rounded-xl p-5 mb-2.5 flex-row items-center"
-      style={{ elevation: 2, shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 4 }}
+      className="bg-white rounded-xl p-5 mb-2.5 flex-row items-center border border-gray-100"
       onPress={() =>
         router.push({
           pathname: "/stocks/details",

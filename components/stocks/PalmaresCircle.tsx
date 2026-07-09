@@ -57,12 +57,7 @@ const PalmaresCircle: React.FC<PalmaresCircleProps> = ({
       }
     >
       <View
-        className="flex-1 rounded-full bg-white items-center justify-center p-1 shadow-sm"
-        style={{
-          borderWidth: 1.5,
-          borderColor: isPositive ? "#4CAF50" : isNegative ? "#F44336" : "#8E8E8E",
-          elevation: 2,
-        }}
+        className="flex-1 rounded-full bg-white items-center justify-center p-1 border border-gray-200"
       >
         <Text className="text-[9px] font-bold text-[#123458] mb-0.5" numberOfLines={1}>
           {symbol.trim()}

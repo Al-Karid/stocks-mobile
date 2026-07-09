@@ -24,7 +24,7 @@ const PalmaresSection: React.FC<PalmaresSectionProps> = ({ stocks }) => {
         {t("palmares")}
       </Text>
 
-      <View className="flex-row flex-wrap gap-[2.5%] py-2">
+      <View className="flex-row flex-wrap gap-x-[2.5%] gap-y-2 py-2">
         {top12.map((item) => (
           <PalmaresCircle
             key={item.id}
