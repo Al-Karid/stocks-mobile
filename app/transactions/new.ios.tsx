@@ -134,15 +134,14 @@ export default function NewTransaction() {
       style={{ flex: 1 }}
       behavior="padding"
     >
-      <View style={{ flex: 1 }}>
-        <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={[
-            styles.container,
-            { paddingTop: headerHeight + 20 },
-          ]}
-          keyboardShouldPersistTaps="handled"
-        >
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={[
+          styles.container,
+          { paddingTop: headerHeight + 20, paddingBottom: 0 },
+        ]}
+        keyboardShouldPersistTaps="handled"
+      >
         {symbol && (
           <Text style={styles.sectionTitle}>
             {title ?? t("stock")} ({symbol})
@@ -221,20 +220,19 @@ export default function NewTransaction() {
 
         {/* Fees field — dev only, not needed */}
         {/* __DEV__ && fees code commented out */}
-        </ScrollView>
 
-        <View style={styles.totalContainer}>
-        <View style={styles.totalInner}>
-          <View style={styles.totalLeft}>
+        <View className="bg-black items-center mx-auto mt-10 rounded-xl">
+        <View className="flex-row items-center justify-between py-7 px-6 w-full">
+          <View className="flex-row items-center gap-3">
             <Feather name="dollar-sign" size={22} color="#fff" />
-            <Text style={styles.totalLabel}>{t("total-estimated")}</Text>
+            <Text className="text-[17px] text-white font-semibold">{t("total-estimated")}</Text>
           </View>
-          <Text style={styles.totalValue}>
+          <Text className="text-[26px] font-black text-white">
             {formatNumber(total.toFixed(2))} FCFA
           </Text>
         </View>
       </View>
-      </View>
+        </ScrollView>
     </KeyboardAvoidingView>
   );
 }
