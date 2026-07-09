@@ -112,6 +112,7 @@ export default function Layout() {
                   title: t("alerts"),
                   headerLargeTitle: true,
                   headerBackTitle: t("dashboard"),
+                  headerBackButtonDisplayMode: "minimal"
                 }}
               />
               <Stack.Screen
