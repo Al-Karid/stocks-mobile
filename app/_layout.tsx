@@ -132,8 +132,10 @@ export default function Layout() {
                 name="alerts/notifications"
                 options={{
                   title: t("notifications"),
-                  headerLargeTitle: true,
+                  // headerLargeTitle: true,
                   headerBackTitle: t("dashboard"),
+                  headerBackButtonDisplayMode: "minimal",
+                  headerTransparent: true
                 }}
               />
               <Stack.Screen

@@ -1,21 +1,24 @@
 // screens/NotificationScreen.tsx
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, SectionList } from 'react-native';
-import NotificationCard from '@/components/alerts/NotificationCard';
-import { useNotificationStore } from '@/stores/notificationStore';
-import { groupNotifications } from '@/utils/notificationUtils';
-import { useTranslation } from 'react-i18next';
+import React, { useMemo } from "react";
+import { View, Text, SectionList } from "react-native";
+import { Feather } from "@expo/vector-icons";
+import { useHeaderHeight } from "@react-navigation/elements";
+import NotificationCard from "@/components/alerts/NotificationCard";
+import { useNotificationStore } from "@/stores/notificationStore";
+import { groupNotifications } from "@/utils/notificationUtils";
+import { useTranslation } from "react-i18next";
 
 
 const NotificationScreen = () => {
 
   const { t } = useTranslation();
-  
+  const headerHeight = useHeaderHeight();
+
   const { notifications } = useNotificationStore();
   const grouped = useMemo(() => groupNotifications(notifications ?? []), [notifications]);
   
   return (
-    <View style={styles.container}>
+    <View className="flex-1 px-4">
       {/* <Text style={styles.header}>Notifications</Text> */}
       <SectionList
         sections={grouped}
@@ -29,12 +32,24 @@ const NotificationScreen = () => {
           />
         )}
         renderSectionHeader={({ section: { title } }) => (
-          <Text style={styles.sectionHeader}>{title}</Text>
+          <Text className="text-sm font-semibold mt-4 mb-1.5 text-gray-500 pl-2">{title}</Text>
         )}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 20, paddingTop: headerHeight + 16 }}
         ListEmptyComponent={() => (
-          <View style={{ flex: 1, margin: 20, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={{ fontSize: 16, color: '#888' }}>{t('no-notifications-yet')}</Text>
+          <View className="items-center justify-center py-16 px-8">
+            <View className="mb-8">
+              <View className="w-28 h-28 rounded-full bg-gray-50 items-center justify-center border border-gray-100">
+                <View className="w-20 h-20 rounded-full bg-gray-100 items-center justify-center">
+                  <Feather name="bell" size={32} color="#d1d5db" />
+                </View>
+              </View>
+            </View>
+            <Text className="text-lg font-semibold text-gray-400 mb-2">
+              {t("no-notifications-yet")}
+            </Text>
+            <Text className="text-sm text-gray-300 text-center leading-5">
+              {t("notifications-will-appear-here")}
+            </Text>
           </View>
         )}
         stickySectionHeadersEnabled={false}
@@ -46,37 +61,3 @@ const NotificationScreen = () => {
 };
 
 export default NotificationScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // backgroundColor: '#f1f5f9',
-    paddingHorizontal: 16,
-    // paddingTop: 40,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 20,
-  },
-  sectionHeader: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginTop: 16,
-    marginBottom: 6,
-    color: 'gray',
-    paddingLeft: 8,
-  },
-  notificationUnread: {
-    backgroundColor: '#e0f7fa', // Light blue background for unread notifications
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 8,
-  },
-  notificationRead: {
-    backgroundColor: '#ffffff', // White background for read notifications
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 8,
-  },
-});
