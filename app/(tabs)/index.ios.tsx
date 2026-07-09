@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
   ScrollView,
   Text,
   RefreshControl,
-} from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+} from "react-native";
+import { StatusBar, setStatusBarStyle } from "expo-status-bar";
+import { useFocusEffect } from "expo-router";
 import DashboardHeader from '@/components/views/DashboardHeader';
 import PortfolioDistribution from '@/components/views/PortfolioDistribution';
 import WatchlistSection from '@/components/views/WatchlistSection';
@@ -44,6 +45,15 @@ export default function StabilizedOverscrollScreen() {
     const portfolio = portfolios.find((p) => p.isDefault);
     setDefaultPortfolio(portfolio);
   }, [portfolios]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setStatusBarStyle("light");
+      return () => {
+        setStatusBarStyle("dark");
+      };
+    }, []),
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);
