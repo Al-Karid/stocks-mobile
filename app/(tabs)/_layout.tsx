@@ -25,7 +25,7 @@ export default function TabLayout() {
 
       <NativeTabs.Trigger name="stocks">
         <Icon src={<VectorIcon family={MaterialIcons} name="table-chart" />} />
-        <Label>{t("stocks")}</Label>
+        <Label>BRMV</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

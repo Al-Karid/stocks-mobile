@@ -11,8 +11,10 @@ export default function StocksStackLayout() {
         <Stack.Screen
           name="index"
           options={{
-            title: t('stocks'),
-            headerLargeTitle: true,
+            // title: t('stocks'),
+            title: "BRVM",
+            headerLargeTitle: false,
+            headerTransparent: true
           }}
         />
         <Stack.Screen
