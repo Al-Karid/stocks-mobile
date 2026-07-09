@@ -124,6 +124,7 @@ export default function NewTransaction() {
       const stock = stocks.find((s) => s.symbol.trim() === String(symbol).trim());
       if (stock) {
         setCurrentStockPrice(stock.currentPrice);
+        setPricePerShare(String(stock.currentPrice));
       }
     });
   }, [symbol]);
