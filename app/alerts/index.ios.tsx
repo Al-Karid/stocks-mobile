@@ -1,28 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   FlatList,
   Text,
   Alert,
   StyleSheet,
-  Pressable,
   Switch,
   TouchableOpacity,
 } from "react-native";
 import { globalCardStyles } from "@/styles/globalStyles";
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import {
-  Feather,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
 import { HeaderButton } from "@react-navigation/elements";
 import { AlertData } from "@/types/alerts";
-import { Colors } from "@/styles/colors";
-import { Stock } from "@/types/stock";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import { useStockRepository } from "@/data/repositories/stockRepository";
 import { useAlertStore } from "@/stores/alertStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { useTranslation } from "react-i18next";
@@ -43,7 +34,6 @@ const AlertsScreen: React.FC = () => {
     decreaseUserContraintCounts,
   } = useSettingsStore();
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const navigation = useNavigation();
 
   const [userCanAddAlert, setUserCanAddAlert] = useState(true);
@@ -61,7 +51,14 @@ const AlertsScreen: React.FC = () => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <HeaderButton onPress={() => openStockModal()}>
+        <HeaderButton
+          onPress={() =>
+            router.push({
+              pathname: "/choose-stock",
+              params: { nextRoute: "/alerts/form" },
+            })
+          }
+        >
           <MaterialIcons name="notification-add" size={23} />
         </HeaderButton>
       ),
@@ -106,59 +103,6 @@ const AlertsScreen: React.FC = () => {
       },
     );
   };
-
-  const [stocks, setStocks] = useState<Stock[]>([]);
-  const { fetchStocks } = useStockRepository();
-
-  useEffect(() => {
-    const loadStocks = async () => {
-      const result = await fetchStocks();
-      setStocks(result);
-    };
-    loadStocks();
-  }, []);
-
-  const openStockModal = () => {
-    bottomSheetModalRef.current?.present();
-  };
-
-  const closeStockModal = () => {
-    bottomSheetModalRef.current?.dismiss();
-  };
-
-  const handleStockSelect = (stock: Stock) => {
-    closeStockModal();
-    router.push({
-      pathname: "/alerts/form",
-      params: {
-        stockSymbol: stock.symbol,
-        stockTitle: stock.title,
-      },
-    });
-  };
-
-  const renderStockItem = ({ item }: { item: Stock }) => (
-    <Pressable onPress={() => handleStockSelect(item)} style={styles.stockItem}>
-      <Text style={styles.stockItemText}>{item.title}</Text>
-    </Pressable>
-  );
-
-  const renderStockSelector = () => (
-    <>
-      <Text style={styles.modalTitle}>{t("choose-a-stock")}</Text>
-      <FlatList
-        data={stocks}
-        keyExtractor={(item) => item.symbol}
-        renderItem={renderStockItem}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      />
-      <View style={{ marginTop: 16 }}>
-        <Pressable onPress={closeStockModal} style={styles.modalCancelButton}>
-          <Text style={styles.modalCancelButtonText}>{t("cancel")}</Text>
-        </Pressable>
-      </View>
-    </>
-  );
 
   return (
     <View style={styles.container}>
@@ -227,16 +171,6 @@ const AlertsScreen: React.FC = () => {
           </TouchableOpacity>
         )}
       />
-
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={0}
-        snapPoints={["60%"]}
-      >
-        <BottomSheetView style={{ flex: 1, padding: 20 }}>
-          {renderStockSelector()}
-        </BottomSheetView>
-      </BottomSheetModal>
     </View>
   );
 };
@@ -264,29 +198,5 @@ const styles = StyleSheet.create({
   cardCondition: {
     fontSize: 16,
     color: "#4CAF50",
-  },
-  stockItem: {
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderColor: "#eee",
-  },
-  stockItemText: {
-    fontSize: 16,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 12,
-  },
-  modalCancelButton: {
-    backgroundColor: "#FF3B30",
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  modalCancelButtonText: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: 16,
   },
 });

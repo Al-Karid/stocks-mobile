@@ -46,8 +46,8 @@ export default function HoldingsScreen() {
   const handleNewTransaction = () => {
     provideHapticFeedback();
     router.push({
-      pathname: "/(tabs)/portfolio/choose-stock",
-      params: { portfolioId },
+      pathname: "/choose-stock",
+      params: { portfolioId, nextRoute: "/transactions/new" },
     });
   };
 

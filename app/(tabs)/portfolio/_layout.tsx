@@ -22,19 +22,6 @@ export default function PortfolioStackLayout() {
             headerBackButtonDisplayMode: "minimal",
           }}
         />
-        <Stack.Screen
-          name="choose-stock"
-          options={{
-            title: "Choose Stock",
-            presentation: "formSheet",
-            sheetGrabberVisible: true,
-            contentStyle: { backgroundColor: 'transparent' },
-            headerStyle: { backgroundColor: 'transparent' },
-            sheetAllowedDetents: [0.7, 1],
-            sheetInitialDetentIndex: 0,
-            sheetLargestUndimmedDetentIndex: -1,
-          }}
-        />
       </Stack>
     </>
   );

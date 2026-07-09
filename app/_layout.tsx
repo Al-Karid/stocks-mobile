@@ -63,6 +63,19 @@ export default function Layout() {
                 }}
               />
               <Stack.Screen
+                name="choose-stock"
+                options={{
+                  title: "Choose Stock",
+                  presentation: "formSheet",
+                  sheetGrabberVisible: true,
+                  contentStyle: { backgroundColor: "transparent" },
+                  headerStyle: { backgroundColor: "transparent" },
+                  sheetAllowedDetents: [0.7, 1],
+                  sheetInitialDetentIndex: 0,
+                  sheetLargestUndimmedDetentIndex: -1,
+                }}
+              />
+              <Stack.Screen
                 name="settings/index"
                 options={{
                   title: t("settings"),
@@ -112,7 +125,7 @@ export default function Layout() {
                   title: t("alerts"),
                   headerLargeTitle: true,
                   headerBackTitle: t("dashboard"),
-                  headerBackButtonDisplayMode: "minimal"
+                  headerBackButtonDisplayMode: "minimal",
                 }}
               />
               <Stack.Screen
