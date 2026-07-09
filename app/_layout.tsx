@@ -9,8 +9,9 @@ import { useNotificationHandler } from "@/services/notificationService";
 import * as SplashScreen from "expo-splash-screen";
 import { useState, useEffect, useCallback } from "react";
 import { useAppInitializer } from "@/data/configs/initDatabases";
-import '@/i18n'; // Import your i18n configuration
+import "@/i18n"; // Import your i18n configuration
 import { useTranslation } from "react-i18next";
+import { Platform } from "react-native";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -21,7 +22,6 @@ SplashScreen.setOptions({
 });
 
 export default function Layout() {
-  
   const { t } = useTranslation();
   useNotificationHandler();
   const { initializeAppData } = useAppInitializer();
@@ -65,16 +65,16 @@ export default function Layout() {
               <Stack.Screen
                 name="settings/index"
                 options={{
-                  title: t('settings'),
+                  title: t("settings"),
                   headerLargeTitle: true,
-                  headerBackTitle: t('dashboard'),
-                  headerBackButtonDisplayMode: "minimal"
+                  headerBackTitle: t("dashboard"),
+                  headerBackButtonDisplayMode: "minimal",
                 }}
               />
               <Stack.Screen
                 name="settings/login"
                 options={{
-                  title: t('login'),
+                  title: t("login"),
                   presentation: "modal",
                   animation: "slide_from_bottom",
                 }}
@@ -82,7 +82,7 @@ export default function Layout() {
               <Stack.Screen
                 name="settings/register"
                 options={{
-                  title: t('register'),
+                  title: t("register"),
                   presentation: "modal",
                   animation: "slide_from_bottom",
                 }}
@@ -90,7 +90,7 @@ export default function Layout() {
               <Stack.Screen
                 name="stocks/details"
                 options={{
-                  title: t('stock-details'),
+                  title: t("stock-details"),
                   presentation: "modal",
                   animation: "slide_from_bottom",
                   headerShadowVisible: false,
@@ -99,7 +99,7 @@ export default function Layout() {
               <Stack.Screen
                 name="stocks/stocks"
                 options={{
-                  title: t('stocks'),
+                  title: t("stocks"),
                   headerLargeTitle: true,
                   presentation: "modal",
                   animation: "slide_from_bottom",
@@ -109,39 +109,52 @@ export default function Layout() {
               <Stack.Screen
                 name="alerts/index"
                 options={{
-                  title: t('alerts'),
+                  title: t("alerts"),
                   headerLargeTitle: true,
-                  headerBackTitle: t('dashboard'),
+                  headerBackTitle: t("dashboard"),
                 }}
               />
               <Stack.Screen
                 name="alerts/notifications"
                 options={{
-                  title: t('notifications'),
+                  title: t("notifications"),
                   headerLargeTitle: true,
-                  headerBackTitle: t('dashboard'),
+                  headerBackTitle: t("dashboard"),
                 }}
               />
               <Stack.Screen
                 name="alerts/form"
                 options={{
-                  title: t('new-alert'),
+                  title: t("new-alert"),
                   presentation: "modal",
                   animation: "slide_from_bottom",
                 }}
               />
               <Stack.Screen
                 name="portfolio/details"
-                options={{
-                  title: t('portfolio-details'),
-                  presentation: "modal",
-                  animation: "slide_from_bottom",
-                }}
+                options={Platform.select({
+                  android: {
+                    title: t("portfolio-details"),
+                    presentation: "modal",
+                    animation: "slide_from_bottom",
+                  },
+                  ios: {
+                    // title: t('portfolio-details'),
+                    presentation: "formSheet",
+                    sheetGrabberVisible: true,
+                    contentStyle: { backgroundColor: "transparent" },
+                    headerStyle: { backgroundColor: "transparent" },
+                    sheetAllowedDetents: [0.7, 1],
+                    sheetInitialDetentIndex: 0,
+                    headerTransparent: false,
+                    sheetLargestUndimmedDetentIndex: -1,
+                  },
+                })}
               />
               <Stack.Screen
                 name="transactions/new"
                 options={{
-                  title: t('new-transaction'),
+                  title: t("new-transaction"),
                   presentation: undefined,
                   headerBackButtonDisplayMode: "minimal",
                   headerTransparent: true,
@@ -150,12 +163,25 @@ export default function Layout() {
               />
               <Stack.Screen
                 name="transactions/history"
-                options={{
-                  title: t('transaction-history'),
-                  presentation: "modal",
-                  animation: "slide_from_bottom",
-                  headerShadowVisible: false,
-                }}
+                options={Platform.select({
+                  android: {
+                    title: t("transaction-history"),
+                    presentation: "modal",
+                    animation: "slide_from_bottom",
+                    headerShadowVisible: false,
+                  },
+                  ios: {
+                    title: t("transaction-history"),
+                    presentation: "formSheet",
+                    sheetGrabberVisible: true,
+                    contentStyle: { backgroundColor: "transparent" },
+                    headerStyle: { backgroundColor: "transparent" },
+                    sheetAllowedDetents: [0.7, 1],
+                    sheetInitialDetentIndex: 0,
+                    headerTransparent: false,
+                    sheetLargestUndimmedDetentIndex: -1,
+                  },
+                })}
               />
             </Stack>
 

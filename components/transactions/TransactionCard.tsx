@@ -1,11 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { View, Text } from "react-native";
 import { Transaction } from "@/types/portfolio";
-import { formatTransactionCurrency, formatTransactionNumber } from "@/utils/numberUtils";
-import { globalTextStyles, globalCardStyles } from "@/styles/globalStyles";
+import {
+  formatTransactionCurrency,
+  formatTransactionNumber,
+} from "@/utils/numberUtils";
 import { useTranslation } from "react-i18next";
-
-const { width } = Dimensions.get("window");
 
 interface Props {
   transaction: Transaction;
@@ -13,103 +13,71 @@ interface Props {
 }
 
 const TransactionCard = ({ transaction, symbol }: Props) => {
-
   const { t } = useTranslation();
-  
+
   return (
-    <View style={globalCardStyles.card}>
-      <View style={styles.header}>
-        <Text style={styles.symbol}>{symbol}</Text>
+    <View
+      className="w-full bg-none border border-gray-200 rounded-xl p-5 mb-2.5"
+      style={{
+        // elevation: 2,
+        // shadowColor: "#000",
+        // shadowOffset: { width: 0, height: 1 },
+        // shadowOpacity: 0.06,
+        // shadowRadius: 4,
+      }}
+    >
+      <View className="flex-row justify-between items-center mb-4">
         <View
-          style={[
-            styles.typeBadge,
-            { backgroundColor: transaction.type === "BUY" ? "#34C759" : "#FF3B30" },
-          ]}
+          className={`px-3 py-1 rounded-full ${
+            transaction.type === "BUY" ? "bg-[#34C759]" : "bg-[#FF3B30]"
+          }`}
         >
-          <Text style={styles.typeText}>{transaction.type}</Text>
+          <Text className="text-white font-bold text-sm">
+            {transaction.type}
+          </Text>
         </View>
       </View>
 
-      <View style={globalTextStyles.labelValueDetailsContainerBTop}>
-
-        <View style={globalTextStyles.labelValueDetailsRow}>
-          <Text style={globalTextStyles.label}>{t('quantity')}</Text>
-          <Text style={globalTextStyles.value}>{formatTransactionNumber(transaction.quantity)}</Text>
+      <View className="border-t border-gray-200 pt-2.5 gap-1.5">
+        <View className="flex-row justify-between">
+          <Text className="text-sm text-[#374151]">{t("quantity")}</Text>
+          <Text className="font-semibold text-[#123456]">
+            {formatTransactionNumber(transaction.quantity)}
+          </Text>
         </View>
-
-        <View style={globalTextStyles.labelValueDetailsRow}>
-          <Text style={globalTextStyles.label}>{t('price-per-share-fcfa')}</Text>
-          <Text style={globalTextStyles.value}>{formatTransactionCurrency(transaction.realPricePerShare)}</Text>
+        <View className="flex-row justify-between">
+          <Text className="text-sm text-[#374151]">
+            {t("price-per-share-fcfa")}
+          </Text>
+          <Text className="font-semibold text-[#123456]">
+            {formatTransactionCurrency(transaction.realPricePerShare)}
+          </Text>
         </View>
-
-        <View style={globalTextStyles.labelValueDetailsRow}>
-          <Text style={globalTextStyles.label}>{t('total-cost')}</Text>
-          <Text style={globalTextStyles.value}>{formatTransactionCurrency(transaction.totalCost)}</Text>
+        <View className="flex-row justify-between">
+          <Text className="text-sm text-[#374151]">{t("total-cost")}</Text>
+          <Text className="font-semibold text-[#123456]">
+            {formatTransactionCurrency(transaction.totalCost)}
+          </Text>
         </View>
-
-        <View style={globalTextStyles.labelValueDetailsRow}>
-          <Text style={globalTextStyles.label}>{t('transaction-date')}</Text>
-          <Text style={globalTextStyles.value}>
+        <View className="flex-row justify-between">
+          <Text className="text-sm text-[#374151]">
+            {t("transaction-date")}
+          </Text>
+          <Text className="font-semibold text-[#123456]">
             {new Date(transaction.transactionDate).toLocaleDateString()}
           </Text>
         </View>
-
-        <View style={globalTextStyles.labelValueDetailsRow}>
-          <Text style={globalTextStyles.label}>{t('transaction-fees')}</Text>
-          <Text style={globalTextStyles.value}>{transaction.fees}%</Text>
+        <View className="flex-row justify-between">
+          <Text className="text-sm text-[#374151]">
+            {t("transaction-fees")}
+          </Text>
+          <Text className="font-semibold text-[#123456]">
+            {transaction.fees}%
+          </Text>
         </View>
-
       </View>
-
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    width: width * 0.9,
-    backgroundColor: "white",
-    borderRadius: 18,
-    padding: 20,
-    marginBottom: 20,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  symbol: {
-    fontSize: 24,
-    color: "#FFF",
-    fontWeight: "700",
-    opacity: 0.0,
-  },
-  typeBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 15,
-  },
-  typeText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 14,
-  },
-  detailRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
-  },
-  label: {
-    color: "#AAA",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  value: {
-    color: "#547792",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});
 
 export default TransactionCard;
