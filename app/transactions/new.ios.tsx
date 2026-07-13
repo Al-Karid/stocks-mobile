@@ -6,7 +6,6 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
-  KeyboardAvoidingView,
   ActivityIndicator,
 } from "react-native";
 import { useHeaderHeight, HeaderButton } from "@react-navigation/elements";
@@ -130,18 +129,14 @@ export default function NewTransaction() {
   }, [symbol]);
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior="padding"
+    <ScrollView
+      className="flex-1"
+      contentContainerStyle={[
+        styles.container,
+        { paddingTop: headerHeight + 20, paddingBottom: 0 },
+      ]}
+      keyboardShouldPersistTaps="handled"
     >
-      <ScrollView
-        className="flex-1"
-        contentContainerStyle={[
-          styles.container,
-          { paddingTop: headerHeight + 20, paddingBottom: 0 },
-        ]}
-        keyboardShouldPersistTaps="handled"
-      >
         {symbol && (
           <Text style={styles.sectionTitle}>
             {title ?? t("stock")} ({symbol})
@@ -232,8 +227,7 @@ export default function NewTransaction() {
           </Text>
         </View>
       </View>
-        </ScrollView>
-    </KeyboardAvoidingView>
+      </ScrollView>
   );
 }
 
