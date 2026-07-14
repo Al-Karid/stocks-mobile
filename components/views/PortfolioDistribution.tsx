@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import AssetCard from '@/components/stocks/AssetCard';
 import EmptyPortfolioCard from '@/components/stocks/EmptyPortfolioCard';
 import { Portfolio } from '@/types/portfolio';
@@ -22,6 +23,9 @@ const PortfolioDistribution: React.FC<PortfolioDistributionProps> = ({ portfolio
     router.navigate('/(tabs)/portfolio');
   };
 
+  const holdings = portfolio?.holdings ?? [];
+  const displayHoldings = holdings.slice(0, 3);
+
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
@@ -32,10 +36,22 @@ const PortfolioDistribution: React.FC<PortfolioDistributionProps> = ({ portfolio
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {portfolio?.holdings && portfolio.holdings.length > 0 ? (
-          portfolio.holdings.slice(0, 2).map((holding) => (
-            <AssetCard key={holding.symbol} holding={holding} />
-          ))
+        {holdings.length > 0 ? (
+          <>
+            {displayHoldings.map((holding) => (
+              <AssetCard key={holding.symbol} holding={holding} />
+            ))}
+            <TouchableOpacity
+              style={styles.seeMoreCard}
+              onPress={handleEmptyPortfolioPress}
+              activeOpacity={0.7}
+            >
+              <View style={styles.seeMoreCircle}>
+                <Ionicons name="chevron-forward" size={20} color="#6b7280" />
+              </View>
+              <Text style={styles.seeMoreText}>{t('see-more')}</Text>
+            </TouchableOpacity>
+          </>
         ) : (
           <EmptyPortfolioCard onPress={handleEmptyPortfolioPress} />
         )}
@@ -47,7 +63,6 @@ const PortfolioDistribution: React.FC<PortfolioDistributionProps> = ({ portfolio
 const styles = StyleSheet.create({
   section: {
     marginTop: 0,
-    // backgroundColor: '#f2f2f2',
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -65,6 +80,30 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     fontSize: 11,
     paddingVertical: 5,
+  },
+  seeMoreCard: {
+    minWidth: 80,
+    padding: 16,
+    borderRadius: 14,
+    backgroundColor: '#ffffff',
+    marginRight: 10,
+    marginTop: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  seeMoreCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#f3f4f6',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  seeMoreText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#6b7280',
   },
 });
 

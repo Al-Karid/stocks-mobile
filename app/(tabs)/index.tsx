@@ -99,9 +99,19 @@ const DashboardScreen = () => {
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {defaultPortfolio?.holdings && defaultPortfolio.holdings.length > 0 ? (
-                    defaultPortfolio.holdings.slice(0, 2).map((holding) => (
-                      <AssetCard key={holding.symbol} holding={holding} />
-                    ))
+                    <>
+                      {defaultPortfolio.holdings.slice(0, 3).map((holding) => (
+                        <AssetCard key={holding.symbol} holding={holding} />
+                      ))}
+                      <TouchableOpacity
+                        style={styles.seeMoreCard}
+                        onPress={() => { provideHapticFeedback(); router.navigate('/(tabs)/portfolio'); }}
+                        activeOpacity={0.7}
+                      >
+                        <Text style={styles.seeMoreText}>{t('see-more')}</Text>
+                        <Ionicons name="chevron-forward" size={20} color="#6b7280" />
+                      </TouchableOpacity>
+                    </>
                   ) : (
                     <TouchableOpacity
                       style={styles.emptyPortfolioCard}
@@ -234,6 +244,23 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 12,
     fontWeight: '600',
+  },
+  seeMoreCard: {
+    minWidth: 80,
+    padding: 16,
+    borderRadius: 14,
+    backgroundColor: '#ffffff',
+    marginRight: 12,
+    marginTop: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 4,
+  },
+  seeMoreText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#6b7280',
   },
 });
 
