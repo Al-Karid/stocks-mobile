@@ -26,7 +26,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio, displayNam
   , [todayNotificationsCount]);
 
   const { performance } = portfolio;
-  const { totalValue, gainLossPercentage, totalGainLoss } = performance;
+  const { totalValue, totalCost, gainLossPercentage, totalGainLoss } = performance;
 
   const isPositive = totalGainLoss >= 0;
 
@@ -68,14 +68,20 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ portfolio, displayNam
         </View>
 
         {/* {!isHidden && ( */}
-        <Text
-          style={[
-            styles.portfolioChange,
-            { color: isPositive ? '#00FF7F' : '#FF4500' } // green if positive, red if negative
-          ]}
-        >
-          {isPositive ? '▲' : '▼'} {formatCurrency(totalGainLoss, 0, "XOF", true)} ({formatPercentage(gainLossPercentage, 2)})
-        </Text>
+        <View style={styles.portfolioBottomRow}>
+          <Text
+            style={[
+              styles.portfolioChange,
+              { color: isPositive ? '#00FF7F' : '#FF4500' },
+            ]}
+          >
+            {isPositive ? '▲' : '▼'} {formatCurrency(totalGainLoss, 0, "XOF", true)} ({formatPercentage(gainLossPercentage, 2)})
+          </Text>
+          <Text style={styles.portfolioInvested}>
+            {/* {isHidden ? '**********' : `${t('invested')} ${formatCurrency(totalCost, 0, 'XOF', true)}`} */}
+            {isHidden ? '**********' : `${formatCurrency(totalCost, 0, 'XOF', true)}`}
+          </Text>
+        </View>
         {/* // )} */}
       </View>
     </View>
@@ -125,8 +131,17 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   portfolioChange: {
+    fontSize: 14,
+  },
+  portfolioBottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginTop: 5,
-    fontSize: 16,
+  },
+  portfolioInvested: {
+    fontSize: 14,
+    color: '#9ca3af',
   },
   eye: {
     marginLeft: 8,
