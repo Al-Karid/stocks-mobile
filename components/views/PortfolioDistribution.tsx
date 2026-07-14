@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import AssetCard from '@/components/stocks/AssetCard';
 import EmptyPortfolioCard from '@/components/stocks/EmptyPortfolioCard';
 import { Portfolio } from '@/types/portfolio';
 import { changeLanguage } from '@/utils/languageUtils';
+import { provideHapticFeedback } from '@/utils/interactionUtils';
 import { useTranslation } from 'react-i18next';
 
 interface PortfolioDistributionProps {
@@ -13,6 +15,12 @@ interface PortfolioDistributionProps {
 
 const PortfolioDistribution: React.FC<PortfolioDistributionProps> = ({ portfolio, lastSync }) => {
   const { t } = useTranslation();
+  const router = useRouter();
+
+  const handleEmptyPortfolioPress = () => {
+    provideHapticFeedback();
+    router.navigate('/(tabs)/portfolio');
+  };
 
   return (
     <View style={styles.section}>
@@ -29,7 +37,7 @@ const PortfolioDistribution: React.FC<PortfolioDistributionProps> = ({ portfolio
             <AssetCard key={holding.symbol} holding={holding} />
           ))
         ) : (
-          <EmptyPortfolioCard />
+          <EmptyPortfolioCard onPress={handleEmptyPortfolioPress} />
         )}
       </ScrollView>
     </View>

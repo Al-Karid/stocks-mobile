@@ -103,11 +103,15 @@ const DashboardScreen = () => {
                       <AssetCard key={holding.symbol} holding={holding} />
                     ))
                   ) : (
-                    <View style={styles.emptyPortfolioCard}>
+                    <TouchableOpacity
+                      style={styles.emptyPortfolioCard}
+                      onPress={() => { provideHapticFeedback(); router.navigate('/(tabs)/portfolio'); }}
+                      activeOpacity={0.7}
+                    >
                       <Ionicons name="folder-open-outline" size={24} color="#8b5cf6" />
                       <Text style={styles.emptyPortfolioTitle}>Your portfolio is empty</Text>
                       <Text style={styles.emptyPortfolioText}>Add a holding to see it here.</Text>
-                    </View>
+                    </TouchableOpacity>
                   )}
                 </ScrollView>
               </View>

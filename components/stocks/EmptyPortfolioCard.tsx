@@ -1,14 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const EmptyPortfolioCard: React.FC = () => {
+interface EmptyPortfolioCardProps {
+  onPress?: () => void;
+}
+
+const EmptyPortfolioCard: React.FC<EmptyPortfolioCardProps> = ({ onPress }) => {
   return (
-    <View style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
       <Ionicons name="folder-open-outline" size={24} color="#8b5cf6" />
       <Text style={styles.title}>Your portfolio is empty</Text>
       <Text style={styles.text}>Add a holding to see it here.</Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 
