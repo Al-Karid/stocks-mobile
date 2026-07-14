@@ -39,16 +39,13 @@ export default function NewTransaction() {
   const [transactionDate, setTransactionDate] = useState(new Date());
   const [quantity, setQuantity] = useState("10");
   const [pricePerShare, setPricePerShare] = useState("1000");
-  const [fees, setFees] = useState("0");
   const [isSaving, setIsSaving] = useState(false);
   const [currentStockPrice, setCurrentStockPrice] = useState<number>(0);
 
   const parsedQuantity = parseFloat(quantity) || 0;
   const parsedPrice = parseFloat(pricePerShare) || 0;
-  const parsedFees = parseFloat(fees) || 0;
 
-  const subtotal = parsedQuantity * parsedPrice;
-  const total = subtotal + subtotal * (parsedFees / 100);
+  const total = parsedQuantity * parsedPrice;
 
   const handleSubmit = useCallback(async () => {
     setIsSaving(true);
@@ -101,7 +98,19 @@ export default function NewTransaction() {
     } finally {
       setIsSaving(false);
     }
-  }, [quantity, pricePerShare, type, transactionDate, symbol, title, portfolioId, t, computeRealPricePerShare, computeTotalCost, addTransaction]);
+  }, [
+    quantity,
+    pricePerShare,
+    type,
+    transactionDate,
+    symbol,
+    title,
+    portfolioId,
+    t,
+    computeRealPricePerShare,
+    computeTotalCost,
+    addTransaction,
+  ]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -120,7 +129,9 @@ export default function NewTransaction() {
   useEffect(() => {
     if (!symbol) return;
     fetchStocks().then((stocks) => {
-      const stock = stocks.find((s) => s.symbol.trim() === String(symbol).trim());
+      const stock = stocks.find(
+        (s) => s.symbol.trim() === String(symbol).trim(),
+      );
       if (stock) {
         setCurrentStockPrice(stock.currentPrice);
         setPricePerShare(String(stock.currentPrice));
@@ -130,111 +141,129 @@ export default function NewTransaction() {
 
   return (
     <ScrollView
-      className="flex-1"
+      // className="flex-1"
       contentContainerStyle={[
         styles.container,
         { paddingTop: headerHeight + 20, paddingBottom: 0 },
       ]}
-      keyboardShouldPersistTaps="handled"
     >
-        {symbol && (
-          <Text style={styles.sectionTitle}>
-            {title ?? t("stock")} ({symbol})
+      {symbol && (
+        <Text style={styles.sectionTitle}>
+          {title ?? t("stock")} ({symbol})
+        </Text>
+      )}
+
+      <Text style={styles.label}>{t("transaction-type")}</Text>
+      <View style={styles.typeSelector}>
+        <TransactionTypeSelector
+          type={type}
+          onSelect={setType}
+          price={currentStockPrice}
+        />
+      </View>
+
+      <Text style={styles.label}>{t("details")}</Text>
+
+      <View style={styles.row}>
+        <Pressable
+          style={[
+            styles.valueButton,
+            quantity ? styles.valueButtonSet : styles.valueButtonEmpty,
+          ]}
+          onPress={() => {
+            Alert.prompt(
+              t("quantity"),
+              "",
+              [
+                { text: t("cancel"), style: "cancel" },
+                {
+                  text: t("save"),
+                  isPreferred: true,
+                  onPress: (value?: string) => {
+                    if (value) setQuantity(value);
+                  },
+                },
+              ],
+              "plain-text",
+              quantity,
+              "numeric",
+            );
+          }}
+        >
+          <Text style={styles.valueButtonLabel}>{t("quantity")}</Text>
+          <Text
+            style={[
+              styles.valueButtonText,
+              quantity
+                ? styles.valueButtonTextSet
+                : styles.valueButtonTextEmpty,
+            ]}
+          >
+            {quantity || "—"}
           </Text>
-        )}
+        </Pressable>
 
-        <Text style={styles.label}>{t("transaction-type")}</Text>
-        <View style={styles.typeSelector}>
-          <TransactionTypeSelector type={type} onSelect={setType} price={currentStockPrice} />
-        </View>
-
-        {/* Date picker — dev only, not needed */}
-        {/* __DEV__ && date picker code commented out */}
-
-        <Text style={styles.label}>{t("details")}</Text>
-
-        <View style={styles.row}>
-          <Pressable
-            style={[
-              styles.valueButton,
-              quantity ? styles.valueButtonSet : styles.valueButtonEmpty,
-            ]}
-            onPress={() => {
-              Alert.prompt(
-                t("quantity"),
-                "",
-                [
-                  { text: t("cancel"), style: "cancel" },
-                  {
-                    text: t("save"),
-                    isPreferred: true,
-                    onPress: (value?: string) => { if (value) setQuantity(value); },
+        <Pressable
+          style={[
+            styles.valueButton,
+            pricePerShare ? styles.valueButtonSet : styles.valueButtonEmpty,
+          ]}
+          onPress={() => {
+            Alert.prompt(
+              t("price-per-share-fcfa"),
+              "",
+              [
+                { text: t("cancel"), style: "cancel" },
+                {
+                  text: t("save"),
+                  isPreferred: true,
+                  onPress: (value?: string) => {
+                    if (value) setPricePerShare(value);
                   },
-                ],
-                "plain-text",
-                quantity,
-                "numeric",
-              );
-            }}
-          >
-            <Text style={styles.valueButtonLabel}>{t("quantity")}</Text>
-            <Text style={[styles.valueButtonText, quantity ? styles.valueButtonTextSet : styles.valueButtonTextEmpty]}>
-              {quantity || "—"}
-            </Text>
-          </Pressable>
-
-          <Pressable
+                },
+              ],
+              "plain-text",
+              pricePerShare,
+              "numeric",
+            );
+          }}
+        >
+          <Text style={styles.valueButtonLabel}>
+            {t("price-per-share-fcfa")}
+          </Text>
+          <Text
             style={[
-              styles.valueButton,
-              pricePerShare ? styles.valueButtonSet : styles.valueButtonEmpty,
+              styles.valueButtonText,
+              pricePerShare
+                ? styles.valueButtonTextSet
+                : styles.valueButtonTextEmpty,
             ]}
-            onPress={() => {
-              Alert.prompt(
-                t("price-per-share-fcfa"),
-                "",
-                [
-                  { text: t("cancel"), style: "cancel" },
-                  {
-                    text: t("save"),
-                    isPreferred: true,
-                    onPress: (value?: string) => { if (value) setPricePerShare(value); },
-                  },
-                ],
-                "plain-text",
-                pricePerShare,
-                "numeric",
-              );
-            }}
           >
-            <Text style={styles.valueButtonLabel}>{t("price-per-share-fcfa")}</Text>
-            <Text style={[styles.valueButtonText, pricePerShare ? styles.valueButtonTextSet : styles.valueButtonTextEmpty]}>
-              {pricePerShare || "—"}
-            </Text>
-          </Pressable>
-        </View>
+            {pricePerShare || "—"}
+          </Text>
+        </Pressable>
+      </View>
 
-        {/* Fees field — dev only, not needed */}
-        {/* __DEV__ && fees code commented out */}
-
-        <View className="bg-black items-center mx-auto mt-10 rounded-xl">
+      <View className="bg-black items-center mx-auto mt-10 rounded-xl">
         <View className="flex-row items-center justify-between py-7 px-6 w-full">
           <View className="flex-row items-center gap-3">
             <Feather name="dollar-sign" size={22} color="#fff" />
-            <Text className="text-[17px] text-white font-semibold">{t("total-estimated")}</Text>
+            <Text className="text-[17px] text-white font-semibold">
+              {t("total-estimated")}
+            </Text>
           </View>
           <Text className="text-[26px] font-black text-white">
             {formatNumber(total.toFixed(2))} FCFA
           </Text>
         </View>
       </View>
-      </ScrollView>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    paddingBottom: 80,
   },
   sectionTitle: {
     fontSize: 20,
@@ -292,32 +321,5 @@ const styles = StyleSheet.create({
   },
   valueButtonTextEmpty: {
     color: "#000",
-  },
-  totalContainer: {
-    backgroundColor: "#000",
-    alignItems: "center",
-  },
-  totalInner: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 28,
-    paddingHorizontal: 24,
-    width: "100%",
-  },
-  totalLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  totalLabel: {
-    fontSize: 17,
-    color: "#fff",
-    fontWeight: "600",
-  },
-  totalValue: {
-    fontSize: 26,
-    fontWeight: "900",
-    color: "#fff",
   },
 });

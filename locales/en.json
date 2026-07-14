@@ -39,6 +39,8 @@
   "enter-target-value": "Enter target value",
   "enabled": "Enabled",
   "delete-this-alert": "Delete this alert ?",
+  "delete-holding": "Delete Holding",
+  "are-you-sure-you-want-to-delete-holding": "Are you sure you want to delete {{symbol}}? All transactions for this holding will also be removed.",
   "delete": "Delete",
   "edit": "Edit",
   "no-alerts-set-tap-the-button-to-add-one": "No alerts set. Tap the '+' button to add one.",

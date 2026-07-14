@@ -75,10 +75,28 @@ export const useHoldingRepository = () => {
         return holdings.filter(holding => holding.quantity > 0);
     }
 
+    /**
+     * Delete a holding and all its associated transactions
+     * @param portfolioId
+     * @param symbol
+     */
+    const deleteHolding = async (portfolioId: number, symbol: string) => {
+        try {
+            const db = await dbPromise;
+            await db.runAsync("DELETE FROM transactions WHERE portfolioId = ? AND trim(symbol) = ?", [portfolioId, symbol.trim()]);
+            await db.runAsync("DELETE FROM holdings WHERE portfolioId = ? AND trim(symbol) = ?", [portfolioId, symbol.trim()]);
+            console.log(`🗑️ Holding ${symbol} and its transactions deleted from portfolio ${portfolioId}`);
+        } catch (error) {
+            console.error("‼️ Error deleting holding:", error);
+            throw error;
+        }
+    }
+
     return {
         findHolding,
-        fetchHoldings, 
+        fetchHoldings,
         updateHolding,
         saveOrUpdateHolding,
+        deleteHolding,
     }
 }

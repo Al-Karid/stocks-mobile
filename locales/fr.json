@@ -39,6 +39,8 @@
   "enter-target-value": "Entrez la valeur cible",
   "enabled": "Activé",
   "delete-this-alert": "Supprimer cette alerte ?",
+  "delete-holding": "Supprimer la position",
+  "are-you-sure-you-want-to-delete-holding": "Êtes-vous sûr de vouloir supprimer {{symbol}} ? Toutes les transactions pour cette position seront également supprimées.",
   "delete": "Supprimer",
   "edit": "Modifier",
   "no-alerts-set-tap-the-button-to-add-one": "Aucune alerte définie. Appuyez sur le bouton '+' pour en ajouter une.",
