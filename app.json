@@ -14,7 +14,8 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.alkarid.stocks"
+      "bundleIdentifier": "com.alkarid.stocks",
+      "icon": "./assets/images/icon-ios.png"
     },
     "android": {
       "adaptiveIcon": {
@@ -38,7 +39,13 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#ffffff",
+          "ios": {
+            "image": "./assets/images/splash-icon.ios.png",
+            "imageWidth": 200,
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+          }
         }
       ],
       "expo-localization",
