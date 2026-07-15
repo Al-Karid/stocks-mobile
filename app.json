@@ -41,7 +41,13 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID to secure access to your portfolio."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

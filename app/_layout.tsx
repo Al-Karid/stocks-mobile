@@ -11,7 +11,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useAppInitializer } from "@/data/configs/initDatabases";
 import "@/i18n"; // Import your i18n configuration
 import { useTranslation } from "react-i18next";
-import { Platform } from "react-native";
+import { Platform, Text, View, StyleSheet, ActivityIndicator } from "react-native";
+import { useBiometricAuth } from "@/hooks/useBiometricAuth";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -26,6 +27,13 @@ export default function Layout() {
   useNotificationHandler();
   const { initializeAppData } = useAppInitializer();
   const [appIsReady, setAppIsReady] = useState(false);
+  const {
+    isCompatible,
+    isEnrolled,
+    isAuthenticated,
+    isLoading: isAuthLoading,
+    authenticate,
+  } = useBiometricAuth();
 
   useEffect(() => {
     async function prepare() {
@@ -40,14 +48,39 @@ export default function Layout() {
     prepare();
   }, []);
 
+  // Trigger biometric auth once the app is ready and auth check is done
+  useEffect(() => {
+    if (appIsReady && !isAuthLoading && !isAuthenticated) {
+      // Only require biometrics if the device supports and has them enrolled
+      if (isCompatible && isEnrolled) {
+        authenticate();
+      }
+    }
+  }, [appIsReady, isAuthLoading, isAuthenticated, isCompatible, isEnrolled, authenticate]);
+
   const onLayoutRootView = useCallback(() => {
-    if (appIsReady) {
+    // Only hide splash when fully authenticated (or auth not required)
+    const authNotRequired = !isCompatible || !isEnrolled;
+    if (appIsReady && (isAuthenticated || authNotRequired)) {
       SplashScreen.hide();
     }
-  }, [appIsReady]);
+  }, [appIsReady, isAuthenticated, isCompatible, isEnrolled]);
 
+  // Show nothing while app is initializing
   if (!appIsReady) {
     return null;
+  }
+
+  // Show biometric gate if device supports biometrics and user is enrolled but not yet authenticated
+  const needsBiometricAuth = isCompatible && isEnrolled && !isAuthenticated;
+
+  if (needsBiometricAuth) {
+    return (
+      <View style={styles.authGate}>
+        <ActivityIndicator size="large" />
+        <Text style={styles.authGateText}>Authenticating…</Text>
+      </View>
+    );
   }
 
   return (
@@ -208,3 +241,17 @@ export default function Layout() {
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  authGate: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+  },
+  authGateText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: "#666666",
+  },
+});
