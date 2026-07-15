@@ -141,12 +141,25 @@ export default function Layout() {
               />
               <Stack.Screen
                 name="stocks/details"
-                options={{
-                  title: t("stock-details"),
-                  presentation: "modal",
-                  animation: "slide_from_bottom",
-                  headerShadowVisible: false,
-                }}
+                options={Platform.select({
+                  android: {
+                    title: t("stock-details"),
+                    presentation: "modal",
+                    animation: "slide_from_bottom",
+                    headerShadowVisible: false,
+                },
+                  ios: {
+                    title: t("stock-details"),
+                    presentation: "formSheet",
+                    sheetGrabberVisible: false,
+                    contentStyle: { backgroundColor: "transparent" },
+                    headerStyle: { backgroundColor: "transparent" },
+                    sheetAllowedDetents: [0.9, 1],
+                    sheetInitialDetentIndex: 0,
+                    headerTransparent: false,
+                    sheetLargestUndimmedDetentIndex: -1,
+                  }
+                })}
               />
               <Stack.Screen
                 name="stocks/stocks"
