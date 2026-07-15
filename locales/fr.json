@@ -88,6 +88,7 @@
   "transaction-fees": "Frais de transaction",
   "total-estimated": "Total estimé",
   "save-transaction": "Enregistrer la transaction",
+  "security": "Sécurité",
   "increase": "Gain",
   "loss": "Perte",
   "current-value": "Valeur actuelle",
@@ -111,6 +112,7 @@
   "below-threshold": "Descend sous",
   "empty-watchlist-title": "Votre liste de surveillance est vide",
   "empty-watchlist-text": "Ajoutez quelques actions pour les suivre ici.",
+  "biometric-lock": "Verrouillage biométrique",
   "browse-stocks": "Parcourir les actions",
   "see-more": "Voir plus"
 }

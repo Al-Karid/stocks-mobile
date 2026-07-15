@@ -13,6 +13,7 @@ import "@/i18n"; // Import your i18n configuration
 import { useTranslation } from "react-i18next";
 import { Platform, Text, View, StyleSheet, ActivityIndicator } from "react-native";
 import { useBiometricAuth } from "@/hooks/useBiometricAuth";
+import { useSettingsStore } from "@/stores/settingsStore";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -34,6 +35,7 @@ export default function Layout() {
     isLoading: isAuthLoading,
     authenticate,
   } = useBiometricAuth();
+  const { biometricsEnabled, fetchBiometricsEnabled } = useSettingsStore();
 
   useEffect(() => {
     async function prepare() {
@@ -48,31 +50,35 @@ export default function Layout() {
     prepare();
   }, []);
 
+  useEffect(() => {
+    fetchBiometricsEnabled();
+  }, [fetchBiometricsEnabled]);
+
   // Trigger biometric auth once the app is ready and auth check is done
   useEffect(() => {
     if (appIsReady && !isAuthLoading && !isAuthenticated) {
-      // Only require biometrics if the device supports and has them enrolled
-      if (isCompatible && isEnrolled) {
+      // Only require biometrics if the setting is enabled and the device supports it
+      if (biometricsEnabled && isCompatible && isEnrolled) {
         authenticate();
       }
     }
-  }, [appIsReady, isAuthLoading, isAuthenticated, isCompatible, isEnrolled, authenticate]);
+  }, [appIsReady, isAuthLoading, isAuthenticated, biometricsEnabled, isCompatible, isEnrolled, authenticate]);
 
   const onLayoutRootView = useCallback(() => {
     // Only hide splash when fully authenticated (or auth not required)
-    const authNotRequired = !isCompatible || !isEnrolled;
+    const authNotRequired = !biometricsEnabled || !isCompatible || !isEnrolled;
     if (appIsReady && (isAuthenticated || authNotRequired)) {
       SplashScreen.hide();
     }
-  }, [appIsReady, isAuthenticated, isCompatible, isEnrolled]);
+  }, [appIsReady, isAuthenticated, biometricsEnabled, isCompatible, isEnrolled]);
 
   // Show nothing while app is initializing
   if (!appIsReady) {
     return null;
   }
 
-  // Show biometric gate if device supports biometrics and user is enrolled but not yet authenticated
-  const needsBiometricAuth = isCompatible && isEnrolled && !isAuthenticated;
+  // Show biometric gate if biometrics is enabled, device supports it, user is enrolled, but not yet authenticated
+  const needsBiometricAuth = biometricsEnabled && isCompatible && isEnrolled && !isAuthenticated;
 
   if (needsBiometricAuth) {
     return (

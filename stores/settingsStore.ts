@@ -1,10 +1,12 @@
 import { useSettingRepository } from "@/data/repositories/settingRepository";
 import { UserProfileSettings } from "@/types/settings";
 import { create } from "zustand";
+import * as SecureStore from "expo-secure-store";
 
 interface SettingsStore {
     userContraintCounts: UserProfileSettings;
     autoUpdatesEnabled: boolean;
+    biometricsEnabled: boolean;
     increaseUserContraintCounts: (item: keyof UserProfileSettings) => void;
     decreaseUserContraintCounts: (item: keyof UserProfileSettings) => void;
     setUserContraintCounts: (item: keyof UserProfileSettings, value: number) => void;
@@ -12,9 +14,11 @@ interface SettingsStore {
     fetchUserContraintCounts: () => Promise<void>;
     fetchAutoUpdatesEnabled: () => Promise<void>;
     setAutoUpdatesEnabled: (enabled: boolean) => Promise<void>;
+    fetchBiometricsEnabled: () => Promise<void>;
+    setBiometricsEnabled: (enabled: boolean) => Promise<void>;
 }
 
-const { getSettings, updateSetting } = useSettingRepository();
+const { getSettings, updateSetting, saveSetting } = useSettingRepository();
 
 export const useSettingsStore = create<SettingsStore>((set) => ({
     userContraintCounts: {
@@ -23,7 +27,8 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
         maxWatchlist: 5,
         maxTransactions: 50,
         maxAlerts: 1
-    },    autoUpdatesEnabled: true,    increaseUserContraintCounts: (item: keyof UserProfileSettings) => {
+    },    autoUpdatesEnabled: true,
+    biometricsEnabled: false,    increaseUserContraintCounts: (item: keyof UserProfileSettings) => {
         set((state) => {
             const updatedCounts = {
                 ...state.userContraintCounts,
@@ -95,8 +100,27 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
         console.log("Auto updates preference fetched:", enabled);
     },
     setAutoUpdatesEnabled: async (enabled: boolean) => {
-        await updateSetting({ key: "autoUpdatesEnabled", value: enabled ? "true" : "false" });
+        await saveSetting({ key: "autoUpdatesEnabled", value: enabled ? "true" : "false" });
         set({ autoUpdatesEnabled: enabled });
         console.log("Auto updates preference updated:", enabled);
-    }
+    },
+    fetchBiometricsEnabled: async () => {
+        try {
+            const value = await SecureStore.getItemAsync("biometricsEnabled");
+            const enabled = value === "true";
+            set({ biometricsEnabled: enabled });
+            console.log("Biometrics preference fetched from SecureStore:", enabled);
+        } catch {
+            set({ biometricsEnabled: false });
+        }
+    },
+    setBiometricsEnabled: async (enabled: boolean) => {
+        try {
+            await SecureStore.setItemAsync("biometricsEnabled", enabled ? "true" : "false");
+            set({ biometricsEnabled: enabled });
+            console.log("Biometrics preference saved to SecureStore:", enabled);
+        } catch (e) {
+            console.error("Failed to save biometrics preference to SecureStore:", e);
+        }
+    },
 }));

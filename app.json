@@ -42,6 +42,7 @@
         }
       ],
       "expo-localization",
+      "expo-secure-store",
       [
         "expo-local-authentication",
         {

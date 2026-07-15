@@ -17,12 +17,14 @@ import { useAlertStore } from '@/stores/alertStore';
 import { NotificationChannel } from '@/types/settings';
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from '@/stores/settingsStore';
+import { useBiometricAuth } from '@/hooks/useBiometricAuth';
 
 export default function SettingsScreen() {
 
     const { t } = useTranslation();
     const {notificationChannels, updateNotificationChannel } = useAlertStore();
-    const { autoUpdatesEnabled, setAutoUpdatesEnabled, fetchAutoUpdatesEnabled } = useSettingsStore();
+    const { autoUpdatesEnabled, setAutoUpdatesEnabled, fetchAutoUpdatesEnabled, biometricsEnabled, setBiometricsEnabled, fetchBiometricsEnabled } = useSettingsStore();
+    const { isCompatible, isEnrolled } = useBiometricAuth();
     
     const [collapsed, setCollapsed] = useState(true);
     const { user, loggedIn, removeUser } = useUserStore();
@@ -32,7 +34,8 @@ export default function SettingsScreen() {
 
     useEffect(() => {
         fetchAutoUpdatesEnabled();
-    }, [fetchAutoUpdatesEnabled]);
+        fetchBiometricsEnabled();
+    }, [fetchAutoUpdatesEnabled, fetchBiometricsEnabled]);
 
     const handleLogout = () => removeUser();
     const handleAlertSettings = () => console.log("Alert Settings pressed");
@@ -120,7 +123,25 @@ export default function SettingsScreen() {
                 </View>
             </View>
 
-            {/* Section 3: Alerts */}
+            {/* Section 3: Security */}
+            {isCompatible && isEnrolled && (
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>{t('security')}</Text>
+                    <View style={styles.card}>
+                        <View style={[styles.row, styles.lastRow]}>
+                            <Ionicons name="finger-print-outline" size={20} color="#666" style={styles.icon} />
+                            <Text style={styles.text}>{t('biometric-lock')}</Text>
+                            <Switch
+                                value={biometricsEnabled}
+                                onValueChange={(value) => setBiometricsEnabled(value)}
+                                style={styles.chevron}
+                            />
+                        </View>
+                    </View>
+                </View>
+            )}
+            
+            {/* Section 4: Alerts */}
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>{t('alerts')}</Text>
                 

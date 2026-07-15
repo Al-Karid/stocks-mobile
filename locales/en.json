@@ -88,6 +88,7 @@
   "transaction-fees": "Transaction fees",
   "total-estimated": "Total estimated",
   "save-transaction": "Save transaction",
+  "security": "Security",
   "increase": "Increase",
   "loss": "Loss",
   "current-value": "Current value",
@@ -111,6 +112,7 @@
   "below-threshold": "Below",
   "empty-watchlist-title": "Your watchlist is empty",
   "empty-watchlist-text": "Add a few stocks to follow them here.",
+  "biometric-lock": "Biometric lock",
   "browse-stocks": "Browse stocks",
   "see-more": "See more"
 }
