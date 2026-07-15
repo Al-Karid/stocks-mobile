@@ -35,7 +35,11 @@ const PortfolioDistribution: React.FC<PortfolioDistributionProps> = ({ portfolio
         </TouchableOpacity>
       </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 20 }}
+      >
         {holdings.length > 0 ? (
           <>
             {displayHoldings.map((holding) => (
@@ -63,12 +67,14 @@ const PortfolioDistribution: React.FC<PortfolioDistributionProps> = ({ portfolio
 const styles = StyleSheet.create({
   section: {
     marginTop: 0,
+    marginHorizontal: -20,
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
+    paddingHorizontal: 20,
   },
   sectionTitle: {
     fontSize: 14,

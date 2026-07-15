@@ -34,7 +34,7 @@ export const initSettingsDb = async () => {
         const freeUserProfileSettings: UserProfileSettings = {
             userProfile: "free",
             maxPorfolio: 1,
-            maxWatchlist: 2,
+            maxWatchlist: 5,
             maxTransactions: 50,
             maxAlerts: 1,
         };
@@ -50,7 +50,7 @@ export const initSettingsDb = async () => {
         const initialUserProfileConstraintsCounts: UserProfileSettings = {
             userProfile: "free",
             maxPorfolio: 1,
-            maxWatchlist: 2,
+            maxWatchlist: 5,
             maxTransactions: 50,
             maxAlerts: 1
         }

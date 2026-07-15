@@ -20,7 +20,7 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
     userContraintCounts: {
         userProfile: "free" as "free" | "premium",
         maxPorfolio: 2,
-        maxWatchlist: 2,
+        maxWatchlist: 5,
         maxTransactions: 50,
         maxAlerts: 1
     },    autoUpdatesEnabled: true,    increaseUserContraintCounts: (item: keyof UserProfileSettings) => {
