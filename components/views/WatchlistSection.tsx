@@ -23,7 +23,7 @@ const WatchlistSection: React.FC = () => {
       </View>
 
       {watchlistStore.length > 0 ? (
-        watchlistStore.slice(0, 2).map((stock) => (
+        watchlistStore.slice(0, 5).map((stock) => (
           <StockRow key={stock.id} stock={stock} />
         ))
       ) : (
