@@ -9,25 +9,22 @@ import {
   Switch,
   TouchableOpacity,
   Platform,
-  Modal,
 } from "react-native";
 import { globalCardStyles } from "@/styles/globalStyles";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import {
   Feather,
-  MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
 import { AlertData } from "@/types/alerts";
 import { Colors } from "@/styles/colors";
 import { Stock } from "@/types/stock";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import { useStockRepository } from "@/data/repositories/stockRepository";
 import { useAlertStore } from "@/stores/alertStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { useTranslation } from "react-i18next";
 import AlertEmptyState from "@/components/alerts/AlertEmptyState";
+import StockSelector, { StockSelectorRef } from "@/components/shared/StockSelector";
 
 const AlertsScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -45,8 +42,7 @@ const AlertsScreen: React.FC = () => {
     decreaseUserContraintCounts,
   } = useSettingsStore();
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const [androidModalVisible, setAndroidModalVisible] = useState(false);
+  const stockSelectorRef = useRef<StockSelectorRef>(null);
   const navigation = useNavigation();
 
   const [userCanAddAlert, setUserCanAddAlert] = useState(true);
@@ -69,7 +65,7 @@ const AlertsScreen: React.FC = () => {
     if (Platform.OS === "ios") {
       navigation.setOptions({
         headerRight: () => (
-          <TouchableOpacity onPress={() => openStockModal()}>
+          <TouchableOpacity onPress={() => stockSelectorRef.current?.open()}>
             <MaterialIcons
               style={{ marginRight: 5, marginTop: 0 }}
               name="notification-add"
@@ -123,31 +119,7 @@ const AlertsScreen: React.FC = () => {
     );
   };
 
-  const [stocks, setStocks] = useState<Stock[]>([]);
-  const { fetchStocks } = useStockRepository();
-
-  useEffect(() => {
-    const loadStocks = async () => {
-      const result = await fetchStocks();
-      setStocks(result);
-    };
-    loadStocks();
-  }, []);
-
-  const openStockModal = () => {
-    Platform.OS === "ios"
-      ? bottomSheetModalRef.current?.present()
-      : setAndroidModalVisible(true);
-  };
-
-  const closeStockModal = () => {
-    Platform.OS === "ios"
-      ? bottomSheetModalRef.current?.dismiss()
-      : setAndroidModalVisible(false);
-  };
-
   const handleStockSelect = (stock: Stock) => {
-    closeStockModal();
     router.push({
       pathname: "/alerts/form",
       params: {
@@ -156,29 +128,6 @@ const AlertsScreen: React.FC = () => {
       },
     });
   };
-
-  const renderStockItem = ({ item }: { item: Stock }) => (
-    <Pressable onPress={() => handleStockSelect(item)} style={styles.stockItem}>
-      <Text style={styles.stockItemText}>{item.title}</Text>
-    </Pressable>
-  );
-
-  const renderStockSelector = () => (
-    <>
-      <Text style={styles.modalTitle}>{t("choose-a-stock")}</Text>
-      <FlatList
-        data={stocks}
-        keyExtractor={(item) => item.symbol}
-        renderItem={renderStockItem}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      />
-      <View style={{ marginTop: 16 }}>
-        <Pressable onPress={closeStockModal} style={styles.modalCancelButton}>
-          <Text style={styles.modalCancelButtonText}>{t("cancel")}</Text>
-        </Pressable>
-      </View>
-    </>
-  );
 
   return (
     <View style={styles.container}>
@@ -254,9 +203,7 @@ const AlertsScreen: React.FC = () => {
       {Platform.OS === "android" && (
         <Pressable
           disabled={!userCanAddAlert}
-          onPress={() => {
-            setAndroidModalVisible(true);
-          }}
+          onPress={() => stockSelectorRef.current?.open()}
           style={[
             styles.fab,
             { backgroundColor: userCanAddAlert ? "black" : "#ccc" },
@@ -270,25 +217,7 @@ const AlertsScreen: React.FC = () => {
         </Pressable>
       )}
 
-      {/* iOS Bottom Sheet */}
-      {Platform.OS === "ios" && (
-        <BottomSheetModal
-          ref={bottomSheetModalRef}
-          index={0}
-          snapPoints={["60%"]}
-        >
-          <BottomSheetView style={{ flex: 1, padding: 20 }}>
-            {renderStockSelector()}
-          </BottomSheetView>
-        </BottomSheetModal>
-      )}
-
-      {/* Android Fullscreen Modal */}
-      {Platform.OS === "android" && (
-        <Modal visible={androidModalVisible} animationType="slide">
-          <View style={{ flex: 1, padding: 20 }}>{renderStockSelector()}</View>
-        </Modal>
-      )}
+      <StockSelector ref={stockSelectorRef} onSelectStock={handleStockSelect} />
     </View>
   );
 };
@@ -338,39 +267,5 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3.84,
-  },
-  stockSelector: {
-    borderBottomWidth: 1,
-    borderColor: "#ccc",
-    paddingVertical: 10,
-    marginBottom: 15,
-  },
-  stockSelectorText: {
-    fontSize: 16,
-    color: "#333",
-  },
-  stockItem: {
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderColor: "#eee",
-  },
-  stockItemText: {
-    fontSize: 16,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 12,
-  },
-  modalCancelButton: {
-    backgroundColor: "#FF3B30",
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  modalCancelButtonText: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: 16,
   },
 });
