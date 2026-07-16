@@ -53,7 +53,7 @@ export default function StocksDetailsScreen() {
     <ScrollView className="flex-1" showsVerticalScrollIndicator={false} contentInsetAdjustmentBehavior="automatic">
       <View className="px-5 pt-5 pb-16 gap-4">
         {/* ── Hero card ── */}
-        <View className="rounded-2xl px-5 py-6 items-center border border-gray-100">
+        <View className="rounded-3xl px-5 py-6 items-center border border-gray-100">
           <Text className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">
             {stock?.symbol}
           </Text>
@@ -173,13 +173,13 @@ export default function StocksDetailsScreen() {
                 color={watchlisted ? "#FF3B30" : "#123458"}
               />
             }
-            label={watchlisted ? t("remove-from-watchlist") : t("add-to-watchlist")}
+            label={"Watchlist"}
             onPress={handleToggleWatchlist}
             disabled={watchlistFull}
           />
           <ActionButton
             icon={<Ionicons name="briefcase-outline" size={22} color="#123458" />}
-            label={t("add-to-portfolio")}
+            label={t("portfolio")}
             onPress={() =>
               router.push({
                 pathname: "/transactions/new",
@@ -189,7 +189,7 @@ export default function StocksDetailsScreen() {
           />
           <ActionButton
             icon={<Ionicons name="notifications-outline" size={22} color="#123458" />}
-            label={t("add-an-alert")}
+            label={t("alerts")}
             onPress={() =>
               router.push({
                 pathname: "/alerts/form",
@@ -238,10 +238,9 @@ function ActionButton({
         {icon}
       </View>
       <Text
-        className={`text-[11px] font-medium text-center leading-tight ${
+        className={`text-[11px] font-medium text-center ${
           disabled ? "text-gray-400" : "text-[#123458]"
         }`}
-        numberOfLines={2}
       >
         {label}
       </Text>

@@ -151,10 +151,11 @@ export default function Layout() {
                   ios: {
                     title: t("stock-details"),
                     presentation: "formSheet",
+                    headerShown: false,
                     sheetGrabberVisible: false,
                     contentStyle: { backgroundColor: "transparent" },
                     headerStyle: { backgroundColor: "transparent" },
-                    sheetAllowedDetents: [0.9, 1],
+                    sheetAllowedDetents: [0.8, 1],
                     sheetInitialDetentIndex: 0,
                     headerTransparent: false,
                     sheetLargestUndimmedDetentIndex: -1,
