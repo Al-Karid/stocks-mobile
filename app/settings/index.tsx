@@ -1,11 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
-    StyleSheet,
     TouchableOpacity,
     ScrollView,
-    Platform,
     Alert,
     Switch,
 } from 'react-native';
@@ -14,7 +12,6 @@ import { router } from 'expo-router';
 import Collapsible from 'react-native-collapsible';
 import { useUserStore } from '@/stores/userStore';
 import { useAlertStore } from '@/stores/alertStore';
-import { NotificationChannel } from '@/types/settings';
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
@@ -22,13 +19,13 @@ import { useBiometricAuth } from '@/hooks/useBiometricAuth';
 export default function SettingsScreen() {
 
     const { t } = useTranslation();
-    const {notificationChannels, updateNotificationChannel } = useAlertStore();
+    const { notificationChannels, updateNotificationChannel } = useAlertStore();
     const { autoUpdatesEnabled, setAutoUpdatesEnabled, fetchAutoUpdatesEnabled, biometricsEnabled, setBiometricsEnabled, fetchBiometricsEnabled } = useSettingsStore();
     const { isCompatible, isEnrolled } = useBiometricAuth();
-    
+
     const [collapsed, setCollapsed] = useState(true);
     const { user, loggedIn, removeUser } = useUserStore();
-    const canLogin = false
+    const canLogin = false;
 
     const isRegistered = loggedIn && user !== null;
 
@@ -38,7 +35,6 @@ export default function SettingsScreen() {
     }, [fetchAutoUpdatesEnabled, fetchBiometricsEnabled]);
 
     const handleLogout = () => removeUser();
-    const handleAlertSettings = () => console.log("Alert Settings pressed");
 
     const handleDeleteAccount = () => {
         Alert.alert(
@@ -52,254 +48,154 @@ export default function SettingsScreen() {
     };
 
     return (
-        <ScrollView style={styles.container} contentInsetAdjustmentBehavior="automatic">
+        <ScrollView
+            className="flex-1 bg-[#f2f2f2] px-4"
+            contentInsetAdjustmentBehavior="automatic"
+        >
             {/* Section 1: Account */}
             <View>
-                {/* <Text style={styles.sectionTitle}>Account</Text> */}
-
-                <View style={styles.card}>
+                <View className="bg-white rounded-xl overflow-hidden">
 
                     {isRegistered && (
-                        <TouchableOpacity style={styles.row} onPress={() => setCollapsed(!collapsed)} disabled>
-                            <Ionicons name="person-outline" size={20} color="#666" style={styles.icon} />
-                            <Text style={styles.text}>{user?.name}</Text>
+                        <TouchableOpacity
+                            className="flex-row items-center py-3.5 px-4 border-b border-gray-100"
+                            onPress={() => setCollapsed(!collapsed)}
+                            disabled
+                        >
+                            <Ionicons name="person-outline" size={20} color="#666" className="mr-3" />
+                            <Text className="text-base text-gray-700">{user?.name}</Text>
                             <Ionicons
                                 name={collapsed ? 'chevron-forward-outline' : 'chevron-up-outline'}
                                 size={18}
                                 color="#ccc"
-                                style={styles.chevron}
+                                className="ml-auto"
                             />
                         </TouchableOpacity>
                     )}
 
                     {isRegistered && (
-                        <Collapsible style={styles.detailsBox} collapsed={collapsed}>
-                            <Text style={[styles.row]}>Username: {user.username}</Text>
-                            <Text style={styles.row}>{t('display-name')} {user.name}</Text>
-                            <Text style={[styles.row]}>Phone: {user.phone}</Text>
-                            <TouchableOpacity style={styles.blackButton} onPress={() => console.log("Edit pressed")}>
-                                <Ionicons name="create-outline" size={20} color="#fff" style={styles.icon} />
-                                <Text style={styles.blackButtonText}>{t('edit')}</Text>
+                        <Collapsible style={{ paddingVertical: 0, paddingHorizontal: 20, backgroundColor: '#f9f9f9', borderTopWidth: 1, borderTopColor: '#eee' }} collapsed={collapsed}>
+                            <Text className="py-2 text-sm text-gray-500">Username: {user.username}</Text>
+                            <Text className="py-2 text-sm text-gray-500">{t('display-name')} {user.name}</Text>
+                            <Text className="py-2 text-sm text-gray-500">Phone: {user.phone}</Text>
+                            <TouchableOpacity
+                                className="flex-row items-center justify-center bg-black py-3 px-4 rounded-lg my-3"
+                                onPress={() => console.log("Edit pressed")}
+                            >
+                                <Ionicons name="create-outline" size={20} color="#fff" className="mr-3" />
+                                <Text className="text-white text-base font-medium">{t('edit')}</Text>
                             </TouchableOpacity>
                         </Collapsible>
                     )}
 
                     {canLogin && (
-                        <TouchableOpacity style={styles.row} onPress={() => router.push('/settings/login')}>
-                            <Ionicons name="log-in-outline" size={20} color="#666" style={styles.icon} />
-                            <Text style={styles.text}>{t('login')}</Text>
+                        <TouchableOpacity
+                            className="flex-row items-center py-3.5 px-4 border-b border-gray-100"
+                            onPress={() => router.push('/settings/login')}
+                        >
+                            <Ionicons name="log-in-outline" size={20} color="#666" className="mr-3" />
+                            <Text className="text-base text-gray-700">{t('login')}</Text>
                         </TouchableOpacity>
                     )}
 
                     {isRegistered && (
-                        <TouchableOpacity style={styles.row} onPress={() => router.push('/settings/register')}>
-                            <Ionicons name="person-add" size={20} color="#666" style={styles.icon} />
-                            <Text style={styles.text}>{t('register')}</Text>
+                        <TouchableOpacity
+                            className="flex-row items-center py-3.5 px-4 border-b border-gray-100"
+                            onPress={() => router.push('/settings/register')}
+                        >
+                            <Ionicons name="person-add" size={20} color="#666" className="mr-3" />
+                            <Text className="text-base text-gray-700">{t('register')}</Text>
                         </TouchableOpacity>
                     )}
 
                     {isRegistered && (
-                        <TouchableOpacity style={[styles.row, styles.lastRow]} onPress={handleDeleteAccount}>
-                            <Ionicons name="log-out-outline" size={20} color="#666" style={styles.icon} />
-                            <Text style={[styles.text, { color: 'red' }]}>{t('delete-my-account')}</Text>
+                        <TouchableOpacity
+                            className="flex-row items-center py-3.5 px-4"
+                            onPress={handleDeleteAccount}
+                        >
+                            <Ionicons name="log-out-outline" size={20} color="#666" className="mr-3" />
+                            <Text className="text-base text-red-500">{t('delete-my-account')}</Text>
                         </TouchableOpacity>
                     )}
                 </View>
             </View>
 
             {/* Section 2: Updates */}
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Updates</Text>
-                <View style={styles.card}>
-                    <View style={[styles.row, styles.lastRow]}>
-                        <Ionicons name="cloud-download-outline" size={20} color="#666" style={styles.icon} />
-                        <Text style={styles.text}>Auto update</Text>
+            <View className="mt-8">
+                <Text className="text-base font-bold mb-2 text-gray-600 pl-1">Updates</Text>
+                <View className="bg-white rounded-xl overflow-hidden">
+                    <View className="flex-row items-center py-3.5 px-4">
+                        <Ionicons name="cloud-download-outline" size={20} color="#666" className="mr-3" />
+                        <Text className="text-base text-gray-700">Auto update</Text>
                         <Switch
                             value={autoUpdatesEnabled}
                             onValueChange={(value) => setAutoUpdatesEnabled(value)}
-                            style={styles.chevron}
+                            className="ml-auto"
                         />
                     </View>
                 </View>
             </View>
 
             {/* Section 3: Security */}
-            {isCompatible && isEnrolled && (
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>{t('security')}</Text>
-                    <View style={styles.card}>
-                        <View style={[styles.row, styles.lastRow]}>
-                            <Ionicons name="finger-print-outline" size={20} color="#666" style={styles.icon} />
-                            <Text style={styles.text}>{t('biometric-lock')}</Text>
+            {((isCompatible && isEnrolled) || __DEV__) && (
+                <View className="mt-8">
+                    <Text className="text-base font-bold mb-2 text-gray-600 pl-1">{t('security')}</Text>
+                    <View className="bg-white rounded-xl overflow-hidden">
+                        <View className="flex-row items-center py-3.5 px-4">
+                            <Ionicons name="finger-print-outline" size={20} color="#666" className="mr-3" />
+                            <Text className="text-base text-gray-700">{t('biometric-lock')}</Text>
                             <Switch
                                 value={biometricsEnabled}
                                 onValueChange={(value) => setBiometricsEnabled(value)}
-                                style={styles.chevron}
+                                className="ml-auto"
                             />
                         </View>
                     </View>
                 </View>
             )}
-            
+
             {/* Section 4: Alerts */}
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>{t('alerts')}</Text>
-                
-                {/* <Text style={styles.sectionSubtitle}>Canaux de notification</Text> */}
-                <View style={[styles.card, { marginBottom: 12 }]}>
-                    <TouchableOpacity style={[styles.row, styles.row]} onPress={handleAlertSettings}>
-                        <Entypo name="notification" size={20} color="#666" style={styles.icon} />
-                        <Text style={styles.text}>{t('push-channel')}</Text>
-                        {
-                            Platform.OS === "ios" ? (
-                                <Switch
-                                    value={notificationChannels?.push || false}
-                                    onValueChange={() => {updateNotificationChannel('push')}}
-                                    style={[styles.chevron]}
-                                    disabled={true}
-                                />
-                            ) : (
-                                <Switch
-                                    value={notificationChannels?.push || false}
-                                    onValueChange={() => {updateNotificationChannel('push')}}
-                                    // trackColor={{ false: '#ccc', true: '#000' }}
-                                    style={[styles.chevron]}
-                                    disabled={true}
-                                // thumbColor={item.enabled ? '#000' : '#f4f3f4'}
-                                />
-                            )
-                        }
-                        {/* <Ionicons name="chevron-forward-outline" size={18} color="#ccc" style={styles.chevron} /> */}
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.row, styles.lastRow]} onPress={handleAlertSettings}>
-                        <MaterialIcons name="sms" size={20} color="#666" style={styles.icon} />
-                        <Text style={styles.text}>{t('sms-channel')}</Text>
-                        {
-                            Platform.OS === "ios" ? (
-                                <Switch
-                                    value={notificationChannels?.sms || false}
-                                    onValueChange={() => {updateNotificationChannel('sms')}}
-                                    style={[styles.chevron]}
-                                    disabled={true}
-                                />
-                            ) : (
-                                <Switch
-                                    value={notificationChannels?.sms || false}
-                                    onValueChange={() => {updateNotificationChannel('sms')}}
-                                    // trackColor={{ false: '#ccc', true: '#000' }}
-                                    style={[styles.chevron]}
-                                    disabled={true}
-                                    
-                                // thumbColor={item.enabled ? '#000' : '#f4f3f4'}
-                                />
-                            )
-                        }
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.card}>
-                    <TouchableOpacity style={[styles.row, styles.lastRow]} onPress={() => router.push('/alerts')}>
-                        <Ionicons name="notifications-outline" size={20} color="#666" style={styles.icon} />
-                        <Text style={styles.text}>{t('manage-alerts')}</Text>
-                        <Ionicons name="chevron-forward-outline" size={18} color="#ccc" style={styles.chevron} />
+            <View className="mt-8">
+                <Text className="text-base font-bold mb-2 text-gray-600 pl-1">{t('alerts')}</Text>
+
+                <View className="bg-white rounded-xl overflow-hidden">
+                    <View className="flex-row items-center py-3.5 px-4 border-b border-gray-100">
+                        <Entypo name="notification" size={20} color="#666" className="mr-3" />
+                        <Text className="text-base text-gray-700">{t('push-channel')}</Text>
+                        <Switch
+                            value={notificationChannels?.push || false}
+                            onValueChange={() => { updateNotificationChannel('push'); }}
+                            className="ml-auto"
+                            disabled={true}
+                        />
+                    </View>
+                    <View className="flex-row items-center py-3.5 px-4 border-b border-gray-100">
+                        <MaterialIcons name="sms" size={20} color="#666" className="mr-3" />
+                        <Text className="text-base text-gray-700">{t('sms-channel')}</Text>
+                        <Switch
+                            value={notificationChannels?.sms || false}
+                            onValueChange={() => { updateNotificationChannel('sms'); }}
+                            className="ml-auto"
+                            disabled={true}
+                        />
+                    </View>
+                    <TouchableOpacity
+                        className="flex-row items-center py-4 px-4"
+                        onPress={() => router.push('/alerts')}
+                    >
+                        <Ionicons name="notifications-outline" size={20} color="#666" className="mr-3" />
+                        <Text className="text-base text-gray-700">{t('manage-alerts')}</Text>
+                        <Ionicons name="chevron-forward-outline" size={18} color="#ccc" className="ml-auto" />
                     </TouchableOpacity>
                 </View>
             </View>
 
-            {/* Section 4: About */}
-            <View style={styles.creditsContainer}>
-                <Text style={styles.creditsText}>
+            {/* Section 5: About */}
+            <View className="mt-8 items-center pb-6">
+                <Text className="text-xs text-gray-400">
                     {t('c-2025-revalys-data-services')}
                 </Text>
             </View>
         </ScrollView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f2f2f2',
-        padding: 16,
-    },
-    section: {
-        marginBottom: 32,
-    },
-    sectionTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        color: '#444',
-        paddingLeft: 4,
-    },
-    sectionSubtitle: {
-        fontSize: 12,
-        fontWeight: '500',
-        marginBottom: 8,
-        marginTop: 8,
-        color: '#999',
-        paddingLeft: 4,
-    },
-    card: {
-        backgroundColor: 'white',
-        borderRadius: 12,
-        overflow: 'hidden',
-    },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 14,
-        paddingHorizontal: 16,
-        borderBottomColor: '#eee',
-        borderBottomWidth: 1,
-    },
-    lastRow: {
-        borderBottomWidth: 0,
-    },
-    text: {
-        fontSize: 16,
-        color: '#333',
-    },
-    icon: {
-        marginRight: 12,
-    },
-    chevron: {
-        marginLeft: 'auto',
-    },
-    detailsBox: {
-        paddingVertical: 0,
-        paddingHorizontal: 20,
-        backgroundColor: '#f9f9f9',
-        borderTopWidth: 1,
-        borderTopColor: '#eee',
-    },
-    detailText: {
-        fontSize: 14,
-        color: '#666',
-        marginBottom: 4,
-    },
-    creditsContainer: {
-        marginTop: 32,
-        alignItems: 'center',
-        paddingBottom: 24,
-    },
-    creditsText: {
-        fontSize: 12,
-        color: '#999',
-    },
-    blackButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#000',
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        borderRadius: 8,
-        marginVertical: 12,
-    },
-
-    blackButtonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '500',
-    },
-});
