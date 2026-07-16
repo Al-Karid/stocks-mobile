@@ -133,10 +133,10 @@ const styles = StyleSheet.create({
 
   whiteBody: {
     backgroundColor: '#f2f2f2',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
     marginTop: -32,
-    paddingTop: 32,
+    paddingTop: 18,
     paddingHorizontal: 20,
     paddingBottom: 40,
     minHeight: 600,
