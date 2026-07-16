@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar, setStatusBarStyle } from 'expo-status-bar';
+import { useFocusEffect } from 'expo-router';
 import DashboardHeader from '@/components/views/DashboardHeader';
 import { useWatchlistStore } from '@/stores/watchlistStore';
 import StockRow from '@/components/stocks/StockRow';
@@ -18,6 +18,8 @@ import { useUserStore } from '@/stores/userStore';
 import { changeLanguage } from '@/utils/languageUtils';
 import { useTranslation } from 'react-i18next';
 
+const HEADER_HEIGHT = 300;
+
 const DashboardScreen = () => {
 
   const { t } = useTranslation();
@@ -31,7 +33,6 @@ const DashboardScreen = () => {
   const [lastSync, setLastSync] = useState<string>();
   const [defaultPortfolio, setDefaultPortfolio] = useState<Portfolio>();
 
-  // const { loading, error } = useInitDatabases();
   const router = useRouter();
 
   const fetchLastSyncDate = async () => {
@@ -50,6 +51,15 @@ const DashboardScreen = () => {
     setDefaultPortfolio(portfolio);
   }, [portfolios]);
 
+  useFocusEffect(
+    useCallback(() => {
+      setStatusBarStyle("light");
+      return () => {
+        setStatusBarStyle("dark");
+      };
+    }, []),
+  );
+
   const onRefresh = async () => {
     setRefreshing(true);
     await syncStockDataFromServer();
@@ -58,123 +68,146 @@ const DashboardScreen = () => {
   };
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
-        <StatusBar style="dark" backgroundColor='#ffffff' />
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={{ flexGrow: 1 }}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={["#007AFF"]}
-              tintColor="#007AFF"
-              progressBackgroundColor="white"
-            />
-          }
-        >
-          <View style={{ flex: 1, backgroundColor: 'white', minHeight: '100%' }}>
-            {/* HEADER */}
-            {defaultPortfolio && defaultPortfolio.performance ? (
-              <DashboardHeader portfolio={defaultPortfolio} displayName={user?.name} />
+    <View style={styles.container}>
+      <StatusBar style="light" />
+
+      {/* Static background shown during top overscroll */}
+      <View style={styles.topBackground} />
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
+        bounces
+        overScrollMode="always"
+        showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="never"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#007AFF"]}
+            tintColor="#007AFF"
+            progressBackgroundColor="white"
+          />
+        }
+      >
+        {/* HEADER */}
+        {defaultPortfolio && defaultPortfolio.performance ? (
+          <DashboardHeader portfolio={defaultPortfolio} displayName={user?.name} />
+        ) : (
+          <View style={{ height: 200, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 18, color: '#6b7280' }}>{t('no-portfolio-available')}</Text>
+          </View>
+        )}
+
+        {/* BODY */}
+        <View style={styles.whiteBody}>
+
+          {/* PORTFOLIO DISTRIBUTION */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>{t('portfolio_distribution')}</Text>
+              <TouchableOpacity onPress={() => changeLanguage('fr')}>
+                <Text style={styles.seeAll}>{lastSync}</Text>
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {defaultPortfolio?.holdings && defaultPortfolio.holdings.length > 0 ? (
+                <>
+                  {defaultPortfolio.holdings.slice(0, 3).map((holding) => (
+                    <AssetCard key={holding.symbol} holding={holding} />
+                  ))}
+                  <TouchableOpacity
+                    style={styles.seeMoreCard}
+                    onPress={() => { provideHapticFeedback(); router.navigate('/(tabs)/portfolio'); }}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.seeMoreText}>{t('see-more')}</Text>
+                    <Ionicons name="chevron-forward" size={20} color="#6b7280" />
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <TouchableOpacity
+                  style={styles.emptyPortfolioCard}
+                  onPress={() => { provideHapticFeedback(); router.navigate('/(tabs)/portfolio'); }}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="folder-open-outline" size={24} color="#8b5cf6" />
+                  <Text style={styles.emptyPortfolioTitle}>Your portfolio is empty</Text>
+                  <Text style={styles.emptyPortfolioText}>Add a holding to see it here.</Text>
+                </TouchableOpacity>
+              )}
+            </ScrollView>
+          </View>
+
+          {/* WATCHLIST */}
+          <View style={[styles.section, { marginTop: 20 }]}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>{t('my-watchlist')}</Text>
+              <TouchableOpacity onPress={() => { provideHapticFeedback(); router.push('/stocks'); }}>
+                <Ionicons name="add-circle-outline" size={24} color="#6b7280" />
+              </TouchableOpacity>
+            </View>
+
+            {watchlistStore.length > 0 ? (
+              watchlistStore.slice(0, 2).map((stock) => (
+                <StockRow key={stock.id} stock={stock} />
+              ))
             ) : (
-              <View style={{ height: 200, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ fontSize: 18, color: '#6b7280' }}>{t('no-portfolio-available')}</Text>
+              <View style={styles.emptyWatchlistCard}>
+                <Text style={styles.emptyWatchlistTitle}>Your watchlist is empty</Text>
+                <Text style={styles.emptyWatchlistText}>Add a few stocks to follow them here.</Text>
+                <TouchableOpacity style={styles.seeMoreButton} onPress={() => { provideHapticFeedback(); router.push('/stocks'); }}>
+                  <Text style={styles.seeMoreButtonText}>Browse stocks</Text>
+                </TouchableOpacity>
               </View>
             )}
-
-            {/* CONTENT */}
-            <View style={[styles.content, { flex: 1, backgroundColor: "#f2f2f2" }]}>
-
-              {/* PORTFOLIO DISTRIBUTION */}
-              <View style={styles.section}>
-                <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionTitle}>{t('portfolio_distribution')}</Text>
-                  <TouchableOpacity onPress={() => changeLanguage('fr')}>
-                    <Text style={styles.seeAll}>{lastSync}</Text>
-                  </TouchableOpacity>
-                </View>
-
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  {defaultPortfolio?.holdings && defaultPortfolio.holdings.length > 0 ? (
-                    <>
-                      {defaultPortfolio.holdings.slice(0, 3).map((holding) => (
-                        <AssetCard key={holding.symbol} holding={holding} />
-                      ))}
-                      <TouchableOpacity
-                        style={styles.seeMoreCard}
-                        onPress={() => { provideHapticFeedback(); router.navigate('/(tabs)/portfolio'); }}
-                        activeOpacity={0.7}
-                      >
-                        <Text style={styles.seeMoreText}>{t('see-more')}</Text>
-                        <Ionicons name="chevron-forward" size={20} color="#6b7280" />
-                      </TouchableOpacity>
-                    </>
-                  ) : (
-                    <TouchableOpacity
-                      style={styles.emptyPortfolioCard}
-                      onPress={() => { provideHapticFeedback(); router.navigate('/(tabs)/portfolio'); }}
-                      activeOpacity={0.7}
-                    >
-                      <Ionicons name="folder-open-outline" size={24} color="#8b5cf6" />
-                      <Text style={styles.emptyPortfolioTitle}>Your portfolio is empty</Text>
-                      <Text style={styles.emptyPortfolioText}>Add a holding to see it here.</Text>
-                    </TouchableOpacity>
-                  )}
-                </ScrollView>
-              </View>
-
-              {/* WATCHLIST */}
-              <View style={[styles.section, { marginTop: 20 }]}>
-                <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionTitle}>{t('my-watchlist')}</Text>
-                  <TouchableOpacity onPress={() => { provideHapticFeedback(); router.push('/stocks'); }}>
-                    <Ionicons name="add-circle-outline" size={24} color="#6b7280" />
-                  </TouchableOpacity>
-                </View>
-
-                {watchlistStore.length > 0 ? (
-                  watchlistStore.slice(0, 2).map((stock) => (
-                    <StockRow key={stock.id} stock={stock} />
-                  ))
-                ) : (
-                  <View style={styles.emptyWatchlistCard}>
-                    <Text style={styles.emptyWatchlistTitle}>Your watchlist is empty</Text>
-                    <Text style={styles.emptyWatchlistText}>Add a few stocks to follow them here.</Text>
-                    <TouchableOpacity style={styles.seeMoreButton} onPress={() => { provideHapticFeedback(); router.push('/stocks'); }}>
-                      <Text style={styles.seeMoreButtonText}>Browse stocks</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </View>
-            </View>
           </View>
-        </ScrollView>
-      </SafeAreaView>
-    </SafeAreaProvider>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f2f2f2',
+  },
+
+  topBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: HEADER_HEIGHT + 100,
     backgroundColor: '#121212',
   },
-  content: {
-    paddingHorizontal: 0,
-    paddingTop: 16,
-    paddingBottom: 20,
-    backgroundColor: 'white',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    marginTop: -30,
+
+  scrollView: {
+    flex: 1,
+    backgroundColor: 'transparent',
   },
+
+  contentContainer: {
+    paddingBottom: 40,
+    marginTop: 40
+  },
+
+  whiteBody: {
+    backgroundColor: '#f2f2f2',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    marginTop: -32,
+    paddingTop: 18,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+    minHeight: 600,
+  },
+
   section: {
     marginTop: 10,
-    paddingHorizontal: 20,
-    backgroundColor: '#f2f2f2',
   },
   sectionHeader: {
     flexDirection: 'row',
