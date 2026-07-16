@@ -27,6 +27,7 @@ import { useStockRepository } from "@/data/repositories/stockRepository";
 import { useAlertStore } from "@/stores/alertStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { useTranslation } from "react-i18next";
+import AlertEmptyState from "@/components/alerts/AlertEmptyState";
 
 const AlertsScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -187,13 +188,7 @@ const AlertsScreen: React.FC = () => {
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
         keyExtractor={(item) => item.id.toString()}
-        ListEmptyComponent={() => (
-          <View style={{ padding: 20 }}>
-            <Text style={{ textAlign: "center", color: "#475569" }}>
-              {t("no-alerts-set-tap-the-button-to-add-one")}
-            </Text>
-          </View>
-        )}
+        ListEmptyComponent={AlertEmptyState}
         renderItem={({ item }) => (
           <TouchableOpacity onLongPress={() => openActionSheet(item)}>
             <View style={globalCardStyles.card}>
