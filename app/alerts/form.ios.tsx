@@ -170,11 +170,12 @@ export default function AlertFormModal() {
             {t("alert-type")}
           </Text>
           <View className="flex-row gap-3 mb-4">
-            <View
-              className={`flex-1 aspect-square rounded-[18px] p-0.5 ${
+            <Pressable
+              onPress={() => setAlertType("above")}
+              className={`flex-1 aspect-square rounded-2xl items-center justify-center gap-2 overflow-hidden ${
                 alertType === "above"
-                  ? "bg-green-500"
-                  : "bg-transparent"
+                  ? "bg-green-500 border-2 border-green-500"
+                  : "bg-gray-100 border-2 border-transparent"
               }`}
               style={
                 alertType === "above"
@@ -182,31 +183,25 @@ export default function AlertFormModal() {
                   : undefined
               }
             >
-              <Pressable
-                onPress={() => setAlertType("above")}
-                className={`flex-1 rounded-2xl items-center justify-center gap-2 ${
-                  alertType === "above" ? "bg-green-500" : "bg-gray-100"
+              <Feather
+                name="arrow-up"
+                size={28}
+                color={alertType === "above" ? "#fff" : "#6b7280"}
+              />
+              <Text
+                className={`text-sm font-semibold ${
+                  alertType === "above" ? "text-white" : "text-gray-500"
                 }`}
               >
-                <Feather
-                  name="arrow-up"
-                  size={28}
-                  color={alertType === "above" ? "#fff" : "#6b7280"}
-                />
-                <Text
-                  className={`text-sm font-semibold ${
-                    alertType === "above" ? "text-white" : "text-gray-500"
-                  }`}
-                >
-                  {t("above")}
-                </Text>
-              </Pressable>
-            </View>
-            <View
-              className={`flex-1 aspect-square rounded-[18px] p-0.5 ${
+                {t("above")}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => setAlertType("below")}
+              className={`flex-1 aspect-square rounded-2xl items-center justify-center gap-2 overflow-hidden ${
                 alertType === "below"
-                  ? "bg-red-500"
-                  : "bg-transparent"
+                  ? "bg-red-500 border-2 border-red-500"
+                  : "bg-gray-100 border-2 border-transparent"
               }`}
               style={
                 alertType === "below"
@@ -214,26 +209,19 @@ export default function AlertFormModal() {
                   : undefined
               }
             >
-              <Pressable
-                onPress={() => setAlertType("below")}
-                className={`flex-1 rounded-2xl items-center justify-center gap-2 ${
-                  alertType === "below" ? "bg-red-500" : "bg-gray-100"
+              <Feather
+                name="arrow-down"
+                size={28}
+                color={alertType === "below" ? "#fff" : "#6b7280"}
+              />
+              <Text
+                className={`text-sm font-semibold ${
+                  alertType === "below" ? "text-white" : "text-gray-500"
                 }`}
               >
-                <Feather
-                  name="arrow-down"
-                  size={28}
-                  color={alertType === "below" ? "#fff" : "#6b7280"}
-                />
-                <Text
-                  className={`text-sm font-semibold ${
-                    alertType === "below" ? "text-white" : "text-gray-500"
-                  }`}
-                >
-                  {t("below")}
-                </Text>
-              </Pressable>
-            </View>
+                {t("below")}
+              </Text>
+            </Pressable>
           </View>
 
           <Text className="text-[15px] text-[#4b5563] mb-2">

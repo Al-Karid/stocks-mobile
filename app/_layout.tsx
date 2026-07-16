@@ -195,8 +195,8 @@ export default function Layout() {
                 name="alerts/form"
                 options={{
                   title: t("new-alert"),
-                  presentation: "modal",
-                  animation: "slide_from_bottom",
+                  // presentation: "modal",
+                  // animation: "slide_from_bottom",
                 }}
               />
               <Stack.Screen
