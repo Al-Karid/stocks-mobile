@@ -1,8 +1,7 @@
-import { globalCardStyles } from '@/styles/globalStyles';
 import { AlertType } from '@/types/alerts';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
 type Props = {
   title: string;
@@ -12,85 +11,76 @@ type Props = {
 };
 
 const NotificationCard = ({ title, description, time, type }: Props) => {
-
-  const { t } = useTranslation();
   const isGain = type === 'above';
 
   return (
-    <View style={[globalCardStyles.card, isGain ? styles.gainBorder : styles.lossBorder]}>
-      <View style={styles.header}>
-        <Text style={styles.title} numberOfLines={2}>{title}</Text>
-        {type && (
-          <View style={[styles.tag, isGain ? styles.gainTag : styles.lossTag]}>
-            <Text style={styles.tagText}>{isGain ? t('increase') : t('loss')}</Text>
+    <View
+      className="bg-white rounded-xl p-4 mb-3"
+      // style={{
+      //   shadowColor: '#000',
+      //   shadowOffset: { width: 0, height: 2 },
+      //   shadowOpacity: 0.03,
+      //   shadowRadius: 8,
+      //   elevation: 1,
+      // }}
+    >
+      <View className="flex-row items-start gap-3">
+        {/* Leading icon */}
+        <View
+          className={`w-10 h-10 rounded-full items-center justify-center mt-0.5 ${
+            isGain ? 'bg-emerald-50' : 'bg-rose-50'
+          }`}
+        >
+          <Feather
+            name={isGain ? 'trending-up' : 'trending-down'}
+            size={18}
+            color={isGain ? '#059669' : '#e11d48'}
+          />
+        </View>
+
+        {/* Content */}
+        <View className="flex-1">
+          {/* Title row */}
+          <View className="flex-row items-center justify-between">
+            <Text
+              className="text-base font-semibold text-gray-900 flex-1 mr-2"
+              numberOfLines={1}
+            >
+              {title}
+            </Text>
+            {/* {type && (
+              <View
+                className={`px-2 py-0.5 rounded-full ${
+                  isGain ? 'bg-emerald-100' : 'bg-rose-100'
+                }`}
+              >
+                <Text
+                  className={`text-[11px] font-bold ${
+                    isGain ? 'text-emerald-700' : 'text-rose-700'
+                  }`}
+                >
+                  {isGain ? '▲' : '▼'}
+                </Text>
+              </View>
+            )} */}
           </View>
-        )}
+
+          {/* Description */}
+          {description ? (
+            <Text
+              className="text-[13px] text-gray-500 mt-1 leading-[18px]"
+              numberOfLines={3}
+            >
+              {description}
+            </Text>
+          ) : null}
+
+          {/* Timestamp */}
+          <Text className="text-[11px] text-gray-400 mt-2">{time}</Text>
+        </View>
       </View>
-      <Text style={styles.description} numberOfLines={3}>{description}</Text>
-      <Text style={styles.time}>{time}</Text>
     </View>
   );
 };
 
 export default NotificationCard;
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 18,
-    padding: 18,
-    marginVertical: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  gainBorder: {
-    borderLeftWidth: 4,
-    borderLeftColor: '#86efac', // soft green
-  },
-  lossBorder: {
-    borderLeftWidth: 4,
-    borderLeftColor: '#fca5a5', // soft red
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 6,
-  },
-  title: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#1f2937', // soft gray-black
-    flex: 1,
-    marginRight: 10,
-  },
-  description: {
-    color: '#4b5563', // neutral gray
-    fontSize: 14,
-    marginVertical: 6,
-  },
-  time: {
-    color: '#9ca3af',
-    fontSize: 12,
-    marginTop: 2,
-  },
-  tag: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 999,
-  },
-  gainTag: {
-    backgroundColor: '#ecfdf5',
-  },
-  lossTag: {
-    backgroundColor: '#fef2f2',
-  },
-  tagText: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: '#374151',
-  },
-});

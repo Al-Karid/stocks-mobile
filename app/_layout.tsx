@@ -188,7 +188,7 @@ export default function Layout() {
                   // headerLargeTitle: true,
                   headerBackTitle: t("dashboard"),
                   headerBackButtonDisplayMode: "minimal",
-                  headerTransparent: true
+                  headerTransparent: Platform.select({android: false, ios: true})
                 }}
               />
               <Stack.Screen
