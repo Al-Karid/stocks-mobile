@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -9,15 +9,13 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator,
 } from "react-native";
-import { useHeaderHeight, HeaderButton } from "@react-navigation/elements";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import { useHeaderHeight } from "@react-navigation/elements";
 import { TransactionType } from "@/types/portfolio";
-import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, router, useNavigation } from "expo-router";
 import { useConputeService } from "@/services/computeService";
 import { usePortfolioStore } from "@/stores/portfolioStore";
+import { useStockRepository } from "@/data/repositories/stockRepository";
 import { formatNumber } from "@/utils/numberUtils";
 import Toast from "react-native-toast-message";
 import { useTranslation } from "react-i18next";
@@ -36,61 +34,31 @@ export default function NewTransaction() {
 
   const { computeRealPricePerShare, computeTotalCost } = useConputeService();
   const { addTransaction } = usePortfolioStore();
+  const { fetchStocks } = useStockRepository();
 
   const [type, setType] = useState<TransactionType>("BUY");
   const [transactionDate, setTransactionDate] = useState(new Date());
   const [quantity, setQuantity] = useState("10");
   const [pricePerShare, setPricePerShare] = useState("1000");
-  // Will not be used since CMP will be used instead for asset price
-  const [fees, setFees] = useState("0");
+  const [currentStockPrice, setCurrentStockPrice] = useState<number>(0);
   const [focusedField, setFocusedField] = useState<string | null>(null);
-
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const priceInputRef = useRef<TextInput>(null);
-  const feesInputRef = useRef<TextInput>(null);
 
   const parsedQuantity = parseFloat(quantity) || 0;
   const parsedPrice = parseFloat(pricePerShare) || 0;
-  const parsedFees = parseFloat(fees) || 0;
 
-  const subtotal = parsedQuantity * parsedPrice;
-  const total = subtotal + subtotal * (parsedFees / 100);
+  const total = parsedQuantity * parsedPrice;
 
-  const setCleanFees = (value: string) => {
-    const parsedValue = value.replace(",", ".");
-    setFees(parsedValue);
-  };
-
-  useEffect(() => {
-    if (Platform.OS === "ios") {
-      navigation.setOptions({
-        headerRight: () => (
-          <HeaderButton onPress={handleSubmit}>
-            {isSaving ? (
-              <ActivityIndicator size="small" color="#000" />
-            ) : (
-              <Feather name="check" size={20} color="#000" />
-            )}
-          </HeaderButton>
-        ),
-      });
-    }
-  }, [navigation, isSaving, t]);
-
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     setIsSaving(true);
     try {
       const parsedQuantity = parseFloat(quantity);
       const parsedPrice = parseFloat(pricePerShare);
-      const parsedFees = parseFloat(fees);
-      const realPricePerShare = computeRealPricePerShare(
-        parsedPrice,
-        parsedFees,
-      );
+      const realPricePerShare = computeRealPricePerShare(parsedPrice, 0);
 
-      if (isNaN(parsedQuantity) || isNaN(parsedPrice) || isNaN(parsedFees)) {
+      if (isNaN(parsedQuantity) || isNaN(parsedPrice)) {
         throw new Error(t("please-enter-a-valid-input"));
       }
 
@@ -99,8 +67,6 @@ export default function NewTransaction() {
       }
 
       const newTransaction = {
-        //FIX manage the case when portfolioId is undefined
-        //FIX manage the case when symbol is undefined
         portfolioId: parseInt(portfolioId!),
         symbol: symbol ?? "",
         type: type,
@@ -114,7 +80,7 @@ export default function NewTransaction() {
           type === "BUY"
             ? computeTotalCost(parsedQuantity, realPricePerShare)
             : -computeTotalCost(parsedQuantity, realPricePerShare),
-        fees: isNaN(parsedFees) ? 1.51 : parsedFees,
+        fees: 0,
         notes: null,
       };
 
@@ -134,7 +100,33 @@ export default function NewTransaction() {
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [
+    quantity,
+    pricePerShare,
+    type,
+    transactionDate,
+    symbol,
+    title,
+    portfolioId,
+    t,
+    computeRealPricePerShare,
+    computeTotalCost,
+    addTransaction,
+  ]);
+
+
+  useEffect(() => {
+    if (!symbol) return;
+    fetchStocks().then((stocks) => {
+      const stock = stocks.find(
+        (s) => s.symbol.trim() === String(symbol).trim(),
+      );
+      if (stock) {
+        setCurrentStockPrice(stock.currentPrice);
+        setPricePerShare(String(stock.currentPrice));
+      }
+    });
+  }, [symbol]);
 
   return (
     <KeyboardAvoidingView
@@ -156,36 +148,8 @@ export default function NewTransaction() {
 
         <Text style={styles.label}>{t("transaction-type")}</Text>
         <View style={styles.typeSelector}>
-          <TransactionTypeSelector type={type} onSelect={setType} />
+          <TransactionTypeSelector type={type} onSelect={setType} price={currentStockPrice} />
         </View>
-
-        {__DEV__ && (
-          <>
-            <Text style={styles.label}>{t("transaction-date")}</Text>
-            <Pressable
-              onPress={() => setShowDatePicker(true)}
-              style={styles.dateButton}
-            >
-              <Text style={styles.dateText}>
-                {transactionDate.toLocaleDateString()}
-              </Text>
-            </Pressable>
-
-            {showDatePicker && (
-              <DateTimePicker
-                value={transactionDate}
-                mode="date"
-                display="default"
-                onChange={(event, date) => {
-                  setShowDatePicker(false);
-                  if (event.type === "set" && date) {
-                    setTransactionDate(date);
-                  }
-                }}
-              />
-            )}
-          </>
-        )}
 
         <View style={styles.row}>
           <View style={styles.halfField}>
@@ -223,22 +187,6 @@ export default function NewTransaction() {
           </View>
         </View>
 
-        {__DEV__ && (
-          <>
-            <Text style={styles.label}>{t("transaction-fees")}</Text>
-            <TextInput
-              ref={feesInputRef}
-              style={[styles.input, focusedField === "fees" && styles.inputFocused]}
-              keyboardType="numeric"
-              returnKeyType="done"
-              value={fees}
-              onChangeText={setCleanFees}
-              onFocus={() => setFocusedField("fees")}
-              onBlur={() => setFocusedField(null)}
-            />
-          </>
-        )}
-
         <View style={styles.totalContainer}>
           <Text style={styles.totalLabel}>{t("total-estimated")}</Text>
           <Text style={styles.totalValue}>
@@ -273,7 +221,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     fontWeight: "500",
     fontSize: 15,
-    color: "#555", // soft gray instead of full black
+    color: "#555",
   },
   input: {
     borderWidth: 1,
@@ -331,15 +279,5 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "#000",
-  },
-  dateButton: {
-    padding: 10,
-    backgroundColor: "#eee",
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  dateText: {
-    fontSize: 16,
-    color: "#333",
   },
 });

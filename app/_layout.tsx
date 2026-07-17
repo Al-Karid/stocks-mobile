@@ -225,9 +225,6 @@ export default function Layout() {
                 options={{
                   title: t("new-transaction"),
                   presentation: undefined,
-                  headerBackButtonDisplayMode: "minimal",
-                  headerTransparent: true,
-                  animation: "slide_from_bottom",
                 }}
               />
               <Stack.Screen
