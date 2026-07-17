@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Platform } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { usePortfolioStore } from "@/stores/portfolioStore";
 import {
@@ -43,7 +43,7 @@ const PortfolioDetails = () => {
 
   return (
     <ScrollView
-      className="flex-1"
+      className={`flex-1 ${Platform.OS === "android" ? "bg-white" : "bg-none"}`}
       contentContainerStyle={{
         paddingVertical: 20,
         paddingHorizontal: 16,
@@ -53,13 +53,15 @@ const PortfolioDetails = () => {
     >
       <View
         className="w-full bg-none border border-gray-200 rounded-xl p-5 mb-2.5"
-        style={{
-          // elevation: 2,
-          // shadowColor: "#000",
-          // shadowOffset: { width: 0, height: 1 },
-          // shadowOpacity: 0.06,
-          // shadowRadius: 4,
-        }}
+        style={
+          {
+            // elevation: 2,
+            // shadowColor: "#000",
+            // shadowOffset: { width: 0, height: 1 },
+            // shadowOpacity: 0.06,
+            // shadowRadius: 4,
+          }
+        }
       >
         <Text className="text-base font-bold text-[#333] mb-3 self-start">
           {t("performance")}
@@ -116,13 +118,15 @@ const PortfolioDetails = () => {
         <View
           key={holding.symbol}
           className="w-full bg-none border border-gray-200 rounded-xl p-5 mb-2.5"
-          style={{
-            elevation: 2,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.06,
-            shadowRadius: 4,
-          }}
+          style={Platform.select({
+            ios: {
+              elevation: 2,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.06,
+              shadowRadius: 4,
+            },
+          })}
         >
           <View className="flex-row justify-between mb-3">
             <Text className="text-base font-bold text-[#1A1A1A]">

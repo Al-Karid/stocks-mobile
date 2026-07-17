@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Alert, ScrollView, StyleSheet, Text } from "react-native";
+import { Alert, ScrollView, Platform, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { HeaderButton } from "@react-navigation/elements";
 import { useLocalSearchParams, useNavigation, router } from "expo-router";
 import { Feather } from "@expo/vector-icons";
@@ -11,7 +12,7 @@ import { useTranslation } from "react-i18next";
 
 const TransactionDetails = () => {
   const { t } = useTranslation();
-  const { portfolioId, symbol, title} = useLocalSearchParams();
+  const { portfolioId, symbol, title } = useLocalSearchParams();
   const { getTransactions, deleteHolding } = usePortfolioStore();
 
   const navigation = useNavigation();
@@ -38,42 +39,68 @@ const TransactionDetails = () => {
 
   useEffect(() => {
     const fetchTransactions = async () => {
-      const transactions = await getTransactions(Number(portfolioId), symbol as string);
+      const transactions = await getTransactions(
+        Number(portfolioId),
+        symbol as string,
+      );
       setTransactions(transactions);
     };
     fetchTransactions();
 
-    navigation.setOptions({
-      headerTitle: title,
-      headerRight: () => (
-        <HeaderButton onPress={handleDeleteHolding}>
-          <Feather name="trash-2" size={19} color="#FF3B30" />
-        </HeaderButton>
-      ),
-    });
-
+    if (Platform.OS === "ios") {
+      navigation.setOptions({
+        headerTitle: title,
+        headerRight: () => (
+          <HeaderButton onPress={handleDeleteHolding}>
+            <Feather name="trash-2" size={19} color="#FF3B30" />
+          </HeaderButton>
+        ),
+      });
+    } else {
+      navigation.setOptions({ headerTitle: title });
+    }
   }, [portfolioId]);
 
   return (
-    <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-      {transactions.map((transaction) => (
-        <TransactionCard
-          key={transaction.id}
-          transaction={transaction}
-          symbol={symbol as string}
-        />
-      ))}
-    </ScrollView>
+    <View className="flex-1">
+      <ScrollView
+        className={`flex-1 ${Platform.OS === "android" ? "bg-white" : ""}`}
+        contentContainerStyle={{
+          paddingVertical: 20,
+          paddingHorizontal: 16,
+          alignItems: "center",
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        {transactions.map((transaction) => (
+          <TransactionCard
+            key={transaction.id}
+            transaction={transaction}
+            symbol={symbol as string}
+          />
+        ))}
+      </ScrollView>
+
+      {/* Android FAB */}
+      {Platform.OS === "android" && (
+        <SafeAreaView edges={["bottom"]} className="absolute bottom-0 right-0">
+          <TouchableOpacity
+            onPress={handleDeleteHolding}
+            className="bg-red-500 w-14 h-14 rounded-full items-center justify-center mb-4 mr-5"
+            style={{
+              elevation: 6,
+              shadowColor: "#ef4444",
+              shadowOffset: { width: 0, height: 3 },
+              shadowOpacity: 0.35,
+              shadowRadius: 6,
+            }}
+          >
+            <Feather name="trash-2" size={22} color="#fff" />
+          </TouchableOpacity>
+        </SafeAreaView>
+      )}
+    </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 20,
-    paddingHorizontal: 16,
-    alignItems: "center",
-    // backgroundColor: "#f2f2f2",
-  },
-});
 
 export default TransactionDetails;

@@ -204,8 +204,8 @@ export default function Layout() {
                 options={Platform.select({
                   android: {
                     title: t("portfolio-details"),
-                    presentation: "modal",
-                    animation: "slide_from_bottom",
+                    // presentation: "modal",
+                    // animation: "slide_from_bottom",
                   },
                   ios: {
                     // title: t('portfolio-details'),
@@ -235,8 +235,8 @@ export default function Layout() {
                 options={Platform.select({
                   android: {
                     title: t("transaction-history"),
-                    presentation: "modal",
-                    animation: "slide_from_bottom",
+                    // presentation: "modal",
+                    // animation: "slide_from_bottom",
                     headerShadowVisible: false,
                   },
                   ios: {
