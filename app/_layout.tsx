@@ -144,8 +144,8 @@ export default function Layout() {
                 options={Platform.select({
                   android: {
                     title: t("stock-details"),
-                    presentation: "modal",
-                    animation: "slide_from_bottom",
+                    // presentation: "modal",
+                    // animation: "slide_from_bottom",
                     headerShadowVisible: false,
                 },
                   ios: {

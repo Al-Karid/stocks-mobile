@@ -1,6 +1,6 @@
 import StockCard from "@/components/stocks/StockCard";
 import React, { useEffect } from "react";
-import { FlatList, RefreshControl } from "react-native";
+import { FlatList, Platform, RefreshControl } from "react-native";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 import { Stock } from "@/types/stock";
 
@@ -22,15 +22,17 @@ const PalmaresScreen = () => {
 
   // De-duplicate based on 'id' property
   const uniquePalmaresData = palmaresData.filter(
-    (value, index, self) =>
-      index === self.findIndex((t) => t.id === value.id) // Keep only the first occurrence of each 'id'
+    (value, index, self) => index === self.findIndex((t) => t.id === value.id), // Keep only the first occurrence of each 'id'
   );
 
   return (
     <FlatList
       data={uniquePalmaresData} // Use the de-duplicated data
       keyExtractor={(item) => item.id.toString()}
-      contentContainerStyle={{ padding: 16 }}
+      contentContainerStyle={{
+        padding: 16,
+        paddingBottom: Platform.select({android: 100, default: undefined})
+      }}
       showsVerticalScrollIndicator={false}
       contentInsetAdjustmentBehavior="automatic"
       refreshControl={

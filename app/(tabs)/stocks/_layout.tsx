@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Platform } from 'react-native';
 
 export default function StocksStackLayout() {
 
@@ -14,7 +15,7 @@ export default function StocksStackLayout() {
             // title: t('stocks'),
             title: "BRVM",
             headerLargeTitle: false,
-            headerTransparent: true
+            headerTransparent: Platform.select({ios: true, default: false})
           }}
         />
         <Stack.Screen

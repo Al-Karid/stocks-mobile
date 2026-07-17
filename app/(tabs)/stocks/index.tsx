@@ -1,196 +1,78 @@
-import React, { useEffect, useSyncExternalStore } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, RefreshControl, Platform } from "react-native";
-import { router } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useStockSync } from "@/data/configs/syncStocks";
-import UpdatedAt from "@/components/views/UpdatedAt";
-import { useTranslation } from "react-i18next";
+import StockListing from "@/components/stocks/StockListing";
+import { Feather } from "@expo/vector-icons";
+import { router, useNavigation } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useStockRepository } from "@/data/repositories/stockRepository";
+import { Stock } from "@/types/stock";
 
-export default function HomeScreen() {
+export default function StocksScreen() {
+  const { fetchStocks } = useStockRepository();
+  const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
-  const { t } = useTranslation();
+  const [filterText, setFilterText] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+  const [stocks, setStocks] = useState<Stock[]>([]);
 
-  const [refreshing, setRefreshing] = React.useState(false);
-  const { syncStockDataFromServer } = useStockSync()
+  const filteredStocks = stocks.filter((stock: Stock) =>
+    stock.title.toLowerCase().includes(filterText.toLowerCase())
+  );
 
-  const onRefresh = async () => {
+  const fetchStockData = async () => {
     setRefreshing(true);
-    try {
-      await syncStockDataFromServer();
-      console.log("✅ Data refreshed successfully");
-    } catch (e) {
-      console.error("❌ Failed to refresh data", e);
-    } finally {
-      setRefreshing(false);
-    }
+    const stocks = await fetchStocks();
+    setStocks(stocks);
+    setRefreshing(false);
   };
 
+  useEffect(() => {
+    fetchStockData();
+    navigation.setOptions({
+      headerTitle: "BRVM",
+      headerSearchBarOptions: {
+        placeholder: "Search stocks",
+        onChangeText: (event: {
+          nativeEvent: { text: React.SetStateAction<string> };
+        }) => {
+          setFilterText(event.nativeEvent.text);
+        },
+      },
+    });
+  }, [navigation]);
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={["#3D90D7"]} />
-        }
+    <View className="flex-1">
+      <StockListing
+        stocks={filteredStocks}
+        refreshing={refreshing}
+        onRefresh={fetchStockData}
+      />
+      {/* Palmares FAB — positioned above the native tab bar */}
+      <View
+        style={{
+          position: "absolute",
+          right: 0,
+          bottom: insets.bottom + 90,
+          zIndex: 9999,
+          elevation: 9999,
+        }}
+        pointerEvents="box-none"
       >
-        {/* <Text style={styles.title}>Stock Tracker</Text>
-
-        <UpdatedAt /> */}
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, styles.palmares]}
-            onPress={() => router.push("/stocks/palmares")}
-          >
-            <Text style={styles.buttonText}>{t('palmares')}</Text>
-            <FontAwesome name="line-chart" size={22} color="#fff" />
-          </TouchableOpacity>
-
-          {
-            Platform.OS === "ios" ? (
-              <TouchableOpacity
-                style={[styles.button, styles.stocks]}
-                onPress={() => router.push("/stocks/stocksios")}
-              >
-                <Text style={styles.buttonText}>{t('stocks')}</Text>
-                <FontAwesome name="list" size={22} color="#fff" />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={[styles.button, styles.stocks]}
-                onPress={() => router.push("/stocks/stocks")}
-              >
-                <Text style={styles.buttonText}>{t('stocks')}</Text>
-                <FontAwesome name="list" size={22} color="#fff" />
-              </TouchableOpacity>
-            )
-          }
-
-          <TouchableOpacity
-            style={[styles.button, styles.watchlist]}
-            onPress={() => router.push("/stocks/watchlist")}
-          >
-            <Text style={styles.buttonText}>{t('watchlist')}</Text>
-            <FontAwesome name="eye" size={22} color="#fff" />
-          </TouchableOpacity>
-
-          {/* <TouchableOpacity
-            style={[styles.button, styles.watchlist]}
-            onPress={() => router.push("/stocks/push")}
-          >
-            <Text style={styles.buttonText}>Test notifications</Text>
-            <FontAwesome name="eye" size={22} color="#fff" />
-          </TouchableOpacity> */}
-
-          {/* <TouchableOpacity
-            style={[styles.button, styles.portfolio]}
-            onPress={() => router.push("/")}
-          >
-            <Text style={styles.buttonText}>Portfolio</Text>
-            <FontAwesome name="folder" size={22} color="#fff" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[styles.button, styles.alerts]}>
-            <Text style={styles.buttonText}>Alerts</Text>
-            <FontAwesome name="lock" size={22} color="#fff" />
-          </TouchableOpacity> */}
-        </View>
-
-        {/* <View>
-          <Text style={styles.copyRight}>© Revalys Data Services - 2025</Text>
-        </View> */}
-      </ScrollView>
-    </SafeAreaView>
+        <TouchableOpacity
+          onPress={() => router.push("/(tabs)/stocks/palmares")}
+          className="bg-black w-14 h-14 rounded-full items-center justify-center mr-5"
+          style={{
+            elevation: 6,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 3 },
+            shadowOpacity: 0.2,
+            shadowRadius: 6,
+          }}
+        >
+          <Feather name="award" size={22} color="#fff" />
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#f7f7f7",
-  },
-  container: {
-    flexGrow: 1, // Ensures the content is scrollable even if it doesn't fill the screen
-    backgroundColor: "#f7f7f7", // Light background color for modern look
-    paddingHorizontal: 24,
-    paddingTop: 40,
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: "700",
-    textAlign: "center",
-    color: "#333",
-    marginBottom: 40,
-  },
-  buttonContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  button: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderRadius: 25,
-    paddingVertical: 22,
-    paddingHorizontal: 25,
-    marginBottom: 20,
-    width: "80%",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 5,
-  },
-  palmares: {
-    backgroundColor: "#3b82f6", // Blue
-  },
-  stocks: {
-    backgroundColor: "#10b981", // Green
-  },
-  watchlist: {
-    backgroundColor: "#f59e0b", // Yellow
-  },
-  portfolio: {
-    backgroundColor: "#8b5cf6", // Purple
-    // backgroundColor: "#A6AEBF", // Purple
-  },
-  alerts: {
-    // backgroundColor: "#ef4444", // Red
-    backgroundColor: "#A6AEBF", // Red
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "600",
-    marginRight: 10,
-  },
-  copyRight: {
-    fontSize: 8,
-    color: "#666",
-    textAlign: "center",
-    marginTop: 0,
-  },
-  syncButton: {
-    // position: "absolute",
-    bottom: 30,
-    alignSelf: "center",
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: "#210F37",
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 6,
-    zIndex: 10,
-  },
-});
