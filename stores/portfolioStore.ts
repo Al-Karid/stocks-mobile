@@ -1,13 +1,13 @@
 import { create } from "zustand";
 import { usePortfolioRepository } from "@/data/repositories/portfolioRepository";
 import { Portfolio, Transaction } from "@/types/portfolio";
-import { Holding } from "@/types/portfolio";
+import { Holding, HoldingTargetRequest } from "@/types/portfolio";
 import { TransactionRequest } from "@/types/portfolio";
 import { useHoldingRepository } from "@/data/repositories/holdingRepository";
 import { useTransactionService } from "@/services/transactionService";
 import { useTransactionRepository } from "@/data/repositories/transactionRepository";
 
-const { fetchHoldings, deleteHolding: deleteHoldingFromRepo } = useHoldingRepository();
+const { fetchHoldings, deleteHolding: deleteHoldingFromRepo, updateHoldingTarget } = useHoldingRepository();
 const { processTransaction } = useTransactionService();
 const { fetchTransactions } = useTransactionRepository();
 const {
@@ -32,6 +32,7 @@ interface PortfolioStore {
   getTransactions: (portfolioId: number, symbol: string) => Promise<Transaction[]>;
   makePortfolioAsDefault: (id: number) => Promise<void>;
   deleteHolding: (portfolioId: number, symbol: string) => Promise<void>;
+  setHoldingTarget: (request: HoldingTargetRequest) => Promise<void>;
 }
 
 export const usePortfolioStore = create<PortfolioStore>((set) => ({
@@ -105,6 +106,12 @@ export const usePortfolioStore = create<PortfolioStore>((set) => ({
     const holdings = await fetchHoldings(portfolioId);
     const portfolios = await getPortfolios();
     set({ portfolios });
+    set({ holdings });
+  },
+
+  setHoldingTarget: async (request: HoldingTargetRequest) => {
+    await updateHoldingTarget(request.portfolioId, request.symbol, request.targetPrice, request.targetDate);
+    const holdings = await fetchHoldings(request.portfolioId);
     set({ holdings });
   },
 }));

@@ -55,12 +55,26 @@ export const initPortfolioDb = async () => {
         name TEXT NOT NULL,
         quantity REAL NOT NULL,
         averagePrice REAL NOT NULL,
-        totalCost REAL NOT NULL,  
+        totalCost REAL NOT NULL,
+        targetPrice REAL,
+        targetDate TEXT,
         FOREIGN KEY (portfolioId) REFERENCES portfolios(id),
         UNIQUE (portfolioId, symbol)
       );`
     );
     console.log("✅ Database initialized: Holdings");
+
+    // Migration: add targetPrice and targetDate columns for existing installs
+    const columns = await db.getAllAsync<{ name: string }>("PRAGMA table_info(holdings)");
+    const colNames = new Set(columns.map(c => c.name));
+    if (!colNames.has("targetPrice")) {
+      await db.runAsync("ALTER TABLE holdings ADD COLUMN targetPrice REAL");
+      console.log("✅ Migration: added targetPrice column");
+    }
+    if (!colNames.has("targetDate")) {
+      await db.runAsync("ALTER TABLE holdings ADD COLUMN targetDate TEXT");
+      console.log("✅ Migration: added targetDate column");
+    }
 
   } catch (error) {
     console.error("⚠️ Error initializing portfolio database: ", error);

@@ -114,5 +114,15 @@
   "empty-watchlist-text": "Add a few stocks to follow them here.",
   "biometric-lock": "Biometric lock",
   "browse-stocks": "Browse stocks",
-  "see-more": "See more"
+  "see-more": "See more",
+  "target": "Target",
+  "target-price": "Target Price",
+  "target-date": "Target Date",
+  "projected-return": "Projected Return",
+  "set-target": "Set a target price",
+  "clear-target": "Clear Target",
+  "by-date": "by {{date}}",
+  "in-days": "{{count}} days",
+  "in-days_one": "{{count}} day",
+  "in-days_other": "{{count}} days"
 }

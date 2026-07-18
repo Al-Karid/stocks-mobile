@@ -92,11 +92,29 @@ export const useHoldingRepository = () => {
         }
     }
 
+    /**
+     * Update the target price and date for a holding
+     */
+    const updateHoldingTarget = async (portfolioId: number, symbol: string, targetPrice: number | null, targetDate: string | null) => {
+        try {
+            const db = await dbPromise;
+            await db.runAsync(
+                "UPDATE holdings SET targetPrice = ?, targetDate = ? WHERE portfolioId = ? AND trim(symbol) = ?",
+                [targetPrice, targetDate, portfolioId, symbol.trim()]
+            );
+            console.log(`🎯 Target updated for ${symbol}: price=${targetPrice}, date=${targetDate}`);
+        } catch (error) {
+            console.error("‼️ Error updating holding target:", error);
+            throw error;
+        }
+    }
+
     return {
         findHolding,
         fetchHoldings,
         updateHolding,
         saveOrUpdateHolding,
         deleteHolding,
+        updateHoldingTarget,
     }
 }

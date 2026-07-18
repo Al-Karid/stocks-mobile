@@ -18,7 +18,7 @@ export default function HoldingsScreen() {
   const { portfolioId } = useLocalSearchParams();
   const navigation = useNavigation();
 
-  const { holdings, getHoldings, portfolios } = usePortfolioStore();
+  const { holdings, getHoldings, portfolios, setHoldingTarget } = usePortfolioStore();
 
   useEffect(() => {
     getHoldings(Number(portfolioId));
@@ -63,6 +63,7 @@ export default function HoldingsScreen() {
       <HoldingListing
         holdings={holdings}
         onHoldingLongPress={handleHoldingLongPress}
+        onSaveTarget={setHoldingTarget}
       />
 
       <StockSelector

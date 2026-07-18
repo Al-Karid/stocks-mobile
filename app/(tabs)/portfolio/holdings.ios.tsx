@@ -15,7 +15,7 @@ export default function HoldingsScreen() {
   const navigation = useNavigation();
 
   const [portfolioName, setPortfolioName] = useState<string>("");
-  const { holdings, getHoldings, portfolios } = usePortfolioStore();
+  const { holdings, getHoldings, portfolios, setHoldingTarget } = usePortfolioStore();
 
   useEffect(() => {
     navigation.setOptions({
@@ -63,6 +63,7 @@ export default function HoldingsScreen() {
     <HoldingListing
       holdings={holdings}
       onHoldingLongPress={handleHoldingLongPress}
+      onSaveTarget={setHoldingTarget}
     />
   );
 }

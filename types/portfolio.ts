@@ -40,6 +40,15 @@ export interface Holding {
   portfolioId: number;
   averagePrice: number;
   currentPrice?: number;
+  targetPrice?: number | null;
+  targetDate?: string | null;
+}
+
+export interface HoldingTargetRequest {
+  portfolioId: number;
+  symbol: string;
+  targetPrice: number | null;
+  targetDate: string | null;
 }
 
 export interface PortfolioRequest {

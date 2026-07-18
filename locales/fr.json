@@ -114,5 +114,15 @@
   "empty-watchlist-text": "Ajoutez quelques actions pour les suivre ici.",
   "biometric-lock": "Verrouillage biométrique",
   "browse-stocks": "Parcourir les actions",
-  "see-more": "Voir plus"
+  "see-more": "Voir plus",
+  "target": "Objectif",
+  "target-price": "Prix cible",
+  "target-date": "Date cible",
+  "projected-return": "Rendement projeté",
+  "set-target": "Définir un prix cible",
+  "clear-target": "Effacer l'objectif",
+  "by-date": "d'ici {{date}}",
+  "in-days": "{{count}} jours",
+  "in-days_one": "{{count}} jour",
+  "in-days_other": "{{count}} jours"
 }

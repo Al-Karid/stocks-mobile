@@ -6,6 +6,7 @@ import {
     ScrollView,
     Alert,
     Switch,
+    ActivityIndicator,
 } from 'react-native';
 import { Entypo, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -15,6 +16,8 @@ import { useAlertStore } from '@/stores/alertStore';
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useBiometricAuth } from '@/hooks/useBiometricAuth';
+import { dbPromise } from '@/data/providers/sqlite';
+import * as Updates from 'expo-updates';
 
 export default function SettingsScreen() {
 
@@ -36,6 +39,8 @@ export default function SettingsScreen() {
 
     const handleLogout = () => removeUser();
 
+    const [isResettingDb, setIsResettingDb] = useState(false);
+
     const handleDeleteAccount = () => {
         Alert.alert(
             t('delete-account'),
@@ -43,6 +48,42 @@ export default function SettingsScreen() {
             [
                 { text: t('cancel'), style: "cancel" },
                 { text: t('delete'), style: "destructive", onPress: () => handleLogout() },
+            ]
+        );
+    };
+
+    const handleResetDatabase = () => {
+        Alert.alert(
+            "Reset Database",
+            "This will delete ALL data (portfolios, holdings, transactions, alerts, watchlist, settings) and recreate the database.\n\nThe app will restart.",
+            [
+                { text: t('cancel'), style: "cancel" },
+                {
+                    text: "Reset & Restart",
+                    style: "destructive",
+                    onPress: async () => {
+                        setIsResettingDb(true);
+                        try {
+                            const db = await dbPromise;
+                            // Drop all tables
+                            await db.runAsync("DROP TABLE IF EXISTS holdings");
+                            await db.runAsync("DROP TABLE IF EXISTS transactions");
+                            await db.runAsync("DROP TABLE IF EXISTS portfolios");
+                            await db.runAsync("DROP TABLE IF EXISTS alerts");
+                            await db.runAsync("DROP TABLE IF EXISTS notifications");
+                            await db.runAsync("DROP TABLE IF EXISTS settings");
+                            await db.runAsync("DROP TABLE IF EXISTS stocks");
+                            await db.runAsync("DROP TABLE IF EXISTS watchlist");
+                            console.log("🗑️ All tables dropped");
+                            // Reload the app to trigger re-initialization
+                            await Updates.reloadAsync();
+                        } catch (err) {
+                            console.error("‼️ Error resetting database:", err);
+                            Alert.alert("Error", "Failed to reset database. Please restart the app manually.");
+                            setIsResettingDb(false);
+                        }
+                    },
+                },
             ]
         );
     };
@@ -190,7 +231,30 @@ export default function SettingsScreen() {
                 </View>
             </View>
 
-            {/* Section 5: About */}
+            {/* Section 5: Database (dev only) */}
+            {__DEV__ && (
+                <View className="mt-8">
+                    <Text className="text-base font-bold mb-2 text-gray-600 pl-1">Database</Text>
+                    <View className="bg-white rounded-xl overflow-hidden">
+                        <TouchableOpacity
+                            className="flex-row items-center py-3.5 px-4"
+                            onPress={handleResetDatabase}
+                            disabled={isResettingDb}
+                        >
+                            {isResettingDb ? (
+                                <ActivityIndicator size="small" color="#FF3B30" style={{ marginRight: 12 }} />
+                            ) : (
+                                <Ionicons name="warning-outline" size={20} color="#FF3B30" className="mr-3" />
+                            )}
+                            <Text className="text-base text-red-500">
+                                {isResettingDb ? "Resetting..." : "Reset Database"}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
+
+            {/* Section 6: About */}
             <View className="mt-8 items-center pb-6">
                 <Text className="text-xs text-gray-400">
                     {t('c-2025-revalys-data-services')}
