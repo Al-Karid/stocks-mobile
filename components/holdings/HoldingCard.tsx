@@ -1,12 +1,10 @@
 // components/HoldingCard.tsx
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, TouchableOpacity, Animated } from "react-native";
 import { Holding } from "@/types/portfolio";
-import { FontAwesome, Feather } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { formatCurrency, formatPercentage } from "@/utils/numberUtils";
-import { globalCardStyles } from "@/styles/globalStyles";
 import { useTranslation } from "react-i18next";
-import { Colors } from "@/styles/colors";
 
 interface Props {
   holding: Holding;
@@ -48,197 +46,333 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
     return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "2-digit" });
   };
 
+  const [detailsExpanded, setDetailsExpanded] = useState(false);
+  const hasTarget = targetPrice != null;
+  const detailsOpacity = useRef(new Animated.Value(0)).current;
+  const detailsHeight = useRef(new Animated.Value(0)).current;
+  const trendOpacity = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (detailsExpanded) {
+      Animated.parallel([
+        Animated.timing(detailsOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+        Animated.spring(detailsHeight, {
+          toValue: 1,
+          friction: 8,
+          tension: 40,
+          useNativeDriver: false,
+        }),
+        Animated.timing(trendOpacity, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: false,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(detailsOpacity, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: false,
+        }),
+        Animated.timing(detailsHeight, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: false,
+        }),
+        Animated.timing(trendOpacity, {
+          toValue: 1,
+          duration: 250,
+          useNativeDriver: false,
+        }),
+      ]).start();
+    }
+  }, [detailsExpanded]);
+
+  const toggleDetails = () => setDetailsExpanded(prev => !prev);
+
+  // Gauge calculation
+  const cmpToCurrentAbs = Math.abs(currentPrice! - averagePrice);
+  const currentToTargetAbs = hasTarget ? Math.abs(targetPrice! - currentPrice!) : 0;
+  const totalSpan = cmpToCurrentAbs + currentToTargetAbs;
+  const leftSegmentWidth = totalSpan > 0 ? (cmpToCurrentAbs / totalSpan) * 100 : 0;
+  const rightSegmentWidth = totalSpan > 0 ? (currentToTargetAbs / totalSpan) * 100 : 0;
+  const cmpToCurrentIsPositive = currentPrice! >= averagePrice;
+  const currentToTargetIsPositive = hasTarget && targetPrice! >= currentPrice!;
+
+  const gainColor = isGain ? "#22c55e" : "#ef4444";
+  const gainLightBg = isGain ? "#f0fdf4" : "#fef2f2";
+  const gainBadgeBg = isGain ? "#dcfce7" : "#fce4ec";
+  const gainStrongColor = isGain ? "#16a34a" : "#dc2626";
+
+  const targetTrackColor = currentToTargetIsPositive ? "#007AFF" : "#f59e0b";
+  const targetChipBg = currentToTargetIsPositive ? "#e8f0fe" : "#fef3c7";
+  const targetChipColor = currentToTargetIsPositive ? "#007AFF" : "#d97706";
+  const cmpTrackColor = cmpToCurrentIsPositive ? "#22c55e" : "#ef4444";
+  const cmpChipBg = cmpToCurrentIsPositive ? "#dcfce7" : "#fce4ec";
+  const cmpChipColor = cmpToCurrentIsPositive ? "#16a34a" : "#dc2626";
+
   return (
     <TouchableOpacity onLongPress={() => onLongPress()} activeOpacity={0.4}>
-      <View style={globalCardStyles.card}>
-        {/* HEADER */}
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.name}>{name}</Text>
-            <Text style={styles.symbol}>{symbol.trim()}</Text>
-          </View>
-          <View style={styles.priceStatus}>
-            <FontAwesome
-              name={isGain ? "arrow-up" : "arrow-down"}
-              size={18}
-              color={isGain ? "#22c55e" : "#ef4444"}
-            />
-            <Text
-              style={[
-                styles.gainLossValue,
-                { color: isGain ? "#22c55e" : "#ef4444" },
-              ]}
-            >
-              {formatPercentage(gainLossPercentage, 2)} ({formatCurrency(gainLoss, 0)})
-            </Text>
-          </View>
-        </View>
+      {/* CARD */}
+      <View className="bg-gray-50 rounded-xl p-5 mb-2.5">
+        
+        {/* HEADER — tap to expand/collapse */}
+        <TouchableOpacity onPress={toggleDetails} activeOpacity={0.7}>
+          <View className="flex-row justify-between items-center mb-3">
+            {/* Left: name + symbol */}
+            <View className="flex-1">
+              <Text className="text-[10px] text-gray-500">{name}</Text>
+              <Text className="text-lg font-bold text-[#123456]">{symbol.trim()}</Text>
+            </View>
 
-        {/* BODY */}
-        <View style={styles.details}>
-          <View style={styles.row}>
-            <Text style={styles.label}>{t('quantity')}</Text>
-            <Text style={styles.value}>{formatCurrency(quantity)}</Text>
+            {/* Right: gain/loss indicator — fades out when expanded */}
+            <Animated.View className="items-end" style={{ opacity: trendOpacity }}>
+              <View className="flex-row items-center gap-1">
+                <Feather
+                  name={isGain ? "trending-up" : "trending-down"}
+                  size={20}
+                  color={gainColor}
+                />
+              </View>
+              <Text className="text-sm font-semibold mt-1" style={{ color: gainColor }}>
+                {formatPercentage(gainLossPercentage, 2)} ({formatCurrency(gainLoss, 0)})
+              </Text>
+            </Animated.View>
           </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>{t('cmp')}</Text>
-            <Text style={styles.value}>{formatCurrency(Number(averagePrice.toFixed(0)))}</Text>
+        </TouchableOpacity>
+
+        {/* DETAILS SECTION — collapsible */}
+        <Animated.View
+          style={{
+            opacity: detailsOpacity,
+            maxHeight: detailsHeight.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, 500],
+            }),
+            overflow: 'hidden',
+          }}
+        >
+        <View className="border-t border-gray-200 pt-2.5">
+          
+          {/* Group 1: Position */}
+          <View className="py-1.5 gap-1.5">
+            <View className="flex-row justify-between items-center py-0.5">
+              <View className="flex-row items-center gap-2">
+                <Feather name="layers" size={14} color="#6b7280" />
+                <Text className="text-[13px] text-gray-600">{t('quantity')}</Text>
+              </View>
+              <Text className="text-sm font-semibold text-gray-800">{formatCurrency(quantity)}</Text>
+            </View>
+            <View className="flex-row justify-between items-center py-0.5">
+              <View className="flex-row items-center gap-2">
+                <Feather name="dollar-sign" size={14} color="#6b7280" />
+                <Text className="text-[13px] text-gray-600">{t('cmp')}</Text>
+              </View>
+              <Text className="text-sm font-semibold text-gray-800">
+                {formatCurrency(Number(averagePrice.toFixed(0)))}
+              </Text>
+            </View>
           </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>{t('current-price')}</Text>
-            <Text style={styles.value}>{formatCurrency(Number(currentPrice!.toFixed(0)))}</Text>
+
+          {/* Divider */}
+          <View className="h-px bg-gray-100 my-1" />
+
+          {/* Group 2: Market */}
+          <View className="py-1.5 gap-1.5">
+            <View className="flex-row justify-between items-center py-0.5">
+              <View className="flex-row items-center gap-2">
+                <Feather name="trending-up" size={14} color="#6b7280" />
+                <Text className="text-[13px] text-gray-600">{t('current-price')}</Text>
+              </View>
+              <Text className="text-[15px] font-semibold text-[#007AFF]">
+                {formatCurrency(Number(currentPrice!.toFixed(0)))}
+              </Text>
+            </View>
+            <View className="flex-row justify-between items-center py-0.5">
+              <View className="flex-row items-center gap-2">
+                <Feather name="briefcase" size={14} color="#6b7280" />
+                <Text className="text-[13px] text-gray-600">{t('current-value')}</Text>
+              </View>
+              <Text className="text-[15px] font-extrabold text-gray-900">
+                {formatCurrency(currentValue.toFixed(0))}
+              </Text>
+            </View>
           </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>{t('total-cost')}</Text>
-            <Text style={styles.value}>{formatCurrency(computedTotalCost.toFixed(0))}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>{t('current-value')}</Text>
-            <Text style={styles.value}>{formatCurrency(currentValue.toFixed(0))}</Text>
+
+          {/* Divider */}
+          <View className="h-px bg-gray-100 my-1" />
+
+          {/* Group 3: Cost + Gain/Loss */}
+          <View className="py-1.5 gap-1.5">
+            <View className="flex-row justify-between items-center py-0.5">
+              <View className="flex-row items-center gap-2">
+                <Feather name="shopping-cart" size={14} color="#6b7280" />
+                <Text className="text-[13px] text-gray-600">{t('total-cost')}</Text>
+              </View>
+              <Text className="text-sm font-semibold text-gray-800">
+                {formatCurrency(computedTotalCost.toFixed(0))}
+              </Text>
+            </View>
+
+            {/* Gain/Loss highlight row */}
+            <View
+              className="flex-row justify-between items-center py-2 px-2.5 rounded-lg mt-1"
+              style={{ backgroundColor: gainLightBg }}
+            >
+              <View className="flex-row items-center gap-2">
+                <Feather
+                  name={isGain ? "arrow-up-right" : "arrow-down-right"}
+                  size={14}
+                  color={gainStrongColor}
+                />
+                <Text className="text-[13px] font-semibold" style={{ color: gainStrongColor }}>
+                  {isGain ? t('increase') : t('loss')}
+                </Text>
+              </View>
+              <View className="flex-row items-center gap-2">
+                <Text className="text-sm font-bold" style={{ color: gainStrongColor }}>
+                  {isGain ? "+" : ""}{formatCurrency(gainLoss, 0)}
+                </Text>
+                <View className="px-2 py-0.5 rounded-full" style={{ backgroundColor: gainBadgeBg }}>
+                  <Text className="text-[11px] font-bold" style={{ color: gainStrongColor }}>
+                    {gainLossPercentage >= 0 ? "+" : ""}{formatPercentage(gainLossPercentage, 1)}
+                  </Text>
+                </View>
+              </View>
+            </View>
           </View>
         </View>
+        </Animated.View>
 
         {/* TARGET SECTION */}
-        <View style={styles.targetSection}>
-          <TouchableOpacity style={styles.targetRow} onPress={onTargetPress}>
-            <View style={styles.targetInfo}>
-              <View style={styles.targetLabelRow}>
-                <Feather name="target" size={14} color={Colors.headerBlue} />
-                <Text style={styles.targetLabel}>{t("target")}</Text>
-              </View>
-              {targetPrice != null ? (
-                <View style={styles.targetValues}>
-                  <Text style={styles.targetPrice}>
-                    {formatCurrency(targetPrice, 0)}
-                  </Text>
-                  {targetReturn !== null && (
-                    <Text
-                      style={[
-                        styles.targetReturn,
-                        { color: targetReturn >= 0 ? "#22c55e" : "#ef4444" },
-                      ]}
-                    >
-                      {targetReturn >= 0 ? "+" : ""}
-                      {formatPercentage(targetReturn, 2)}
-                    </Text>
-                  )}
-                  {targetDate && (
-                    <Text style={styles.targetDate}>
-                      {t("by-date", { date: formatShortDate(targetDate) })}
-                      {daysToTarget != null && daysToTarget > 0
-                        ? ` (${t("in-days", { count: daysToTarget })})`
-                        : ""}
-                    </Text>
-                  )}
-                </View>
-              ) : (
-                <Text style={styles.noTarget}>{t("set-target")}</Text>
-              )}
+        <TouchableOpacity
+          className="border-t border-gray-200 mt-3 pt-3 px-1"
+          onPress={onTargetPress}
+          activeOpacity={0.7}
+        >
+          {/* Header row */}
+          <View className="flex-row justify-between items-center mb-2.5">
+            <View className="flex-row items-center gap-1.5">
+              <Feather name="target" size={13} color={hasTarget ? "#007AFF" : "#ccc"} />
+              <Text
+                className={`text-xs font-bold uppercase tracking-wider ${hasTarget ? 'text-[#007AFF]' : 'text-[#ccc]'}`}
+              >
+                {t("target")}
+              </Text>
             </View>
-            <Feather name="chevron-right" size={18} color="#ccc" />
-          </TouchableOpacity>
-        </View>
+            {hasTarget && (
+              <View className="bg-gray-100 rounded-full w-6 h-6 justify-center items-center">
+                <Feather name="edit-2" size={11} color="#9ca3af" />
+              </View>
+            )}
+          </View>
+
+          {hasTarget ? (
+            <>
+              {/* Price bar: CMP → Current → Target */}
+              <View className="flex-row items-start gap-1">
+                {/* CMP label */}
+                <View className="items-center min-w-[68px]">
+                  <Text className="text-[13px] font-bold text-gray-700">
+                    {formatCurrency(averagePrice, 0)}
+                  </Text>
+                  <Text className="text-[9px] uppercase text-gray-400 mt-0.5 tracking-wider">{t('cmp')}</Text>
+                </View>
+
+                {/* Track */}
+                <View className="flex-1 items-center pt-1.5 gap-1">
+                  <View className="h-1.5 bg-gray-200 rounded-full w-full overflow-hidden flex-row">
+                    {leftSegmentWidth > 0 && (
+                      <View
+                        style={{
+                          width: `${leftSegmentWidth}%`,
+                          backgroundColor: cmpTrackColor,
+                          borderTopLeftRadius: 3,
+                          borderBottomLeftRadius: 3,
+                        }}
+                      />
+                    )}
+                    {rightSegmentWidth > 0 && (
+                      <View
+                        style={{
+                          width: `${rightSegmentWidth}%`,
+                          backgroundColor: targetTrackColor,
+                          borderTopRightRadius: 3,
+                          borderBottomRightRadius: 3,
+                        }}
+                      />
+                    )}
+                  </View>
+
+                  {/* Percentage chips */}
+                  <View className="flex-row justify-center gap-1.5 flex-wrap">
+                    <View
+                      className="flex-row items-center gap-0.5 px-1.5 py-0.5 rounded-full"
+                      style={{ backgroundColor: cmpChipBg }}
+                    >
+                      <Feather
+                        name={cmpToCurrentIsPositive ? "trending-up" : "trending-down"}
+                        size={10}
+                        color={cmpChipColor}
+                      />
+                      <Text className="text-[10px] font-bold" style={{ color: cmpChipColor }}>
+                        {gainLossPercentage >= 0 ? "+" : ""}
+                        {formatPercentage(gainLossPercentage, 1)}
+                      </Text>
+                    </View>
+
+                    <View
+                      className="flex-row items-center gap-0.5 px-1.5 py-0.5 rounded-full"
+                      style={{ backgroundColor: targetChipBg }}
+                    >
+                      <Feather
+                        name={currentToTargetIsPositive ? "trending-up" : "trending-down"}
+                        size={10}
+                        color={targetChipColor}
+                      />
+                      <Text className="text-[10px] font-bold" style={{ color: targetChipColor }}>
+                        {targetReturn! >= 0 ? "+" : ""}
+                        {formatPercentage(targetReturn!, 1)}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                {/* Target label */}
+                <View className="items-center min-w-[68px]">
+                  <Text className="text-[13px] font-bold text-[#007AFF]">
+                    {formatCurrency(targetPrice!, 0)}
+                  </Text>
+                  <Text className="text-[9px] uppercase text-gray-400 mt-0.5 tracking-wider">Target</Text>
+                </View>
+              </View>
+
+              {/* Date & countdown */}
+              {targetDate && (
+                <View className="flex-row items-center gap-1.5 mt-2.5 pl-0.5">
+                  <Feather name="calendar" size={12} color="#9ca3af" />
+                  <Text className="text-xs text-gray-500">
+                    {t("by-date", { date: formatShortDate(targetDate) })}
+                    {daysToTarget != null && daysToTarget > 0
+                      ? ` · ${t("in-days", { count: daysToTarget })}`
+                      : ""}
+                  </Text>
+                </View>
+              )}
+            </>
+          ) : (
+            <View className="flex-row items-center gap-2 py-1.5">
+              <Feather name="plus-circle" size={16} color="#d1d5db" />
+              <Text className="text-[13px] text-[#aaa] italic">{t("set-target")}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "#f9fafb",
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 10
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  symbol: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#123456",
-  },
-  name: {
-    color: "#6b7280",
-    fontSize: 10,
-    fontStyle: "normal",
-    marginTop: 0,
-  },
-  priceStatus: {
-    alignItems: "flex-end",
-  },
-  gainLossValue: {
-    marginTop: 4,
-    fontWeight: "600",
-  },
-  details: {
-    borderTopWidth: 1,
-    borderTopColor: "#e5e7eb",
-    paddingTop: 10,
-    gap: 6,
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  label: {
-    color: "#374151",
-    fontSize: 14,
-  },
-  value: {
-    fontWeight: "600",
-    color: "#123456",
-  },
-  targetSection: {
-    borderTopWidth: 1,
-    borderTopColor: "#e5e7eb",
-    paddingTop: 10,
-    marginTop: 10,
-  },
-  targetRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  targetInfo: {
-    flex: 1,
-  },
-  targetLabelRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginBottom: 4,
-  },
-  targetLabel: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: Colors.headerBlue,
-  },
-  targetValues: {
-    marginLeft: 20,
-  },
-  targetPrice: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#333",
-  },
-  targetReturn: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginTop: 2,
-  },
-  targetDate: {
-    fontSize: 12,
-    color: "#888",
-    marginTop: 2,
-  },
-  noTarget: {
-    fontSize: 13,
-    color: "#aaa",
-    fontStyle: "italic",
-    marginLeft: 20,
-  },
-});

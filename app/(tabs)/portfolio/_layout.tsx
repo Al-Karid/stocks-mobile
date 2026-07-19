@@ -18,7 +18,7 @@ export default function PortfolioStackLayout() {
           name="holdings"
           options={{
             title: t("holdings"),
-            headerLargeTitle: true,
+            headerTransparent: true,
             headerBackButtonDisplayMode: "minimal",
           }}
         />

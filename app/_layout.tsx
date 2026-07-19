@@ -185,7 +185,6 @@ export default function Layout() {
                 name="alerts/notifications"
                 options={{
                   title: t("notifications"),
-                  // headerLargeTitle: true,
                   headerBackTitle: t("dashboard"),
                   headerBackButtonDisplayMode: "minimal",
                   headerTransparent: Platform.select({android: false, ios: true})
@@ -195,8 +194,6 @@ export default function Layout() {
                 name="alerts/form"
                 options={{
                   title: t("new-alert"),
-                  // presentation: "modal",
-                  // animation: "slide_from_bottom",
                 }}
               />
               <Stack.Screen
@@ -204,8 +201,6 @@ export default function Layout() {
                 options={Platform.select({
                   android: {
                     title: t("portfolio-details"),
-                    // presentation: "modal",
-                    // animation: "slide_from_bottom",
                   },
                   ios: {
                     // title: t('portfolio-details'),
@@ -232,8 +227,6 @@ export default function Layout() {
                 options={Platform.select({
                   android: {
                     title: t("transaction-history"),
-                    // presentation: "modal",
-                    // animation: "slide_from_bottom",
                     headerShadowVisible: false,
                   },
                   ios: {
