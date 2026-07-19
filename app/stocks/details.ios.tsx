@@ -192,7 +192,7 @@ export default function StocksDetailsScreen() {
             onPress={() =>
               router.push({
                 pathname: "/alerts/form",
-                params: { symbol: stock?.symbol },
+                params: { symbol: stock?.symbol, title: stock?.title },
               })
             }
           />

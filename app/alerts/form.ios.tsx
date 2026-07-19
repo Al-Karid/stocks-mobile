@@ -2,16 +2,16 @@ import { AlertData } from "@/types/alerts";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Feather } from "@expo/vector-icons";
-import { HeaderButton } from "@react-navigation/elements";
+import { HeaderButton, useHeaderHeight } from "@react-navigation/elements";
 import { useAlertStore } from "@/stores/alertStore";
 import {
   View,
   Text,
   KeyboardAvoidingView,
-  ScrollView,
   Pressable,
   Alert,
   ActivityIndicator,
+  LayoutAnimation,
 } from "react-native";
 import { getDevicePushToken } from "@/services/pushTokenService";
 import "react-native-get-random-values";
@@ -23,6 +23,7 @@ import { useTranslation } from "react-i18next";
 export default function AlertFormModal() {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const headerHeight = useHeaderHeight();
 
   const { symbol: stockSymbol, title: stockTitle, alertId: alertToEditId } =
     useLocalSearchParams<{
@@ -74,11 +75,11 @@ export default function AlertFormModal() {
   useEffect(() => {
     navigation.setOptions({
       headerTitle: alertToEditId ? t("edit-alert") : t("new-alert"),
-      headerLeft: () => (
-        <HeaderButton onPress={() => router.back()}>
-          <Feather name="x" size={22} color="#000" />
-        </HeaderButton>
-      ),
+      // headerLeft: () => (
+      //   <HeaderButton onPress={() => router.back()}>
+      //     <Feather name="x" size={22} color="#000" />
+      //   </HeaderButton>
+      // ),
       headerRight: () =>
         isLoading ? (
           <ActivityIndicator size="small" color="#000" />
@@ -138,32 +139,24 @@ export default function AlertFormModal() {
           <ActivityIndicator size="large" color="black" />
         </View>
       ) : (
-        <ScrollView
-          className="flex-1 bg-white"
-          contentContainerStyle={{ padding: 24, paddingBottom: 120 }}
-        >
-          <View className="bg-[#f5f5f5] rounded-2xl p-5 mb-5">
-            <View className="flex-row items-center justify-between mb-1.5">
-              <View className="flex-row items-center gap-2">
-                <View className="w-9 h-9 rounded-full bg-[#d4d4d4] items-center justify-center">
-                  <Text className="text-[#525252] text-xs font-bold">
-                    {((alertToEdit?.stockSymbol ?? stockSymbol) || "").slice(0, 2)}
-                  </Text>
-                </View>
-                <Text className="text-[#171717] text-lg font-bold">
+        <View className="flex-1 bg-none px-6" style={{ paddingTop: headerHeight + 10 }}>
+          <View className="rounded-2xl p-4 mb-5 border border-white/30 bg-gray-200/30 backdrop-blur-sm">
+            <View className="flex-row items-center justify-between mb-0">
+              <View>
+                <Text className="text-[#171717] text-xl font-extrabold">
                   {alertToEdit?.stockSymbol ?? stockSymbol ?? "—"}
+                </Text>
+                <Text className="text-[#404040] text-base font-semibold mt-1" numberOfLines={2}>
+                  {alertToEdit?.stockTitle ?? stockTitle ?? ""}
                 </Text>
               </View>
               {currentStockPrice != null && (
-                <Text className="text-[#171717] text-lg font-bold">
+                <Text className="text-[#171717] text-xl font-extrabold">
                   {currentStockPrice.toLocaleString()}{" "}
                   <Text className="text-[#a3a3a3] text-sm font-normal">FCFA</Text>
                 </Text>
               )}
             </View>
-            <Text className="text-[#737373] text-xs">
-              {alertToEdit?.stockTitle ?? stockTitle ?? ""}
-            </Text>
           </View>
 
           <Text className="text-[15px] text-[#4b5563] mb-2">
@@ -171,11 +164,14 @@ export default function AlertFormModal() {
           </Text>
           <View className="flex-row gap-3 mb-4">
             <Pressable
-              onPress={() => setAlertType("above")}
+              onPress={() => {
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                setAlertType("above");
+              }}
               className={`flex-1 aspect-square rounded-2xl items-center justify-center gap-2 overflow-hidden ${
                 alertType === "above"
-                  ? "bg-green-500 border-2 border-green-500"
-                  : "bg-gray-100 border-2 border-transparent"
+                  ? "bg-green-300/30 border-2 border-green-300/30 backdrop-blur-sm"
+                  : " border border-white/30 bg-gray-200/30 backdrop-blur-sm"
               }`}
               style={
                 alertType === "above"
@@ -197,11 +193,14 @@ export default function AlertFormModal() {
               </Text>
             </Pressable>
             <Pressable
-              onPress={() => setAlertType("below")}
+              onPress={() => {
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                setAlertType("below");
+              }}
               className={`flex-1 aspect-square rounded-2xl items-center justify-center gap-2 overflow-hidden ${
                 alertType === "below"
-                  ? "bg-red-500 border-2 border-red-500"
-                  : "bg-gray-100 border-2 border-transparent"
+                  ? "bg-red-300/30 border-2 border-red-300/30 backdrop-blur-sm"
+                  : "border border-white/30 bg-gray-200/30 backdrop-blur-sm"
               }`}
               style={
                 alertType === "below"
@@ -247,10 +246,9 @@ export default function AlertFormModal() {
                 "numeric",
               );
             }}
-            className="bg-black rounded-2xl py-4 items-center justify-center mb-4"
-            style={{ elevation: 4, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 6 }}
+            className="border border-white/30 bg-gray-200/30 backdrop-blur-sm rounded-2xl py-4 items-center justify-center mb-4"
           >
-            <Text className="text-white text-2xl font-extrabold">
+            <Text className="text-2xl font-extrabold">
               {alertThreshold || "—"}
             </Text>
             <Text className="text-gray-400 text-xs mt-1">
@@ -265,7 +263,7 @@ export default function AlertFormModal() {
             <Pressable
               onPress={() => setEnabled(!enabled)}
               className={`w-14 h-14 rounded-2xl items-center justify-center ${
-                enabled ? "bg-black" : "bg-gray-200"
+                enabled ? "bg-black" : "border border-white/30 bg-gray-200/30 backdrop-blur-sm"
               }`}
               style={
                 enabled
@@ -280,7 +278,7 @@ export default function AlertFormModal() {
               />
             </Pressable>
           </View>
-        </ScrollView>
+        </View>
       )}
     </KeyboardAvoidingView>
   );

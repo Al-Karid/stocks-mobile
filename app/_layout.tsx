@@ -192,9 +192,21 @@ export default function Layout() {
               />
               <Stack.Screen
                 name="alerts/form"
-                options={{
-                  title: t("new-alert"),
-                }}
+                options={Platform.select({
+                  android: {
+                    title: t("new-alert"),
+                  },
+                  ios: {
+                    title: t("new-alert"),
+                    presentation: "formSheet",
+                    contentStyle: { backgroundColor: "transparent" },
+                    headerStyle: { backgroundColor: "transparent" },
+                    sheetAllowedDetents: [0.75],
+                    sheetInitialDetentIndex: 0,
+                    headerTransparent: true,
+                    sheetLargestUndimmedDetentIndex: -1,
+                  },
+                })}
               />
               <Stack.Screen
                 name="portfolio/details"

@@ -55,8 +55,8 @@ const AlertsScreen: React.FC = () => {
         <HeaderButton
           onPress={() =>
             router.push({
-              pathname: "/choose-stock",
-              params: { nextRoute: "/alerts/form" },
+                    pathname: "/choose-stock",
+                    params: { nextRoute: "/alerts/form" },
             })
           }
         >
