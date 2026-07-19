@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useState, useEffect } from "react";
@@ -50,8 +50,7 @@ export default function StocksDetailsScreen() {
   const watchlistFull = userContraintCounts.maxWatchlist <= 0 && !watchlisted;
 
   return (
-    <ScrollView className="flex-1" showsVerticalScrollIndicator={false} contentInsetAdjustmentBehavior="automatic">
-      <View className="px-5 pt-5 pb-16 gap-4">
+    <View className="flex-1 px-5 pt-5 pb-16 gap-4">
         {/* ── Hero card ── */}
         <View className="rounded-3xl px-5 py-6 items-center border border-gray-100">
           <Text className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">
@@ -198,8 +197,7 @@ export default function StocksDetailsScreen() {
             }
           />
         </View>
-      </View>
-    </ScrollView>
+    </View>
   );
 }
 

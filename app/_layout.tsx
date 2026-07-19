@@ -155,7 +155,7 @@ export default function Layout() {
                     sheetGrabberVisible: false,
                     contentStyle: { backgroundColor: "transparent" },
                     headerStyle: { backgroundColor: "transparent" },
-                    sheetAllowedDetents: [0.8, 1],
+                    sheetAllowedDetents: [0.8],
                     sheetInitialDetentIndex: 0,
                     headerTransparent: false,
                     sheetLargestUndimmedDetentIndex: -1,
@@ -236,10 +236,22 @@ export default function Layout() {
               />
               <Stack.Screen
                 name="transactions/new"
-                options={{
-                  title: t("new-transaction"),
-                  presentation: undefined,
-                }}
+                options={Platform.select({
+                  android: {
+                    title: t("new-transaction"),
+                  },
+                  ios: {
+                    title: t("new-transaction"),
+                    headerShown: true,
+                    presentation: "formSheet",
+                    contentStyle: { backgroundColor: "transparent" },
+                    headerStyle: { backgroundColor: "transparent" },
+                    sheetAllowedDetents: [0.85],
+                    sheetInitialDetentIndex: 0,
+                    headerTransparent: true,
+                    sheetLargestUndimmedDetentIndex: -1,
+                  },
+                })}
               />
               <Stack.Screen
                 name="transactions/history"

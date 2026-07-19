@@ -117,9 +117,9 @@ export default function NewTransaction() {
       headerRight: () => (
         <HeaderButton onPress={handleSubmit}>
           {isSaving ? (
-            <ActivityIndicator size="small" color="#000" />
+            <ActivityIndicator size="small" color="#1a1a1a" />
           ) : (
-            <Feather name="check" size={20} color="#000" />
+            <Feather name="check" size={20} color="#1a1a1a" />
           )}
         </HeaderButton>
       ),
@@ -144,7 +144,7 @@ export default function NewTransaction() {
       // className="flex-1"
       contentContainerStyle={[
         styles.container,
-        { paddingTop: headerHeight + 20, paddingBottom: 0 },
+        { paddingTop: headerHeight, paddingBottom: 0 },
       ]}
     >
       {symbol && (
@@ -244,7 +244,7 @@ export default function NewTransaction() {
         </Pressable>
       </View>
 
-      <View className="bg-black items-center mx-auto mt-10 rounded-xl">
+      <View className="bg-[#1a1a1a] items-center mx-auto mt-10 rounded-3xl">
         <View className="flex-row items-center justify-between py-7 px-6 w-full">
           <View className="flex-row items-center gap-3">
             <Feather name="dollar-sign" size={22} color="#fff" />
@@ -269,8 +269,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     marginBottom: 12,
-    color: "#000",
-    // textAlign: "center",
+    color: "#1a1a1a",
   },
   label: {
     marginTop: 18,
@@ -299,8 +298,8 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   valueButtonSet: {
-    backgroundColor: "#000",
-    borderColor: "#000",
+    backgroundColor: "#1a1a1a",
+    borderColor: "#1a1a1a",
   },
   valueButtonEmpty: {
     backgroundColor: "#fff",
@@ -320,6 +319,6 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   valueButtonTextEmpty: {
-    color: "#000",
+    color: "#1a1a1a",
   },
 });
