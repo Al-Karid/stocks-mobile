@@ -216,6 +216,25 @@ export default function Layout() {
                 })}
               />
               <Stack.Screen
+                name="portfolio/target"
+                options={Platform.select({
+                  android: {
+                    title: t("target-price"),
+                  },
+                  ios: {
+                    headerShown: false,
+                    presentation: "formSheet",
+                    // sheetGrabberVisible: true,
+                    contentStyle: { backgroundColor: "transparent" },
+                    headerStyle: { backgroundColor: "transparent" },
+                    sheetAllowedDetents: [0.70],
+                    sheetInitialDetentIndex: 0,
+                    headerTransparent: false,
+                    sheetLargestUndimmedDetentIndex: -1,
+                  },
+                })}
+              />
+              <Stack.Screen
                 name="transactions/new"
                 options={{
                   title: t("new-transaction"),

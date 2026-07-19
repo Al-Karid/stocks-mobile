@@ -240,7 +240,7 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
                 </Text>
                 <View className="px-2 py-0.5 rounded-full" style={{ backgroundColor: gainBadgeBg }}>
                   <Text className="text-[11px] font-bold" style={{ color: gainStrongColor }}>
-                    {gainLossPercentage >= 0 ? "+" : ""}{formatPercentage(gainLossPercentage, 1)}
+                    {formatPercentage(gainLossPercentage, 1)}
                   </Text>
                 </View>
               </View>
@@ -321,7 +321,6 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
                         color={cmpChipColor}
                       />
                       <Text className="text-[10px] font-bold" style={{ color: cmpChipColor }}>
-                        {gainLossPercentage >= 0 ? "+" : ""}
                         {formatPercentage(gainLossPercentage, 1)}
                       </Text>
                     </View>
@@ -336,7 +335,6 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
                         color={targetChipColor}
                       />
                       <Text className="text-[10px] font-bold" style={{ color: targetChipColor }}>
-                        {targetReturn! >= 0 ? "+" : ""}
                         {formatPercentage(targetReturn!, 1)}
                       </Text>
                     </View>

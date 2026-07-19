@@ -121,7 +121,7 @@
   "projected-return": "Rendement projeté",
   "set-target": "Définir un prix cible",
   "clear-target": "Effacer l'objectif",
-  "by-date": "d'ici {{date}}",
+  "by-date": "Horizon {{date}}",
   "in-days": "{{count}} jours",
   "in-days_one": "{{count}} jour",
   "in-days_other": "{{count}} jours"
