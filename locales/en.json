@@ -125,5 +125,6 @@
   "by-date": "by {{date}}",
   "in-days": "{{count}} days",
   "in-days_one": "{{count}} day",
-  "in-days_other": "{{count}} days"
+  "in-days_other": "{{count}} days",
+  "expected-gain": "Expected gain"
 }

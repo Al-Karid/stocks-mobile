@@ -48,6 +48,7 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
 
   const [detailsExpanded, setDetailsExpanded] = useState(false);
   const hasTarget = targetPrice != null;
+  const expectedGain = hasTarget ? (targetPrice! - averagePrice) * quantity : null;
   const detailsOpacity = useRef(new Animated.Value(0)).current;
   const detailsHeight = useRef(new Animated.Value(0)).current;
   const trendOpacity = useRef(new Animated.Value(1)).current;
@@ -265,11 +266,6 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
               </Text>
             </View>
             )}
-            {hasTarget && (
-              <View className="bg-gray-100 rounded-full w-6 h-6 justify-center items-center">
-                <Feather name="edit-2" size={11} color="#9ca3af" />
-              </View>
-            )}
           </View>
 
           {hasTarget ? (
@@ -349,6 +345,23 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
                   <Text className="text-[9px] uppercase text-gray-400 mt-0.5 tracking-wider">Target</Text>
                 </View>
               </View>
+
+              {/* Expected gain */}
+              {expectedGain != null && (
+                <View className="flex-row justify-between items-center mt-3 pt-2 border-t border-gray-100">
+                  <View className="flex-row items-center gap-1.5">
+                    <Feather name="target" size={13} color="#6b7280" />
+                    <Text className="text-[12px] text-gray-500">{t("expected-gain")}</Text>
+                  </View>
+                  <Text
+                    className="text-sm font-extrabold"
+                    style={{ color: expectedGain >= 0 ? "#16a34a" : "#dc2626" }}
+                  >
+                    {expectedGain >= 0 ? "+" : ""}
+                    {formatCurrency(expectedGain, 0)}
+                  </Text>
+                </View>
+              )}
 
               {/* Date & countdown */}
               {targetDate && (

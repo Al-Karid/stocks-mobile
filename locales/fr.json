@@ -125,5 +125,6 @@
   "by-date": "Horizon {{date}}",
   "in-days": "{{count}} jours",
   "in-days_one": "{{count}} jour",
-  "in-days_other": "{{count}} jours"
+  "in-days_other": "{{count}} jours",
+  "expected-gain": "Gain attendu"
 }
