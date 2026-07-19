@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, Alert, TouchableOpacity, Platform, LayoutAnimation } from "react-native";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { router } from "expo-router";
@@ -7,6 +7,7 @@ import { formatCurrency, formatPercentage, isPositiveNumber } from "@/utils/numb
 import { useTranslation } from "react-i18next";
 import { Feather } from "@expo/vector-icons";
 import { provideHapticFeedback } from "@/utils/interactionUtils";
+import { usePortfolioStore } from "@/stores/portfolioStore";
 
 type PortfolioProps = {
   portfolio: Portfolio;
@@ -23,8 +24,17 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
 }) => {
   const { t } = useTranslation();
   const { showActionSheetWithOptions } = useActionSheet();
-  const { id, name, holdings, performance } = portfolio;
+  const { id, name, performance } = portfolio;
   const { gainLossPercentage, totalGainLoss } = performance || {};
+
+  const { holdings: storeHoldings, getHoldings } = usePortfolioStore();
+
+  // Load holdings reactively when card mounts or focus returns
+  useEffect(() => {
+    getHoldings(id);
+  }, [id]);
+
+  const holdings = storeHoldings.length > 0 ? storeHoldings : portfolio.holdings;
 
   const isPositive = isPositiveNumber(totalGainLoss);
 
