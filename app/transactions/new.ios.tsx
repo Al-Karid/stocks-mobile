@@ -3,8 +3,6 @@ import {
   View,
   Text,
   Pressable,
-  StyleSheet,
-  ScrollView,
   Alert,
   ActivityIndicator,
 } from "react-native";
@@ -36,7 +34,6 @@ export default function NewTransaction() {
   const { fetchStocks } = useStockRepository();
 
   const [type, setType] = useState<TransactionType>("BUY");
-  const [transactionDate, setTransactionDate] = useState(new Date());
   const [quantity, setQuantity] = useState("10");
   const [pricePerShare, setPricePerShare] = useState("1000");
   const [isSaving, setIsSaving] = useState(false);
@@ -44,7 +41,6 @@ export default function NewTransaction() {
 
   const parsedQuantity = parseFloat(quantity) || 0;
   const parsedPrice = parseFloat(pricePerShare) || 0;
-
   const total = parsedQuantity * parsedPrice;
 
   const handleSubmit = useCallback(async () => {
@@ -57,19 +53,16 @@ export default function NewTransaction() {
       if (isNaN(parsedQuantity) || isNaN(parsedPrice)) {
         throw new Error(t("please-enter-a-valid-input"));
       }
-
       if (parsedQuantity <= 0) {
         throw new Error(t("quantity-must-be-higher-than-0"));
       }
 
       const newTransaction = {
-        //FIX manage the case when portfolioId is undefined
-        //FIX manage the case when symbol is undefined
         portfolioId: parseInt(portfolioId!),
         symbol: symbol ?? "",
         type: type,
         name: title ?? "",
-        transactionDate: transactionDate,
+        transactionDate: new Date(),
         quantity: type === "BUY" ? parsedQuantity : -parsedQuantity,
         pricePerShare: type === "BUY" ? parsedPrice : -parsedPrice,
         realPricePerShare:
@@ -102,7 +95,6 @@ export default function NewTransaction() {
     quantity,
     pricePerShare,
     type,
-    transactionDate,
     symbol,
     title,
     portfolioId,
@@ -140,185 +132,85 @@ export default function NewTransaction() {
   }, [symbol]);
 
   return (
-    <ScrollView
-      // className="flex-1"
-      contentContainerStyle={[
-        styles.container,
-        { paddingTop: headerHeight, paddingBottom: 0 },
-      ]}
-    >
+    <View className="flex-1 bg-none px-5" style={{ paddingTop: headerHeight }}>
+      {/* Stock info heading */}
       {symbol && (
-        <Text style={styles.sectionTitle}>
-          {title ?? t("stock")} ({symbol})
-        </Text>
+        <View className="rounded-2xl p-4 mb-5 border border-white/30 bg-gray-200/30 backdrop-blur-sm">
+          <Text className="text-black text-xl font-extrabold">{symbol}</Text>
+          {title && (
+            <Text className="text-[#404040] text-sm mt-0.5" numberOfLines={1}>
+              {title}
+            </Text>
+          )}
+        </View>
       )}
 
-      <Text style={styles.label}>{t("transaction-type")}</Text>
-      <View style={styles.typeSelector}>
-        <TransactionTypeSelector
-          type={type}
-          onSelect={setType}
-          price={currentStockPrice}
-        />
+      {/* Transaction type */}
+      <Text className="text-[15px] text-black mb-2 mt-2">{t("transaction-type")}</Text>
+      <View className="flex-row gap-3 mb-4">
+        <TransactionTypeSelector type={type} onSelect={setType} price={currentStockPrice} />
       </View>
 
-      <Text style={styles.label}>{t("details")}</Text>
+      {/* Details label */}
+      <Text className="text-[15px] text-black mb-2 mt-4">{t("details")}</Text>
 
-      <View style={styles.row}>
+      {/* Quantity + Price buttons */}
+      <View className="flex-row gap-3">
         <Pressable
-          style={[
-            styles.valueButton,
-            quantity ? styles.valueButtonSet : styles.valueButtonEmpty,
-          ]}
+          className={`flex-1 aspect-square rounded-2xl items-center justify-center p-3 border border-white/30 backdrop-blur-sm ${
+            quantity ? "" : "bg-gray-200/30"
+          }`}
           onPress={() => {
             Alert.prompt(
-              t("quantity"),
-              "",
+              t("quantity"), "",
               [
                 { text: t("cancel"), style: "cancel" },
-                {
-                  text: t("save"),
-                  isPreferred: true,
-                  onPress: (value?: string) => {
-                    if (value) setQuantity(value);
-                  },
-                },
+                { text: t("save"), isPreferred: true, onPress: (value?: string) => { if (value) setQuantity(value); } },
               ],
-              "plain-text",
-              quantity,
-              "numeric",
+              "plain-text", quantity, "numeric",
             );
           }}
         >
-          <Text style={styles.valueButtonLabel}>{t("quantity")}</Text>
-          <Text
-            style={[
-              styles.valueButtonText,
-              quantity
-                ? styles.valueButtonTextSet
-                : styles.valueButtonTextEmpty,
-            ]}
-          >
+          <Text className="text-[13px] font-medium text-[#404040] mb-1.5">{t("quantity")}</Text>
+          <Text className="text-2xl font-bold text-black">
             {quantity || "—"}
           </Text>
         </Pressable>
 
         <Pressable
-          style={[
-            styles.valueButton,
-            pricePerShare ? styles.valueButtonSet : styles.valueButtonEmpty,
-          ]}
+          className={`flex-1 aspect-square rounded-2xl items-center justify-center p-3 border border-white/30 backdrop-blur-sm ${
+            pricePerShare ? "" : "bg-gray-200/30"
+          }`}
           onPress={() => {
             Alert.prompt(
-              t("price-per-share-fcfa"),
-              "",
+              t("price-per-share-fcfa"), "",
               [
                 { text: t("cancel"), style: "cancel" },
-                {
-                  text: t("save"),
-                  isPreferred: true,
-                  onPress: (value?: string) => {
-                    if (value) setPricePerShare(value);
-                  },
-                },
+                { text: t("save"), isPreferred: true, onPress: (value?: string) => { if (value) setPricePerShare(value); } },
               ],
-              "plain-text",
-              pricePerShare,
-              "numeric",
+              "plain-text", pricePerShare, "numeric",
             );
           }}
         >
-          <Text style={styles.valueButtonLabel}>
-            {t("price-per-share-fcfa")}
-          </Text>
-          <Text
-            style={[
-              styles.valueButtonText,
-              pricePerShare
-                ? styles.valueButtonTextSet
-                : styles.valueButtonTextEmpty,
-            ]}
-          >
+          <Text className="text-[13px] font-medium text-[#404040] mb-1.5">{t("price-per-share-fcfa")}</Text>
+          <Text className="text-2xl font-bold text-black">
             {pricePerShare || "—"}
           </Text>
         </Pressable>
       </View>
 
-      <View className="bg-[#1a1a1a] items-center mx-auto mt-10 rounded-3xl">
-        <View className="flex-row items-center justify-between py-7 px-6 w-full">
+      {/* Total estimated */}
+      <View className="border border-white/30 backdrop-blur-sm rounded-3xl w-full mt-10">
+        <View className="flex-row items-center justify-between py-7 px-6">
           <View className="flex-row items-center gap-3">
-            <Feather name="dollar-sign" size={22} color="#fff" />
-            <Text className="text-[17px] text-white font-semibold">
-              {t("total-estimated")}
-            </Text>
+            <Feather name="dollar-sign" size={22} color="#1a1a1a" />
+            <Text className="text-[17px] text-black font-semibold">{t("total-estimated")}</Text>
           </View>
-          <Text className="text-[26px] font-black text-white">
+          <Text className="text-[26px] font-black text-black">
             {formatNumber(total.toFixed(2))} FCFA
           </Text>
         </View>
       </View>
-    </ScrollView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 12,
-    color: "#1a1a1a",
-  },
-  label: {
-    marginTop: 18,
-    marginBottom: 6,
-    fontWeight: "500",
-    fontSize: 15,
-    color: "#555",
-  },
-  typeSelector: {
-    flexDirection: "row",
-    gap: 12,
-    marginTop: 8,
-  },
-  row: {
-    flexDirection: "row",
-    gap: 12,
-    marginTop: 8,
-  },
-  valueButton: {
-    flex: 1,
-    aspectRatio: 1,
-    borderRadius: 14,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 12,
-  },
-  valueButtonSet: {
-    backgroundColor: "#1a1a1a",
-    borderColor: "#1a1a1a",
-  },
-  valueButtonEmpty: {
-    backgroundColor: "#fff",
-    borderColor: "#d1d5db",
-  },
-  valueButtonLabel: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: "#888",
-    marginBottom: 6,
-  },
-  valueButtonText: {
-    fontSize: 24,
-    fontWeight: "700",
-  },
-  valueButtonTextSet: {
-    color: "#fff",
-  },
-  valueButtonTextEmpty: {
-    color: "#1a1a1a",
-  },
-});

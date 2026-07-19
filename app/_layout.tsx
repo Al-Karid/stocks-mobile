@@ -258,7 +258,7 @@ export default function Layout() {
                     presentation: "formSheet",
                     contentStyle: { backgroundColor: "transparent" },
                     headerStyle: { backgroundColor: "transparent" },
-                    sheetAllowedDetents: [0.85],
+                    sheetAllowedDetents: [0.9],
                     sheetInitialDetentIndex: 0,
                     headerTransparent: true,
                     sheetLargestUndimmedDetentIndex: -1,
