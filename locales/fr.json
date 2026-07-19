@@ -121,6 +121,7 @@
   "projected-return": "Rendement projeté",
   "set-target": "Définir un prix cible",
   "clear-target": "Effacer l'objectif",
+  "confirm-clear-target": "Êtes-vous sûr de vouloir effacer l'objectif pour {{symbol}} ? Cela supprimera le prix cible et la date.",
   "by-date": "Horizon {{date}}",
   "in-days": "{{count}} jours",
   "in-days_one": "{{count}} jour",

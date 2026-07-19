@@ -257,14 +257,14 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
         >
           {/* Header row */}
           <View className="flex-row justify-between items-center mb-2.5">
+            {hasTarget && (
             <View className="flex-row items-center gap-1.5">
-              <Feather name="target" size={13} color={hasTarget ? "#007AFF" : "#ccc"} />
-              <Text
-                className={`text-xs font-bold uppercase tracking-wider ${hasTarget ? 'text-[#007AFF]' : 'text-[#ccc]'}`}
-              >
+              <Feather name="target" size={13} color="#007AFF" />
+              <Text className="text-xs font-bold uppercase tracking-wider text-[#007AFF]">
                 {t("target")}
               </Text>
             </View>
+            )}
             {hasTarget && (
               <View className="bg-gray-100 rounded-full w-6 h-6 justify-center items-center">
                 <Feather name="edit-2" size={11} color="#9ca3af" />

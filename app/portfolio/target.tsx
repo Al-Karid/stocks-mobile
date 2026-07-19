@@ -6,6 +6,7 @@ import {
   TextInput,
   Platform,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { Feather } from "@expo/vector-icons";
@@ -73,14 +74,27 @@ export default function TargetPriceScreen() {
     router.back();
   };
 
-  const handleClear = async () => {
-    await setHoldingTarget({
-      portfolioId: parseInt(portfolioId),
-      symbol,
-      targetPrice: null,
-      targetDate: null,
-    });
-    router.back();
+  const handleClear = () => {
+    Alert.alert(
+      t("clear-target"),
+      t("confirm-clear-target", { symbol }),
+      [
+        { text: t("cancel"), style: "cancel" },
+        {
+          text: t("delete"),
+          style: "destructive",
+          onPress: async () => {
+            await setHoldingTarget({
+              portfolioId: parseInt(portfolioId),
+              symbol,
+              targetPrice: null,
+              targetDate: null,
+            });
+            router.back();
+          },
+        },
+      ]
+    );
   };
 
   const formatDisplayDate = (date: Date) => {
@@ -197,11 +211,11 @@ export default function TargetPriceScreen() {
         <View className="flex-row justify-between items-center gap-3">
           {existingTarget != null && (
             <TouchableOpacity
-              className="flex-row items-center gap-1.5 py-3 px-4 rounded-lg border border-[#FF3B30]"
+              className="flex-row items-center gap-1.5 py-3 px-3 rounded-full border border-[#FF3B30]"
               onPress={handleClear}
             >
               <Feather name="trash-2" size={16} color="#FF3B30" />
-              <Text className="text-[#FF3B30] font-semibold text-sm">{t("clear-target")}</Text>
+              {/* <Text className="text-[#FF3B30] font-semibold text-sm">{t("clear-target")}</Text> */}
             </TouchableOpacity>
           )}
           <TouchableOpacity

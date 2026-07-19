@@ -121,6 +121,7 @@
   "projected-return": "Projected Return",
   "set-target": "Set a target price",
   "clear-target": "Clear Target",
+  "confirm-clear-target": "Are you sure you want to clear the target for {{symbol}}? This will remove both the target price and date.",
   "by-date": "by {{date}}",
   "in-days": "{{count}} days",
   "in-days_one": "{{count}} day",
