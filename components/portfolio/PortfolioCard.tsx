@@ -152,7 +152,6 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
               isPositive ? "text-green-600" : "text-red-600"
             }`}
           >
-            {isPositive ? "+" : ""}
             {formatPercentage(gainLossPercentage, 2)}
           </Text>
         </View>

@@ -140,8 +140,8 @@ export default function AlertFormModal() {
           <ActivityIndicator size="large" color="black" />
         </View>
       ) : (
-        <View className="flex-1 bg-none px-6" style={{ paddingTop: headerHeight + 10 }}>
-          <View className="rounded-2xl p-4 mb-5 border border-white/30 bg-gray-200/30 backdrop-blur-sm">
+        <View className="flex-1 bg-none px-6" style={{ paddingTop: headerHeight }}>
+          <View className="rounded-2xl p-4 mb-5 border border-white bg-gray-200/30 backdrop-blur-sm">
             <View className="flex-row items-center justify-between mb-0">
               <View>
                 <Text className="text-[#171717] text-xl font-extrabold">
@@ -172,7 +172,7 @@ export default function AlertFormModal() {
               className={`flex-1 aspect-square rounded-2xl items-center justify-center gap-2 overflow-hidden ${
                 alertType === "above"
                   ? "bg-green-300/30 border-2 border-green-300/30 backdrop-blur-sm"
-                  : " border border-white/30 bg-gray-200/30 backdrop-blur-sm"
+                  : " border border-white bg-gray-200/30 backdrop-blur-sm"
               }`}
               style={
                 alertType === "above"
@@ -201,7 +201,7 @@ export default function AlertFormModal() {
               className={`flex-1 aspect-square rounded-2xl items-center justify-center gap-2 overflow-hidden ${
                 alertType === "below"
                   ? "bg-red-300/30 border-2 border-red-300/30 backdrop-blur-sm"
-                  : "border border-white/30 bg-gray-200/30 backdrop-blur-sm"
+                  : "border border-white bg-gray-200/30 backdrop-blur-sm"
               }`}
               style={
                 alertType === "below"
@@ -247,7 +247,7 @@ export default function AlertFormModal() {
                 "numeric",
               );
             }}
-            className="border border-white/30 bg-gray-200/30 backdrop-blur-sm rounded-2xl py-4 items-center justify-center mb-4"
+            className="border border-white bg-gray-200/30 backdrop-blur-sm rounded-2xl py-4 items-center justify-center mb-4"
           >
             <Text className="text-2xl font-extrabold">
               {alertThreshold || "—"}
@@ -264,7 +264,7 @@ export default function AlertFormModal() {
             <Pressable
               onPress={() => setEnabled(!enabled)}
               className={`w-14 h-14 rounded-2xl items-center justify-center ${
-                enabled ? "bg-black" : "border border-white/30 bg-gray-200/30 backdrop-blur-sm"
+                enabled ? "bg-black" : "border border-white bg-gray-200/30 backdrop-blur-sm"
               }`}
               style={
                 enabled

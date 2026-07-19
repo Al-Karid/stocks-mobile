@@ -1,13 +1,15 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useState, useEffect } from "react";
 import { Stock } from "@/types/stock";
 import { formatCurrency, formatPercentage } from "@/utils/numberUtils";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { useTranslation } from "react-i18next";
+import { Host, Button, HStack } from "@expo/ui/swift-ui";
+import { buttonStyle, buttonBorderShape, controlSize, labelStyle, disabled as disabledModifier } from "@expo/ui/swift-ui/modifiers";
 
 export default function StocksDetailsScreen() {
   const { t } = useTranslation();
@@ -52,15 +54,15 @@ export default function StocksDetailsScreen() {
   return (
     <View className="flex-1 px-5 pt-5 pb-16 gap-4">
         {/* ── Hero card ── */}
-        <View className="rounded-3xl px-5 py-6 items-center border border-gray-100">
-          <Text className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">
+        <View className="rounded-3xl px-5 py-6 items-center border border-white bg-gray-200/30 backdrop-blur-sm">
+          <Text className="text-xs font-semibold text-[#a3a3a3] uppercase tracking-widest mb-1">
             {stock?.symbol}
           </Text>
-          <Text className="text-base font-bold text-[#123458] text-center mb-4">
+          <Text className="text-base font-bold text-[#171717] text-center mb-4">
             {stock?.title}
           </Text>
 
-          <Text className="text-4xl font-extrabold text-[#123458] mb-2">
+          <Text className="text-4xl font-extrabold text-[#171717] mb-2">
             {formatCurrency(stock?.currentPrice || 0)}
           </Text>
 
@@ -94,19 +96,19 @@ export default function StocksDetailsScreen() {
         </View>
 
         {/* ── Price details card ── */}
-        <View className="rounded-2xl px-5 py-4 border border-gray-100 gap-3">
+        <View className="rounded-2xl px-5 py-4 border border-white bg-gray-200/30 backdrop-blur-sm gap-3">
           <DetailRow
             label={t("current-price")}
             value={formatCurrency(stock?.currentPrice || 0)}
           />
-          <View className="h-px bg-gray-100" />
+          <View className="h-px bg-white/20" />
           <DetailRow
             label={t("previous-close")}
             value={formatCurrency(stock?.previousClosePrice || 0)}
           />
-          <View className="h-px bg-gray-100" />
+          <View className="h-px bg-white/20" />
           <View className="flex-row justify-between items-center">
-            <Text className="text-sm text-gray-400">{t("change-rate")}</Text>
+            <Text className="text-sm text-[#a3a3a3]">{t("change-rate")}</Text>
             <View className="flex-row items-center gap-1">
               <Feather
                 name={
@@ -135,27 +137,27 @@ export default function StocksDetailsScreen() {
         </View>
 
         {/* ── Market data card ── */}
-        <View className="rounded-2xl px-5 py-4 border border-gray-100 gap-3">
+        <View className="rounded-2xl px-5 py-4 border border-white bg-gray-200/30 backdrop-blur-sm gap-3">
           <DetailRow
             label={t("volume-titles")}
             value={stock?.volumeTitles ? String(stock.volumeTitles) : "N/A"}
           />
-          <View className="h-px bg-gray-100" />
+          <View className="h-px bg-white/20" />
           <DetailRow
             label={t("volume")}
             value={stock?.volumeValues ? formatCurrency(stock.volumeValues) : "N/A"}
           />
-          <View className="h-px bg-gray-100" />
+          <View className="h-px bg-white/20" />
           <DetailRow
             label={t("opening-price")}
             value={stock?.opening ? formatCurrency(stock.opening) : "N/A"}
           />
-          <View className="h-px bg-gray-100" />
+          <View className="h-px bg-white/20" />
           <DetailRow
             label={t("high")}
             value={stock?.high ? formatCurrency(stock.high) : "N/A"}
           />
-          <View className="h-px bg-gray-100" />
+          <View className="h-px bg-white/20" />
           <DetailRow
             label={t("low")}
             value={stock?.low ? formatCurrency(stock.low) : "N/A"}
@@ -163,40 +165,55 @@ export default function StocksDetailsScreen() {
         </View>
 
         {/* ── Action buttons ── */}
-        <View className="flex-row justify-evenly mt-1">
-          <ActionButton
-            icon={
-              <Ionicons
-                name={watchlisted ? "bookmark" : "bookmark-outline"}
-                size={22}
-                color={watchlisted ? "#FF3B30" : "#123458"}
-              />
-            }
-            label={"Watchlist"}
-            onPress={handleToggleWatchlist}
-            disabled={watchlistFull}
-          />
-          <ActionButton
-            icon={<Ionicons name="briefcase-outline" size={22} color="#123458" />}
-            label={t("portfolio")}
-            onPress={() =>
-              router.push({
-                pathname: "/transactions/new",
-                params: { symbol: stock?.symbol },
-              })
-            }
-          />
-          <ActionButton
-            icon={<Ionicons name="notifications-outline" size={22} color="#123458" />}
-            label={t("alerts")}
-            onPress={() =>
-              router.push({
-                pathname: "/alerts/form",
-                params: { symbol: stock?.symbol, title: stock?.title },
-              })
-            }
-          />
-        </View>
+        <Host matchContents style={{alignSelf: "center"}}>
+          <HStack spacing={8}>
+            <Button
+              label="Watchlist"
+              systemImage={watchlisted ? "bookmark.fill" : "bookmark"}
+              role={watchlisted ? "destructive" : "default"}
+              modifiers={[
+                buttonStyle("glass"),
+                buttonBorderShape("circle"),
+                controlSize("extraLarge"),
+                labelStyle("iconOnly"),
+                ...(watchlistFull ? [disabledModifier()] : []),
+              ]}
+              onPress={handleToggleWatchlist}
+            />
+            <Button
+              label={t("portfolio")}
+              systemImage="briefcase"
+              modifiers={[
+                buttonStyle("glass"),
+                buttonBorderShape("circle"),
+                controlSize("extraLarge"),
+                labelStyle("iconOnly"),
+              ]}
+              onPress={() =>
+                router.push({
+                  pathname: "/transactions/new",
+                  params: { symbol: stock?.symbol },
+                })
+              }
+            />
+            <Button
+              label={t("alerts")}
+              systemImage="bell"
+              modifiers={[
+                buttonStyle("glass"),
+                buttonBorderShape("circle"),
+                controlSize("extraLarge"),
+                labelStyle("iconOnly"),
+              ]}
+              onPress={() =>
+                router.push({
+                  pathname: "/alerts/form",
+                  params: { symbol: stock?.symbol, title: stock?.title },
+                })
+              }
+            />
+          </HStack>
+        </Host>
     </View>
   );
 }
@@ -204,44 +221,9 @@ export default function StocksDetailsScreen() {
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <View className="flex-row justify-between items-center">
-      <Text className="text-sm text-gray-400">{label}</Text>
-      <Text className="text-sm font-semibold text-gray-800">{value}</Text>
+      <Text className="text-sm">{label}</Text>
+      <Text className="text-sm font-semibold">{value}</Text>
     </View>
   );
 }
 
-function ActionButton({
-  icon,
-  label,
-  onPress,
-  disabled,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  onPress: () => void;
-  disabled?: boolean;
-}) {
-  return (
-    <TouchableOpacity
-      className="items-center gap-2"
-      onPress={onPress}
-      disabled={disabled}
-      activeOpacity={0.6}
-    >
-      <View
-        className={`w-14 h-14 rounded-full items-center justify-center border border-gray-200 ${
-          disabled ? "bg-gray-100 opacity-50" : "bg-white"
-        }`}
-      >
-        {icon}
-      </View>
-      <Text
-        className={`text-[11px] font-medium text-center ${
-          disabled ? "text-gray-400" : "text-[#123458]"
-        }`}
-      >
-        {label}
-      </Text>
-    </TouchableOpacity>
-  );
-}

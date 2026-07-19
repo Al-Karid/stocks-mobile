@@ -31,7 +31,7 @@ const TransactionTypeSelector: React.FC<TransactionTypeSelectorProps> = ({
                 ? isBuy
                   ? "bg-blue-300/30 border-2 border-blue-300/30 backdrop-blur-sm"
                   : "bg-green-300/30 border-2 border-green-300/30 backdrop-blur-sm"
-                : "border border-white/30 bg-gray-200/30 backdrop-blur-sm"
+                : "border border-white bg-gray-200/30 backdrop-blur-sm"
             }`}
             style={
               isSelected
@@ -50,18 +50,12 @@ const TransactionTypeSelector: React.FC<TransactionTypeSelectorProps> = ({
             }}
           >
             <Text
-              className={`text-base font-extrabold ${
-                isSelected ? "text-white" : "text-gray-500"
-              }`}
+              className={`text-base font-extrabold text-black`}
             >
               {isBuy ? t("buy") : t("sell")}
             </Text>
-            {isBuy && price != null && (
-              <Text
-              className={`text-xs ${
-                isSelected ? "text-white/70" : "text-gray-400"
-              }`}
-              >
+            {price != null && true &&(
+              <Text className="text-xs text-black">
                 {formatNumber(price)} FCFA
               </Text>
             )}

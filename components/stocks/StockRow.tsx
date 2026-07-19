@@ -15,7 +15,7 @@ const StockRow: React.FC<StockRowProps> = ({ stock }) => {
   const change = formatPercentage(changeRaw, 2);
 
   return (
-    <TouchableOpacity style={styles.card} onLongPress={() => {router.push({ pathname: '/stocks/details', params: { symbol: stock.symbol } })}}>
+    <TouchableOpacity style={styles.card} onPress={() => {router.push({ pathname: '/stocks/details', params: { symbol: stock.symbol } })}}>
       <View style={styles.row}>
         <View style={styles.leftSection}>
           <Text style={styles.symbol}>{symbol}</Text>

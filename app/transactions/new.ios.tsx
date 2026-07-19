@@ -133,10 +133,10 @@ export default function NewTransaction() {
   }, [symbol]);
 
   return (
-    <View className="flex-1 bg-none px-5" style={{ paddingTop: headerHeight }}>
+    <View className="flex-1 px-5 backdrop-blur-sm" style={{ paddingTop: headerHeight }}>
       {/* Stock info heading */}
       {symbol && (
-        <View className="rounded-2xl p-4 mb-5 border border-white/30 bg-gray-200/30 backdrop-blur-sm">
+        <View className="rounded-2xl p-4 mb-2 border border-white bg-gray-200/30 backdrop-blur-sm">
           <Text className="text-black text-xl font-extrabold">{symbol}</Text>
           {title && (
             <Text className="text-[#404040] text-sm mt-0.5" numberOfLines={1}>
@@ -148,7 +148,7 @@ export default function NewTransaction() {
 
       {/* Transaction type */}
       <Text className="text-[15px] text-black mb-2 mt-2">{t("transaction-type")}</Text>
-      <View className="flex-row gap-3 mb-4">
+      <View className="flex-row gap-3 mb-2">
         <TransactionTypeSelector type={type} onSelect={setType} price={currentStockPrice} />
       </View>
 
@@ -158,7 +158,7 @@ export default function NewTransaction() {
       {/* Quantity + Price buttons */}
       <View className="flex-row gap-3">
         <Pressable
-          className={`flex-1 aspect-square rounded-2xl items-center justify-center p-3 border border-white/30 backdrop-blur-sm ${
+          className={`flex-1 aspect-square rounded-2xl items-center justify-center p-3 border border-white backdrop-blur-sm ${
             quantity ? "" : "bg-gray-200/30"
           }`}
           onPress={() => {
@@ -179,7 +179,7 @@ export default function NewTransaction() {
         </Pressable>
 
         <Pressable
-          className={`flex-1 aspect-square rounded-2xl items-center justify-center p-3 border border-white/30 backdrop-blur-sm ${
+          className={`flex-1 aspect-square rounded-2xl items-center justify-center p-3 border border-white backdrop-blur-sm ${
             pricePerShare ? "" : "bg-gray-200/30"
           }`}
           onPress={() => {
@@ -201,7 +201,7 @@ export default function NewTransaction() {
       </View>
 
       {/* Total estimated */}
-      <View className="border border-white/30 backdrop-blur-sm rounded-3xl w-full mt-10">
+      <View className="border border-white backdrop-blur-sm rounded-3xl w-full mt-5">
         <View className="flex-row items-center justify-between py-7 px-6">
           <View className="flex-row items-center gap-3">
             <Feather name="dollar-sign" size={22} color="#1a1a1a" />

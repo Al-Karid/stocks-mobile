@@ -54,7 +54,7 @@ export default function StockPicker({ onSelect }: StockPickerProps) {
       data={stocks}
       keyExtractor={(item) => item.id.toString()}
       renderItem={renderStockItem}
-      contentContainerStyle={{ paddingBottom: 70 }}
+      contentContainerStyle={{ paddingVertical: 70 }}
     />
   );
 }
