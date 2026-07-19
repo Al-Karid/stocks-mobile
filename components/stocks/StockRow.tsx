@@ -1,8 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
-import { Stock } from '@/types/stock';
-import { formatCurrency, formatNumber, formatPercentage, isPositiveNumber } from '@/utils/numberUtils';
-import { router } from 'expo-router';
+import React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import { Stock } from "@/types/stock";
+import { formatCurrency, formatPercentage, isPositiveNumber } from "@/utils/numberUtils";
+import { router } from "expo-router";
+import { Feather } from "@expo/vector-icons";
 
 interface StockRowProps {
   stock: Stock;
@@ -15,69 +16,43 @@ const StockRow: React.FC<StockRowProps> = ({ stock }) => {
   const change = formatPercentage(changeRaw, 2);
 
   return (
-    <TouchableOpacity style={styles.card} onPress={() => {router.push({ pathname: '/stocks/details', params: { symbol: stock.symbol } })}}>
-      <View style={styles.row}>
-        <View style={styles.leftSection}>
-          <Text style={styles.symbol}>{symbol}</Text>
-          <Text style={styles.company}>{title}</Text>
-        </View>
-        <View style={styles.rightSection}>
-          <Text style={isPositive ? styles.changePositive : styles.changeNegative}>
-            {isPositive ? '▲' : '▼'} {change}
+    <TouchableOpacity
+      className="rounded-2xl p-5 mb-3 border border-white/30 bg-white"
+      onPress={() => {
+        router.push({ pathname: "/stocks/details", params: { symbol: stock.symbol } });
+      }}
+      activeOpacity={0.85}
+    >
+      <View className="flex-row items-center">
+        <View className="flex-1">
+          <Text className="text-[15px] font-bold text-[#171717] mb-1">
+            {symbol}
           </Text>
-          <Text style={styles.price}>{formatCurrency(currentPrice)}</Text>
+          <Text className="text-[12px] text-[#a3a3a3]">
+            {title}
+          </Text>
+        </View>
+        <View className="items-end">
+          <View className="flex-row items-center gap-1.5 mb-1.5">
+            <Feather
+              name={isPositive ? "trending-up" : "trending-down"}
+              size={14}
+              color={isPositive ? "#16a34a" : "#dc2626"}
+            />
+            <Text
+              className="text-[15px] font-bold"
+              style={{ color: isPositive ? "#16a34a" : "#dc2626" }}
+            >
+              {change}
+            </Text>
+          </View>
+          <Text className="text-[15px] text-[#171717]">
+            {formatCurrency(currentPrice)}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 14,
-    marginVertical: 6
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  leftSection: {
-    flex: 1,
-  },
-  rightSection: {
-    alignItems: 'flex-end',
-  },
-  symbol: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#374151', // gray-700
-    marginBottom: 3,
-  },
-  company: {
-    fontSize: 12,
-    color: '#6b7280', // gray-500
-    marginTop: 2,
-  },
-  price: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#6b7280', // gray-500
-    marginTop: 2,
-  },
-  changePositive: {
-    color: '#16a34a', // green-600
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 3,
-  },
-  changeNegative: {
-    color: '#dc2626', // red-600
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 3,
-  },
-});
 
 export default StockRow;
