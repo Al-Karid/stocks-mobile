@@ -2,7 +2,7 @@ import { AlertData } from "@/types/alerts";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Feather } from "@expo/vector-icons";
-import { HeaderButton, useHeaderHeight } from "@react-navigation/elements";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAlertStore } from "@/stores/alertStore";
 import {
   View,
@@ -23,7 +23,8 @@ import { useTranslation } from "react-i18next";
 export default function AlertFormModal() {
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const headerHeight = useHeaderHeight();
+  const insets = useSafeAreaInsets();
+  const headerHeight = insets.top + 44;
 
   const { symbol: stockSymbol, title: stockTitle, alertId: alertToEditId } =
     useLocalSearchParams<{
@@ -84,9 +85,9 @@ export default function AlertFormModal() {
         isLoading ? (
           <ActivityIndicator size="small" color="#000" />
         ) : (
-          <HeaderButton onPress={() => handleSubmit()}>
+          <Pressable onPress={() => handleSubmit()} hitSlop={8}>
             <Feather name="check" size={22} color="#000" />
-          </HeaderButton>
+          </Pressable>
         ),
     });
   }, [navigation, alertToEditId, isLoading]);

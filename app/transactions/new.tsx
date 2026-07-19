@@ -10,7 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { useHeaderHeight } from "@react-navigation/elements";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TransactionType } from "@/types/portfolio";
 import { useLocalSearchParams, router, useNavigation } from "expo-router";
 import { useConputeService } from "@/services/computeService";
@@ -23,7 +23,8 @@ import TransactionTypeSelector from "@/components/transactions/TransactionTypeSe
 
 export default function NewTransaction() {
   const { t } = useTranslation();
-  const headerHeight = useHeaderHeight();
+  const insets = useSafeAreaInsets();
+  const headerHeight = insets.top + 44;
   const navigation = useNavigation();
 
   const { portfolioId, symbol, title } = useLocalSearchParams<{

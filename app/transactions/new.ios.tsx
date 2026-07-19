@@ -6,7 +6,7 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { useHeaderHeight, HeaderButton } from "@react-navigation/elements";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TransactionType } from "@/types/portfolio";
 import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, router, useNavigation } from "expo-router";
@@ -20,7 +20,8 @@ import TransactionTypeSelector from "@/components/transactions/TransactionTypeSe
 
 export default function NewTransaction() {
   const { t } = useTranslation();
-  const headerHeight = useHeaderHeight();
+  const insets = useSafeAreaInsets();
+  const headerHeight = insets.top + 44;
   const navigation = useNavigation();
 
   const { portfolioId, symbol, title } = useLocalSearchParams<{
@@ -107,13 +108,13 @@ export default function NewTransaction() {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <HeaderButton onPress={handleSubmit}>
+        <Pressable onPress={handleSubmit} hitSlop={8}>
           {isSaving ? (
             <ActivityIndicator size="small" color="#1a1a1a" />
           ) : (
             <Feather name="check" size={20} color="#1a1a1a" />
           )}
-        </HeaderButton>
+        </Pressable>
       ),
     });
   }, [navigation, isSaving, handleSubmit]);

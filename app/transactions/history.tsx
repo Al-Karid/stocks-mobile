@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Alert, ScrollView, Platform, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, Platform, TouchableOpacity, View, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { HeaderButton } from "@react-navigation/elements";
 import { useLocalSearchParams, useNavigation, router } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { Transaction } from "@/types/portfolio";
@@ -51,9 +50,9 @@ const TransactionDetails = () => {
       navigation.setOptions({
         headerTitle: title,
         headerRight: () => (
-          <HeaderButton onPress={handleDeleteHolding}>
+          <Pressable onPress={handleDeleteHolding} hitSlop={8}>
             <Feather name="trash-2" size={19} color="#FF3B30" />
-          </HeaderButton>
+          </Pressable>
         ),
       });
     } else {

@@ -1,4 +1,4 @@
-import { PlatformPressable } from '@react-navigation/elements';
+import { Pressable } from 'react-native';
 import * as Haptics from 'expo-haptics';
 
 interface HapticButtonProps {
@@ -10,7 +10,7 @@ interface HapticButtonProps {
 
 export function HapticButtonLongPress(props: HapticButtonProps) {
   return (
-    <PlatformPressable
+    <Pressable
       {...props}
       onLongPress={(ev) => {
         if (process.env.EXPO_OS === 'ios') {
@@ -20,6 +20,6 @@ export function HapticButtonLongPress(props: HapticButtonProps) {
       }}
     >
       {props.children}
-    </PlatformPressable>
+    </Pressable>
   );
 }

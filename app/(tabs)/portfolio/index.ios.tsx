@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert } from "react-native";
-import { HeaderButton } from "@react-navigation/elements";
+import { Alert, Pressable } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import PortfolioListing from "@/components/portfolio/PortfolioListing";
 import { provideHapticFeedback } from "@/utils/interactionUtils";
@@ -62,16 +61,16 @@ export default function PortfolioScreen() {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <HeaderButton onPress={handleOpenDialog}>
+        <Pressable onPress={handleOpenDialog} hitSlop={8}>
           <AntDesign name="plus" size={20} />
-        </HeaderButton>
+        </Pressable>
       ),
     });
   }, [navigation]);
 
   return (
     <>
-      <StatusBar style="dark" backgroundColor="white" />
+      <StatusBar style="dark" />
       <PortfolioListing portfolios={portfolios} />
     </>
   );

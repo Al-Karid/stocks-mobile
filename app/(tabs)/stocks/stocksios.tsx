@@ -65,7 +65,7 @@ export default function StocksScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <StatusBar style="dark" backgroundColor='white' />
+      <StatusBar style="dark" />
       <StockListing
         stocks={filteredStocks}
         refreshing={refreshing}

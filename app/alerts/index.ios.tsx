@@ -12,7 +12,6 @@ import { globalCardStyles } from "@/styles/globalStyles";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
-import { HeaderButton } from "@react-navigation/elements";
 import { AlertData } from "@/types/alerts";
 import { useAlertStore } from "@/stores/alertStore";
 import { useSettingsStore } from "@/stores/settingsStore";
@@ -52,7 +51,7 @@ const AlertsScreen: React.FC = () => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <HeaderButton
+        <TouchableOpacity
           onPress={() =>
             router.push({
                     pathname: "/choose-stock",
@@ -61,7 +60,7 @@ const AlertsScreen: React.FC = () => {
           }
         >
           <MaterialIcons name="notification-add" size={23} />
-        </HeaderButton>
+        </TouchableOpacity>
       ),
     });
   }, [navigation]);

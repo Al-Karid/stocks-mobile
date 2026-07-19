@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 import { View, Text, SectionList, Platform } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { useHeaderHeight } from "@react-navigation/elements";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import NotificationCard from "@/components/alerts/NotificationCard";
 import { useNotificationStore } from "@/stores/notificationStore";
 import { groupNotifications } from "@/utils/notificationUtils";
@@ -38,7 +38,8 @@ const MOCK_NOTIFICATIONS: Notification[] = [
 
 const NotificationScreen = () => {
   const { t } = useTranslation();
-  const headerHeight = useHeaderHeight();
+  const insets = useSafeAreaInsets();
+  const headerHeight = insets.top + 44;
 
   const { notifications } = useNotificationStore();
 

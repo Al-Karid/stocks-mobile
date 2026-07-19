@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { HeaderButton } from "@react-navigation/elements";
+import { Pressable } from "react-native";
 import HoldingListing from "@/components/holdings/HoldingListing";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { Feather } from "@expo/vector-icons";
@@ -20,9 +20,9 @@ export default function HoldingsScreen() {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <HeaderButton onPress={handleNewTransaction}>
+        <Pressable onPress={handleNewTransaction} hitSlop={8}>
           <Feather name="edit-3" size={19} />
-        </HeaderButton>
+        </Pressable>
       ),
     });
 
