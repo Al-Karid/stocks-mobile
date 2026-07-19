@@ -109,9 +109,9 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
   const gainBadgeBg = isGain ? "#dcfce7" : "#fce4ec";
   const gainStrongColor = isGain ? "#16a34a" : "#dc2626";
 
-  const targetTrackColor = currentToTargetIsPositive ? "#007AFF" : "#f59e0b";
-  const targetChipBg = currentToTargetIsPositive ? "#e8f0fe" : "#fef3c7";
-  const targetChipColor = currentToTargetIsPositive ? "#007AFF" : "#d97706";
+  const targetTrackColor = currentToTargetIsPositive ? "#9ca3af" : "#d1d5db";
+  const targetChipBg = currentToTargetIsPositive ? "#f3f4f6" : "#f9fafb";
+  const targetChipColor = currentToTargetIsPositive ? "#6b7280" : "#9ca3af";
   const cmpTrackColor = cmpToCurrentIsPositive ? "#22c55e" : "#ef4444";
   const cmpChipBg = cmpToCurrentIsPositive ? "#dcfce7" : "#fce4ec";
   const cmpChipColor = cmpToCurrentIsPositive ? "#16a34a" : "#dc2626";
@@ -259,8 +259,8 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
           <View className="flex-row justify-between items-center mb-2.5">
             {hasTarget && (
             <View className="flex-row items-center gap-1.5">
-              <Feather name="target" size={13} color="#007AFF" />
-              <Text className="text-xs font-bold uppercase tracking-wider text-[#007AFF]">
+              <Feather name="target" size={13} color="#6b7280" />
+              <Text className="text-xs font-bold uppercase tracking-wider text-[#6b7280]">
                 {t("target")}
               </Text>
             </View>
@@ -343,7 +343,7 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
 
                 {/* Target label */}
                 <View className="items-center min-w-[68px]">
-                  <Text className="text-[13px] font-bold text-[#007AFF]">
+                  <Text className="text-[13px] font-bold text-gray-700">
                     {formatCurrency(targetPrice!, 0)}
                   </Text>
                   <Text className="text-[9px] uppercase text-gray-400 mt-0.5 tracking-wider">Target</Text>
