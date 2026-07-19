@@ -30,9 +30,9 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
 
   const onPress = () => {
     if (Platform.OS === "android") {
-      const options = [t("details"), t("rename"), t("make-default"), t("delete"), t("cancel")];
-      const destructiveButtonIndex = 3;
-      const cancelButtonIndex = 4;
+      const options = [t("rename"), t("make-default"), t("delete"), t("cancel")];
+      const destructiveButtonIndex = 2;
+      const cancelButtonIndex = 3;
 
       showActionSheetWithOptions(
         { title: name.toUpperCase(), options, cancelButtonIndex, destructiveButtonIndex, containerStyle: { paddingBottom: 60 } },
@@ -40,12 +40,9 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
           if (selectedIndex === undefined) return;
           switch (selectedIndex) {
             case 0:
-              router.push({ pathname: "/portfolio/details", params: { portfolioId: id } });
-              break;
-            case 1:
               onRename();
               break;
-            case 2:
+            case 1:
               if (portfolio.isDefault) {
                 Alert.alert(t("default-portfolio"), t("this-portfolio-is-already-set-as-default"));
               } else {
@@ -69,10 +66,6 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
     }
 
     Alert.alert(name.toUpperCase(), "", [
-      {
-        text: t("details"),
-        onPress: () => router.push({ pathname: "/portfolio/details", params: { portfolioId: id } }),
-      },
       { text: t("rename"), onPress: onRename },
       {
         text: t("make-default"),
