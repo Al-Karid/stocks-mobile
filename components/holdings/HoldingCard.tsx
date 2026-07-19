@@ -33,8 +33,8 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
   const isGain = gainLoss >= 0;
   const gainLossPercentage = ((currentPrice! - averagePrice) / averagePrice) * 100;
 
-  const targetReturn = targetPrice != null && currentPrice! > 0
-    ? ((targetPrice - currentPrice!) / currentPrice!) * 100
+  const targetReturn = targetPrice != null && averagePrice > 0
+    ? ((targetPrice - averagePrice) / averagePrice) * 100
     : null;
 
   const daysToTarget = targetDate

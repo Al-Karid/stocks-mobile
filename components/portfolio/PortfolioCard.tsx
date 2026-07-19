@@ -98,7 +98,7 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
 
   return (
     <TouchableOpacity
-      className="rounded-3xl p-5 mb-4 border border-white/30 bg-gray-200/30 backdrop-blur-sm"
+      className="rounded-2xl p-5 mb-4 border border-gray-200 bg-white/60"
       style={{
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
@@ -116,7 +116,7 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
       }}
       activeOpacity={0.85}
     >
-      {/* Header row: name + star → performance pill */}
+      {/* Header row: name + star > performance pill */}
       <View className="flex-row items-center mb-4">
         <View className="flex-row items-center gap-2 flex-1">
           <Text className="text-[15px] font-extrabold text-[#171717] tracking-tight">

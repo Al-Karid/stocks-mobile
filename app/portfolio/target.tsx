@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -33,11 +33,12 @@ export default function TargetPriceScreen() {
     targetDate?: string;
   }>();
 
-  const { setHoldingTarget } = usePortfolioStore();
+  const { setHoldingTarget, getHoldings } = usePortfolioStore();
 
   const currentPrice = parseFloat(currentPriceStr || "0");
   const existingTarget = existingTargetStr ? parseFloat(existingTargetStr) : null;
 
+  const [averagePurchasePrice, setAveragePurchasePrice] = useState<number>(0);
   const [targetPrice, setTargetPrice] = useState<string>(
     existingTarget != null ? existingTarget.toString() : ""
   );
@@ -46,9 +47,20 @@ export default function TargetPriceScreen() {
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  useEffect(() => {
+    const fetchAvgPrice = async () => {
+      const holdingList = await getHoldings(parseInt(portfolioId));
+      const holding = holdingList.find((h) => h.symbol === symbol);
+      if (holding) {
+        setAveragePurchasePrice(holding.averagePrice ?? 0);
+      }
+    };
+    fetchAvgPrice();
+  }, [portfolioId, symbol]);
+
   const targetPriceNum = targetPrice ? parseFloat(targetPrice) : null;
-  const projectedReturn = targetPriceNum && currentPrice > 0
-    ? ((targetPriceNum - currentPrice) / currentPrice) * 100
+  const projectedReturn = targetPriceNum && averagePurchasePrice > 0
+    ? ((targetPriceNum - averagePurchasePrice) / averagePurchasePrice) * 100
     : null;
 
   const daysToTarget = Math.ceil((targetDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
@@ -120,6 +132,14 @@ export default function TargetPriceScreen() {
           <Text className="text-base text-gray-400 mt-1 font-medium">{symbol}</Text>
         </View>
 
+        {/* Average purchase price (CMP) info */}
+        <View className="flex-row justify-between items-center bg-gray-50 p-4 rounded-xl mb-4">
+          <Text className="text-sm font-medium text-gray-500">{t("buy-price")}</Text>
+          <Text className="text-lg font-bold text-gray-800">
+            {formatCurrency(averagePurchasePrice, 0)}
+          </Text>
+        </View>
+
         {/* Current price info */}
         <View className="flex-row justify-between items-center bg-gray-50 p-4 rounded-xl mb-4">
           <Text className="text-sm font-medium text-gray-500">{t("current-price")}</Text>
@@ -135,7 +155,7 @@ export default function TargetPriceScreen() {
             className="border border-gray-200 rounded-xl p-4 text-2xl font-bold text-gray-900 bg-gray-50 text-end"
             value={targetPrice}
             onChangeText={setTargetPrice}
-            placeholder={formatCurrency(currentPrice, 0)}
+            placeholder={formatCurrency(averagePurchasePrice || currentPrice, 0)}
             placeholderTextColor="#d1d5db"
             keyboardType="decimal-pad"
           />
@@ -215,7 +235,6 @@ export default function TargetPriceScreen() {
               onPress={handleClear}
             >
               <Feather name="trash-2" size={16} color="#FF3B30" />
-              {/* <Text className="text-[#FF3B30] font-semibold text-sm">{t("clear-target")}</Text> */}
             </TouchableOpacity>
           )}
           <TouchableOpacity
