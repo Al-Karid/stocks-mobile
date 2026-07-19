@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Alert, TouchableOpacity, Platform } from "react-native";
+import { View, Text, Alert, TouchableOpacity, Platform, LayoutAnimation } from "react-native";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { router } from "expo-router";
 import { Portfolio } from "@/types/portfolio";
@@ -65,6 +65,7 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
       return;
     }
 
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     Alert.alert(name.toUpperCase(), "", [
       { text: t("rename"), onPress: onRename },
       {
@@ -97,64 +98,84 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
 
   return (
     <TouchableOpacity
-      className="bg-white rounded-2xl p-4 mb-3 elevation-1"
+      className="rounded-3xl p-5 mb-4 border border-white/30 bg-gray-200/30 backdrop-blur-sm"
       style={{
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.04,
-        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 16,
+        elevation: 6,
       }}
-      onPress={() =>
-        router.push({ pathname: "/portfolio/holdings", params: { portfolioId: id } })
-      }
+      onPress={() => {
+        provideHapticFeedback();
+        router.push({ pathname: "/portfolio/holdings", params: { portfolioId: id } });
+      }}
       onLongPress={() => {
         provideHapticFeedback();
         onPress();
       }}
-      activeOpacity={0.7}
+      activeOpacity={0.85}
     >
-      {/* Top row: name badge + heart + trend icon */}
-      <View className="flex-row items-center">
-        <View className="bg-black/5 px-2 py-1 rounded-md">
-          <Text className="text-[13px] font-bold text-gray-800 tracking-wider">
+      {/* Header row: name + star → performance pill */}
+      <View className="flex-row items-center mb-4">
+        <View className="flex-row items-center gap-2 flex-1">
+          <Text className="text-[15px] font-extrabold text-[#171717] tracking-tight">
             {name.toUpperCase()}
           </Text>
+          {portfolio.isDefault && (
+            <View className="bg-black px-2 py-0.5 rounded-full">
+              <Feather name="star" size={10} color="white" />
+            </View>
+          )}
         </View>
-        {portfolio.isDefault && (
-          <Feather name="heart" size={14} color="#000" className="ml-1.5" />
-        )}
-        <View className="flex-1" />
-        <View className={`flex-row items-center gap-1 ${isPositive ? "" : ""}`}>
+        <View
+          className={`flex-row items-center gap-1 px-2 py-1 rounded-full ${
+            isPositive
+              ? "bg-green-300/30 border border-green-300/30"
+              : "bg-red-300/30 border border-red-300/30"
+          }`}
+          style={{
+            shadowColor: isPositive ? "#22c55e" : "#ef4444",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.15,
+            shadowRadius: 6,
+            elevation: 4,
+          }}
+        >
           <Feather
             name={isPositive ? "trending-up" : "trending-down"}
-            size={16}
+            size={12}
             color={isPositive ? "#16a34a" : "#dc2626"}
           />
-        </View>
-      </View>
-
-      {/* Bottom row: holdings count + gain/loss + performance pill */}
-      <View className="flex-row items-center mt-3">
-        <Text className="text-xs text-gray-500">
-          {holdings?.length ?? 0} {t("holdings").toLowerCase()}
-        </Text>
-        <View className="flex-1" />
-        <Text className="text-sm font-semibold text-gray-700 mr-2">
-          {formatCurrency(totalGainLoss ?? 0)}
-        </Text>
-        <View
-          className={`px-2 py-1 rounded-md ${
-            isPositive ? "bg-green-50" : "bg-red-50"
-          }`}
-        >
           <Text
-            className={`text-xs font-semibold ${
-              isPositive ? "text-green-600" : "text-red-600"
+            className={`text-[11px] font-bold ${
+              isPositive ? "text-green-700" : "text-red-700"
             }`}
           >
             {formatPercentage(gainLossPercentage, 2)}
           </Text>
         </View>
+      </View>
+
+      {/* Divider */}
+      <View className="h-px bg-black/10 mb-4" />
+
+      {/* Bottom row: holdings count + total gain/loss */}
+      <View className="flex-row items-center justify-between">
+        <View className="flex-row items-center gap-1.5">
+          <View className="w-8 h-8 rounded-full border border-white/30 bg-gray-200/30 backdrop-blur-sm items-center justify-center">
+            <Text className="text-[11px] font-bold text-[#171717]">
+              {holdings?.length ?? 0}
+            </Text>
+          </View>
+          <Text className="text-[13px] font-medium text-[#404040]">
+            {t("holdings").toLowerCase()}
+          </Text>
+        </View>
+
+        <Text className="text-[15px] font-semibold text-[#171717]">
+          {formatCurrency(totalGainLoss ?? 0)}
+        </Text>
       </View>
     </TouchableOpacity>
   );
