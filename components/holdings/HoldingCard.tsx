@@ -118,9 +118,9 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
   const cmpChipColor = cmpToCurrentIsPositive ? "#16a34a" : "#dc2626";
 
   return (
-    <TouchableOpacity onLongPress={() => onLongPress()} activeOpacity={0.4}>
+    <TouchableOpacity onLongPress={() => onLongPress()} activeOpacity={0.4} className="border border-gray-200 rounded-xl bg-white mb-2">
       {/* CARD */}
-      <View className="bg-gray-50 rounded-xl p-5 mb-2.5">
+      <View className="rounded-xl p-5 mb-0">
         
         {/* HEADER — tap to expand/collapse */}
         <TouchableOpacity onPress={toggleDetails} activeOpacity={0.7}>
@@ -353,11 +353,7 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
                     <Feather name="target" size={13} color="#6b7280" />
                     <Text className="text-[12px] text-gray-500">{t("expected-gain")}</Text>
                   </View>
-                  <Text
-                    className="text-sm font-extrabold"
-                    style={{ color: expectedGain >= 0 ? "#16a34a" : "#dc2626" }}
-                  >
-                    {expectedGain >= 0 ? "+" : ""}
+                  <Text className="text-sm font-extrabold text-[#6b7280]">
                     {formatCurrency(expectedGain, 0)}
                   </Text>
                 </View>

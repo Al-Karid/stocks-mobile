@@ -28,6 +28,18 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
 
   const isPositive = isPositiveNumber(totalGainLoss);
 
+  const totalExpectedGain = holdings
+    .filter((h) => h.targetPrice != null)
+    .reduce((sum, h) => ((h.targetPrice! - h.averagePrice) * h.quantity) + sum, 0);
+  const hasExpectedGain = holdings.some((h) => h.targetPrice != null);
+
+  // Gauge: where does current performance sit relative to expected gain?
+  const currentVal = Math.abs(totalGainLoss ?? 0);
+  const targetVal = Math.abs(totalExpectedGain);
+  const totalSpan = currentVal + targetVal;
+  const currentSegment = totalSpan > 0 ? (currentVal / totalSpan) * 100 : 0;
+  const targetSegment = totalSpan > 0 ? (targetVal / totalSpan) * 100 : 0;
+
   const onPress = () => {
     if (Platform.OS === "android") {
       const options = [t("rename"), t("make-default"), t("delete"), t("cancel")];
@@ -39,25 +51,17 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
         (selectedIndex?: number) => {
           if (selectedIndex === undefined) return;
           switch (selectedIndex) {
-            case 0:
-              onRename();
-              break;
+            case 0: onRename(); break;
             case 1:
               if (portfolio.isDefault) {
                 Alert.alert(t("default-portfolio"), t("this-portfolio-is-already-set-as-default"));
-              } else {
-                onMakeDefault();
-              }
+              } else { onMakeDefault(); }
               break;
             case destructiveButtonIndex:
-              Alert.alert(
-                t("delete-portfolio"),
-                t("are-you-sure-you-want-to-delete-name", { name }),
-                [
-                  { text: t("cancel"), style: "cancel" },
-                  { text: t("delete"), style: "destructive", onPress: onDelete },
-                ]
-              );
+              Alert.alert(t("delete-portfolio"), t("are-you-sure-you-want-to-delete-name", { name }), [
+                { text: t("cancel"), style: "cancel" },
+                { text: t("delete"), style: "destructive", onPress: onDelete },
+              ]);
               break;
           }
         }
@@ -73,23 +77,16 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
         onPress: () => {
           if (portfolio.isDefault) {
             Alert.alert(t("default-portfolio"), t("this-portfolio-is-already-set-as-default"));
-          } else {
-            onMakeDefault();
-          }
+          } else { onMakeDefault(); }
         },
       },
       {
-        text: t("delete"),
-        style: "destructive",
+        text: t("delete"), style: "destructive",
         onPress: () => {
-          Alert.alert(
-            t("delete-portfolio"),
-            t("are-you-sure-you-want-to-delete-name", { name }),
-            [
-              { text: t("cancel"), style: "cancel" },
-              { text: t("delete"), style: "destructive", onPress: onDelete },
-            ]
-          );
+          Alert.alert(t("delete-portfolio"), t("are-you-sure-you-want-to-delete-name", { name }), [
+            { text: t("cancel"), style: "cancel" },
+            { text: t("delete"), style: "destructive", onPress: onDelete },
+          ]);
         },
       },
       { text: t("cancel"), style: "cancel", isPreferred: true },
@@ -98,14 +95,7 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
 
   return (
     <TouchableOpacity
-      className="rounded-2xl p-5 mb-4 border border-gray-200 bg-white"
-      style={{
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 16,
-        elevation: 6,
-      }}
+      className="rounded-2xl p-6 mb-2 border border-gray-200 bg-white"
       onPress={() => {
         provideHapticFeedback();
         router.push({ pathname: "/portfolio/holdings", params: { portfolioId: id } });
@@ -116,65 +106,87 @@ const PortfolioCard: React.FC<PortfolioProps> = ({
       }}
       activeOpacity={0.85}
     >
-      <View className="flex-row items-center mb-4">
-        <View className="flex-row items-center gap-2 flex-1">
-          <Text className="text-[15px] font-extrabold text-[#171717] tracking-tight">
-            {name.toUpperCase()}
-          </Text>
-          {portfolio.isDefault && (
-            <View className="bg-black px-2 py-0.5 rounded-full">
-              <Feather name="star" size={10} color="white" />
-            </View>
-          )}
-        </View>
-        <View
-          className={`flex-row items-center gap-1 px-2 py-1 rounded-full ${
-            isPositive
-              ? "bg-green-300/30 border border-green-300/30"
-              : "bg-red-300/30 border border-red-300/30"
-          }`}
-          style={{
-            shadowColor: isPositive ? "#22c55e" : "#ef4444",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.15,
-            shadowRadius: 6,
-            elevation: 4,
-          }}
-        >
-          <Feather
-            name={isPositive ? "trending-up" : "trending-down"}
-            size={12}
-            color={isPositive ? "#16a34a" : "#dc2626"}
-          />
-          <Text
-            className={`text-[11px] font-bold ${
-              isPositive ? "text-green-700" : "text-red-700"
-            }`}
-          >
-            {formatPercentage(gainLossPercentage, 2)}
+      {/* Header: name + badges */}
+      <View className="flex-row items-center gap-2 mb-5">
+        <Text className="text-[17px] font-extrabold text-[#171717] tracking-tight flex-1">
+          {name.toUpperCase()}
+        </Text>
+        {portfolio.isDefault && (
+          <View className="bg-black px-2.5 py-1 rounded-full">
+            <Feather name="star" size={11} color="white" />
+          </View>
+        )}
+        <View className="bg-gray-100 px-2.5 py-1 rounded-full">
+          <Text className="text-[11px] font-bold text-[#404040]">
+            {holdings?.length ?? 0}
           </Text>
         </View>
       </View>
 
-      {/* Divider */}
-      <View className="h-px bg-black/10 mb-4" />
-
-      {/* Bottom row: holdings count + total gain/loss */}
-      <View className="flex-row items-center justify-between">
-        <View className="flex-row items-center gap-1.5">
-          <View className="w-8 h-8 rounded-full border border-white/30 bg-gray-200/30 backdrop-blur-sm items-center justify-center">
-            <Text className="text-[11px] font-bold text-[#171717]">
-              {holdings?.length ?? 0}
-            </Text>
-          </View>
-          <Text className="text-[13px] font-medium text-[#404040]">
-            {t("holdings").toLowerCase()}
-          </Text>
+      {/* Gauge bar: always visible */}
+      <View>
+        <View className="h-2 bg-gray-100 rounded-full w-full overflow-hidden flex-row mb-3">
+          {currentSegment > 0 && (
+            <View
+              style={{
+                width: `${currentSegment}%`,
+                backgroundColor: isPositive ? "#22c55e" : "#ef4444",
+                borderTopLeftRadius: 4,
+                borderBottomLeftRadius: 4,
+              }}
+            />
+          )}
+          {targetSegment > 0 && (
+            <View
+              style={{
+                width: `${targetSegment}%`,
+                backgroundColor: "#d1d5db",
+                borderTopRightRadius: 4,
+                borderBottomRightRadius: 4,
+              }}
+            />
+          )}
         </View>
 
-        <Text className="text-[15px] font-semibold text-[#171717]">
-          {formatCurrency(totalGainLoss ?? 0)}
-        </Text>
+        {/* Gauge labels: perf rate | current gain | target gain */}
+        <View className="flex-row justify-between items-center">
+          <View className="flex-row items-center gap-1">
+            <Feather
+              name={isPositive ? "trending-up" : "trending-down"}
+              size={13}
+              color={(totalGainLoss ?? 0) !== 0 ? (isPositive ? "#16a34a" : "#dc2626") : "#d1d5db"}
+            />
+            <Text
+              className={`text-[13px] font-bold ${
+                (totalGainLoss ?? 0) !== 0
+                  ? isPositive ? "text-green-600" : "text-red-600"
+                  : "text-gray-300"
+              }`}
+            >
+              {(totalGainLoss ?? 0) !== 0
+                ? formatPercentage(gainLossPercentage, 1)
+                : "0%"}
+            </Text>
+          </View>
+          <View className="flex-row items-center gap-1">
+            <Feather
+              name={isPositive ? "arrow-up" : "arrow-down"}
+              size={12}
+              color={(totalGainLoss ?? 0) !== 0 ? (isPositive ? "#16a34a" : "#dc2626") : "#d1d5db"}
+            />
+            <Text className="text-[13px] font-semibold text-[#171717]">
+              {formatCurrency(Math.abs(totalGainLoss ?? 0), 0)}
+            </Text>
+          </View>
+          <View className="flex-row items-center gap-1">
+            <Feather name="target" size={13} color="#9ca3af" />
+            <Text className="text-[13px] font-bold text-[#6b7280]">
+              {hasExpectedGain
+                ? formatCurrency(totalExpectedGain, 0)
+                : "0 XOF"}
+            </Text>
+          </View>
+        </View>
       </View>
     </TouchableOpacity>
   );
