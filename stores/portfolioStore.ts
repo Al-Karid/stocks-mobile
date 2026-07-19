@@ -112,6 +112,7 @@ export const usePortfolioStore = create<PortfolioStore>((set) => ({
   setHoldingTarget: async (request: HoldingTargetRequest) => {
     await updateHoldingTarget(request.portfolioId, request.symbol, request.targetPrice, request.targetDate);
     const holdings = await fetchHoldings(request.portfolioId);
-    set({ holdings });
+    const portfolios = await getPortfolios();
+    set({ holdings, portfolios });
   },
 }));
