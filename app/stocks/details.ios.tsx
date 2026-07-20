@@ -10,6 +10,7 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { useTranslation } from "react-i18next";
 import { Host, Button, HStack } from "@expo/ui/swift-ui";
 import { buttonStyle, buttonBorderShape, controlSize, labelStyle, disabled as disabledModifier } from "@expo/ui/swift-ui/modifiers";
+import StockHeroCard from "@/components/stocks/StockHeroCard";
 
 export default function StocksDetailsScreen() {
   const { t } = useTranslation();
@@ -54,46 +55,7 @@ export default function StocksDetailsScreen() {
   return (
     <View className="flex-1 px-5 pt-5 pb-16 gap-4">
         {/* ── Hero card ── */}
-        <View className="rounded-3xl px-5 py-6 items-center border border-white bg-gray-200/30 backdrop-blur-sm">
-          <Text className="text-xs font-semibold text-[#a3a3a3] uppercase tracking-widest mb-1">
-            {stock?.symbol}
-          </Text>
-          <Text className="text-base font-bold text-[#171717] text-center mb-4">
-            {stock?.title}
-          </Text>
-
-          <Text className="text-4xl font-extrabold text-[#171717] mb-2">
-            {formatCurrency(stock?.currentPrice || 0)}
-          </Text>
-
-          <View
-            className={`flex-row items-center px-3 py-1.5 rounded-full ${
-              isPositive
-                ? "bg-green-500"
-                : isNegative
-                ? "bg-red-500"
-                : "bg-gray-400"
-            }`}
-          >
-            <Feather
-              name={
-                isPositive
-                  ? "arrow-up-right"
-                  : isNegative
-                  ? "arrow-down-right"
-                  : "minus"
-              }
-              size={14}
-              color="white"
-            />
-            <Text className="text-white text-sm font-bold ml-1">
-              {formatPercentage(stock?.percentageChange ?? 0, 2)}
-            </Text>
-            <Text className="text-white/80 text-xs ml-1">
-              ({formatCurrency((stock?.currentPrice ?? 0) - (stock?.previousClosePrice ?? 0))})
-            </Text>
-          </View>
-        </View>
+        <StockHeroCard stock={stock} />
 
         {/* ── Price details card ── */}
         <View className="rounded-2xl px-5 py-4 border border-white bg-gray-200/30 backdrop-blur-sm gap-3">
