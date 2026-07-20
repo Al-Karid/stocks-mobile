@@ -1,6 +1,7 @@
 // components/HoldingCard.tsx
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, TouchableOpacity, Animated } from "react-native";
+import { router } from "expo-router";
 import { Holding } from "@/types/portfolio";
 import { Feather } from "@expo/vector-icons";
 import { formatCurrency, formatPercentage } from "@/utils/numberUtils";
@@ -117,35 +118,45 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
   const cmpChipBg = cmpToCurrentIsPositive ? "#dcfce7" : "#fce4ec";
   const cmpChipColor = cmpToCurrentIsPositive ? "#16a34a" : "#dc2626";
 
+  const handleNavigateToStockDetails = () => {
+    router.push({
+      pathname: "/stocks/details",
+      params: { symbol: symbol.trim() },
+    });
+  };
+
   return (
-    <TouchableOpacity onLongPress={() => onLongPress()} activeOpacity={0.4} className="border border-gray-200 rounded-xl bg-white mb-2">
+    <TouchableOpacity
+      onLongPress={handleNavigateToStockDetails}
+      onPress={toggleDetails}
+      activeOpacity={0.7}
+      className="border border-gray-200 rounded-xl bg-white mb-2"
+    >
       {/* CARD */}
       <View className="rounded-xl p-5 mb-0">
         
         {/* HEADER — tap to expand/collapse */}
-        <TouchableOpacity onPress={toggleDetails} activeOpacity={0.7}>
-          <View className="flex-row justify-between items-center mb-3">
-            {/* Left: name + symbol */}
-            <View className="flex-1">
-              <Text className="text-[10px] text-gray-500">{name}</Text>
-              <Text className="text-lg font-bold text-[#123456]">{symbol.trim()}</Text>
-            </View>
-
-            {/* Right: gain/loss indicator — fades out when expanded */}
-            <Animated.View className="items-end" style={{ opacity: trendOpacity }}>
-              <View className="flex-row items-center gap-1">
-                <Feather
-                  name={isGain ? "trending-up" : "trending-down"}
-                  size={20}
-                  color={gainColor}
-                />
-              </View>
-              <Text className="text-sm font-semibold mt-1" style={{ color: gainColor }}>
-                {formatPercentage(gainLossPercentage, 2)} ({formatCurrency(gainLoss, 0)})
-              </Text>
-            </Animated.View>
+        <View className="flex-row justify-between items-center mb-3">
+          {/* Left: name + symbol */}
+          <View className="flex-1">
+            <Text className="text-[10px] text-gray-500">{name}</Text>
+            <Text className="text-lg font-bold text-[#123456]">{symbol.trim()}</Text>
           </View>
-        </TouchableOpacity>
+
+          {/* Right: gain/loss indicator — fades out when expanded */}
+          <Animated.View className="items-end" style={{ opacity: trendOpacity }}>
+            <View className="flex-row items-center gap-1">
+              <Feather
+                name={isGain ? "trending-up" : "trending-down"}
+                size={20}
+                color={gainColor}
+              />
+            </View>
+            <Text className="text-sm font-semibold mt-1" style={{ color: gainColor }}>
+              {formatPercentage(gainLossPercentage, 2)} ({formatCurrency(gainLoss, 0)})
+            </Text>
+          </Animated.View>
+        </View>
 
         {/* DETAILS SECTION — collapsible */}
         <Animated.View
