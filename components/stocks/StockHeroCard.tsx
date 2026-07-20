@@ -34,6 +34,23 @@ const StockHeroCard: React.FC<StockHeroCardProps> = ({ stock }) => {
 
   const lineColor = isPositive ? "#16a34a" : isNegative ? "#dc2626" : "#6b7280";
 
+  const startDate =
+    sorted.length > 0
+      ? new Date(sorted[0].date).toLocaleDateString("fr-FR", {
+          day: "2-digit",
+          month: "short",
+          year: "2-digit",
+        })
+      : "";
+  const endDate =
+    sorted.length > 0
+      ? new Date(sorted[sorted.length - 1].date).toLocaleDateString("fr-FR", {
+          day: "numeric",
+          month: "short",
+          year: "2-digit",
+        })
+      : "";
+
   const linePoints =
     sorted.length > 1
       ? sorted
@@ -48,7 +65,6 @@ const StockHeroCard: React.FC<StockHeroCardProps> = ({ stock }) => {
           .join(" ")
       : "";
 
-  // Area path: same line points + bottom-right + bottom-left to close the shape
   const areaPath =
     sorted.length > 1
       ? `M ${linePoints} L ${chartWidth},${chartHeight} L 0,${chartHeight} Z`
@@ -67,7 +83,7 @@ const StockHeroCard: React.FC<StockHeroCardProps> = ({ stock }) => {
             right: -horizontalPadding,
           }}
         >
-          <BlurView intensity={8} tint="light" style={{ flex: 1 }}>
+          <BlurView intensity={20} tint="light" style={{ flex: 1 }}>
             <Svg
               height="100%"
               width="100%"
@@ -76,23 +92,30 @@ const StockHeroCard: React.FC<StockHeroCardProps> = ({ stock }) => {
             >
               <Defs>
                 <LinearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                  <Stop offset="0" stopColor={lineColor} stopOpacity={0.35} />
+                  <Stop offset="0" stopColor={lineColor} stopOpacity={0.18} />
                   <Stop offset="1" stopColor={lineColor} stopOpacity={0} />
                 </LinearGradient>
               </Defs>
-              {/* Gradient area under the line */}
               <Path d={areaPath} fill="url(#areaGrad)" />
-              {/* Line on top */}
               <Polyline
                 points={linePoints}
                 fill="none"
                 stroke={lineColor}
-                strokeWidth={1.5}
+                strokeWidth={1}
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                opacity={0.35}
               />
             </Svg>
           </BlurView>
+
+          {/* Date labels under the blurred chart */}
+          {sorted.length > 0 && (
+            <View className="flex-row justify-between px-5 absolute bottom-1 left-3 right-3">
+              <Text className="text-[8px] text-gray-300">{startDate}</Text>
+              <Text className="text-[8px] text-gray-300">{endDate}</Text>
+            </View>
+          )}
         </View>
       )}
 
