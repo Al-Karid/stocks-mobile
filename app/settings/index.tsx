@@ -71,10 +71,11 @@ export default function SettingsScreen() {
                             await db.runAsync("DROP TABLE IF EXISTS portfolios");
                             await db.runAsync("DROP TABLE IF EXISTS alerts");
                             await db.runAsync("DROP TABLE IF EXISTS notifications");
-                            await db.runAsync("DROP TABLE IF EXISTS settings");
                             await db.runAsync("DROP TABLE IF EXISTS stocks");
-                            await db.runAsync("DROP TABLE IF EXISTS watchlist");
-                            console.log("🗑️ All tables dropped");
+                            await db.runAsync("DROP TABLE IF EXISTS stock_history");
+                            await db.runAsync("DROP TABLE IF EXISTS watchlists");
+                            await db.runAsync("DROP TABLE IF EXISTS settings");
+                            console.log("🗑️ All tables dropped, init flag cleared");
                             // Reload the app to trigger re-initialization
                             await Updates.reloadAsync();
                         } catch (err) {

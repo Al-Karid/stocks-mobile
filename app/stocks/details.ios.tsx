@@ -162,6 +162,13 @@ export default function StocksDetailsScreen() {
             label={t("low")}
             value={stock?.low ? formatCurrency(stock.low) : "N/A"}
           />
+          <View className="h-px bg-white/20" />
+          {stock?.rsi != null && (
+            <DetailRow
+              label={t("rsi")}
+              value={stock.rsi.toFixed(2)}
+            />
+          )}
         </View>
 
         {/* ── Action buttons ── */}

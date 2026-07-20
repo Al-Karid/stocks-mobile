@@ -155,7 +155,7 @@ export default function Layout() {
                     sheetGrabberVisible: false,
                     contentStyle: { backgroundColor: "transparent" },
                     headerStyle: { backgroundColor: "transparent" },
-                    sheetAllowedDetents: [0.8],
+                    sheetAllowedDetents: [0.85],
                     sheetInitialDetentIndex: 0,
                     headerTransparent: false,
                     sheetLargestUndimmedDetentIndex: -1,

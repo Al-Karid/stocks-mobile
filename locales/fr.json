@@ -126,5 +126,6 @@
   "in-days": "{{count}} jours",
   "in-days_one": "{{count}} jour",
   "in-days_other": "{{count}} jours",
-  "expected-gain": "Gain attendu"
+  "expected-gain": "Gain attendu",
+  "rsi": "RSI"
 }

@@ -1,3 +1,8 @@
+export interface StockHistoryEntry {
+  date: string;
+  closing: number;
+}
+
 export interface Stock {
   id: number;
   code: string;
@@ -14,6 +19,7 @@ export interface Stock {
   low: number;
   updatedAt: string;
   isInWatchlist?: boolean;
+  rsi?: number | null;
 }
 
 export interface APIStock {
@@ -29,4 +35,6 @@ export interface APIStock {
   high: number;
   low: number;
   updated_at: string;
+  rsi?: number | null;
+  history?: StockHistoryEntry[];
 }

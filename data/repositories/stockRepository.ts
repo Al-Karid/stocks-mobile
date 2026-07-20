@@ -1,5 +1,5 @@
 import { dbPromise } from "@/data/providers/sqlite";
-import { Stock } from "@/types/stock";
+import { Stock, StockHistoryEntry } from "@/types/stock";
 import { Watchlist } from "@/types/watchlist";
 
 export const useStockRepository = () => {
@@ -18,6 +18,16 @@ export const useStockRepository = () => {
       [symbol.trim()]
     );
     return stock;
+  };
+
+  const fetchStockHistory = async (symbol: string): Promise<StockHistoryEntry[]> => {
+    if (!symbol) return [];
+    const db = await dbPromise;
+    const rows = await db.getAllAsync<StockHistoryEntry>(
+      "SELECT date, closing FROM stock_history WHERE symbol = ? ORDER BY date DESC",
+      [symbol.trim()]
+    );
+    return rows;
   };
 
   const fetchPalmares = async (): Promise<Stock[]> => {
@@ -46,9 +56,8 @@ export const useStockRepository = () => {
         "UPDATE stocks SET isInWatchlist = TRUE WHERE trim(symbol) = ?",
         [symbol.trim()]
       );
-  
+
       console.log("✅ Added to watchlist: ", symbol.trim());
-      // console.log("Updated stocks table: ", up);
     } catch (error) {
       console.error("⚠️ Error adding to watchlist:", error);
     }
@@ -59,14 +68,14 @@ export const useStockRepository = () => {
     const watchlist = await db.getAllAsync<Watchlist>("SELECT symbol FROM watchlists");
     return watchlist;
   };
-  
+
   const updateWatchlist = async (): Promise<void> => {
     const watchlist = await getWatchlist();
     watchlist.forEach((stock) => {
       addToWatchlist(stock.symbol!);
-    })
+    });
   };
-  
+
   const removeFromWatchlist = async (symbol: string) => {
     const db = await dbPromise;
     await db.runAsync("DELETE FROM watchlists WHERE trim(symbol) = ?", [
@@ -78,28 +87,21 @@ export const useStockRepository = () => {
     );
     console.log("‼️ Stock removed from watchlist: ", symbol.trim());
   };
-  
+
   const getWatchlistAsStocks = async (): Promise<Stock[]> => {
     try {
       const db = await dbPromise;
-  
-      // Fetch all watchlist symbols
+
       const watchlist = await db.getAllAsync<Watchlist>("SELECT symbol FROM watchlists");
-      // console.log("Watchlist symbols: ", watchlist);
-  
-      // Fetch all stock data
+
       const stocks = await db.getAllAsync<Stock>("SELECT * FROM stocks");
-      // console.log("All stocks: ", stocks);
-  
-      // Filter stocks that are in the watchlist
+
       const stocksInWatchlist = stocks.filter((stock) =>
         watchlist.some(
           (watchedStock) => watchedStock.symbol?.trim() === stock.symbol.trim()
         )
       );
-  
-      // console.log("Stocks in Watchlist: ", stocksInWatchlist[0]);
-  
+
       return stocksInWatchlist;
     } catch (error) {
       console.error("⚠️ Error fetching watchlist:", error);
@@ -110,6 +112,7 @@ export const useStockRepository = () => {
   return {
     findStock,
     fetchStocks,
+    fetchStockHistory,
     fetchPalmares,
     addToWatchlist,
     removeFromWatchlist,
