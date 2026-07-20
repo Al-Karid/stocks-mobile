@@ -136,7 +136,7 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
       <View className="rounded-xl p-5 mb-0">
         
         {/* HEADER — tap to expand/collapse */}
-        <View className="flex-row justify-between items-center mb-3">
+        <View className="flex-row justify-between items-center">
           {/* Left: name + symbol */}
           <View className="flex-1">
             <Text className="text-[10px] text-gray-500">{name}</Text>
@@ -267,17 +267,6 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
           onPress={onTargetPress}
           activeOpacity={0.7}
         >
-          {/* Header row */}
-          <View className="flex-row justify-between items-center mb-2.5">
-            {hasTarget && (
-            <View className="flex-row items-center gap-1.5">
-              <Feather name="target" size={13} color="#6b7280" />
-              <Text className="text-xs font-bold uppercase tracking-wider text-[#6b7280]">
-                {t("target")}
-              </Text>
-            </View>
-            )}
-          </View>
 
           {hasTarget ? (
             <>
@@ -321,11 +310,11 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
                     className="flex-row items-center gap-0.5 px-1.5 py-0.5 rounded-full"
                     style={{ backgroundColor: targetChipBg }}
                   >
-                    <Feather
+                    {/* <Feather
                       name={currentToTargetIsPositive ? "trending-up" : "trending-down"}
                       size={10}
                       color={targetChipColor}
-                    />
+                    /> */}
                     <Text className="text-[10px] font-bold" style={{ color: targetChipColor }}>
                       {formatPercentage(targetReturn!, 1)}
                     </Text>
@@ -369,7 +358,7 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
             </>
           ) : (
             <View className="flex-row items-center gap-2 py-1.5">
-              <Feather name="plus-circle" size={16} color="#d1d5db" />
+              <Feather name="target" size={16} color="#d1d5db" />
               <Text className="text-[13px] text-[#aaa] italic">{t("set-target")}</Text>
             </View>
           )}
