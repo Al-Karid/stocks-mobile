@@ -280,7 +280,7 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
                   <Text className="text-[9px] uppercase text-gray-400 mt-0.5 tracking-wider">{t('cmp')}</Text>
                 </View>
 
-                {/* Track */}
+                {/* Track + target perf rate centered */}
                 <View className="flex-1 items-center pt-1.5 gap-1">
                   <View className="h-1.5 bg-gray-200 rounded-full w-full overflow-hidden flex-row">
                     {leftSegmentWidth > 0 && (
@@ -305,35 +305,19 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
                     )}
                   </View>
 
-                  {/* Percentage chips */}
-                  <View className="flex-row justify-center gap-1.5 flex-wrap">
-                    <View
-                      className="flex-row items-center gap-0.5 px-1.5 py-0.5 rounded-full"
-                      style={{ backgroundColor: cmpChipBg }}
-                    >
-                      <Feather
-                        name={cmpToCurrentIsPositive ? "trending-up" : "trending-down"}
-                        size={10}
-                        color={cmpChipColor}
-                      />
-                      <Text className="text-[10px] font-bold" style={{ color: cmpChipColor }}>
-                        {formatPercentage(gainLossPercentage, 1)}
-                      </Text>
-                    </View>
-
-                    <View
-                      className="flex-row items-center gap-0.5 px-1.5 py-0.5 rounded-full"
-                      style={{ backgroundColor: targetChipBg }}
-                    >
-                      <Feather
-                        name={currentToTargetIsPositive ? "trending-up" : "trending-down"}
-                        size={10}
-                        color={targetChipColor}
-                      />
-                      <Text className="text-[10px] font-bold" style={{ color: targetChipColor }}>
-                        {formatPercentage(targetReturn!, 1)}
-                      </Text>
-                    </View>
+                  {/* Target perf chip centered under gauge */}
+                  <View
+                    className="flex-row items-center gap-0.5 px-1.5 py-0.5 rounded-full"
+                    style={{ backgroundColor: targetChipBg }}
+                  >
+                    <Feather
+                      name={currentToTargetIsPositive ? "trending-up" : "trending-down"}
+                      size={10}
+                      color={targetChipColor}
+                    />
+                    <Text className="text-[10px] font-bold" style={{ color: targetChipColor }}>
+                      {formatPercentage(targetReturn!, 1)}
+                    </Text>
                   </View>
                 </View>
 
@@ -342,7 +326,7 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
                   <Text className="text-[13px] font-bold text-gray-700">
                     {formatCurrency(targetPrice!, 0)}
                   </Text>
-                  <Text className="text-[9px] uppercase text-gray-400 mt-0.5 tracking-wider">Target</Text>
+                  <Text className="text-[9px] uppercase text-gray-400 mt-0.5 tracking-wider">{t("target")}</Text>
                 </View>
               </View>
 
