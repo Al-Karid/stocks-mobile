@@ -5,20 +5,14 @@ import {
   Text,
   Alert,
   StyleSheet,
-  Pressable,
   Switch,
   TouchableOpacity,
-  Platform,
 } from "react-native";
 import { globalCardStyles } from "@/styles/globalStyles";
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import {
-  Feather,
-  MaterialIcons,
-} from "@expo/vector-icons";
-import { router, useNavigation } from "expo-router";
+import { Feather } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { AlertData } from "@/types/alerts";
-import { Colors } from "@/styles/colors";
 import { Stock } from "@/types/stock";
 import { useAlertStore } from "@/stores/alertStore";
 import { useSettingsStore } from "@/stores/settingsStore";
@@ -45,41 +39,17 @@ const AlertsScreen: React.FC = () => {
   } = useSettingsStore();
 
   const stockSelectorRef = useRef<StockSelectorRef>(null);
-  const navigation = useNavigation();
 
   const [userCanAddAlert, setUserCanAddAlert] = useState(true);
   const [selectedStock, setSelectedStock] = useState<{ symbol: string; title: string } | null>(null);
+
   useEffect(() => {
-    if (userContraintCounts.maxAlerts === 0) {
-      setUserCanAddAlert(false);
-    } else {
-      setUserCanAddAlert(true);
-    }
+    setUserCanAddAlert(userContraintCounts.maxAlerts > 0);
   }, [userContraintCounts]);
 
   useEffect(() => {
-    const loadAlerts = async () => {
-      await fetchAlerts();
-    };
-    loadAlerts();
+    fetchAlerts();
   }, []);
-
-  useEffect(() => {
-    if (Platform.OS === "ios") {
-      navigation.setOptions({
-        headerRight: () => (
-          <TouchableOpacity onPress={() => stockSelectorRef.current?.open()}>
-            <MaterialIcons
-              style={{ marginRight: 5, marginTop: 0 }}
-              name="notification-add"
-              size={23}
-              color={Colors.headerBlue}
-            />
-          </TouchableOpacity>
-        ),
-      });
-    }
-  }, [navigation]);
 
   const handleDelete = (alert: AlertData) => {
     Alert.alert(alert.stockTitle!, t("delete-this-alert"), [
@@ -111,9 +81,7 @@ const AlertsScreen: React.FC = () => {
         if (index === 0) {
           router.push({
             pathname: "/alerts/form",
-            params: {
-              alertId: alert.id,
-            },
+            params: { alertId: alert.id },
           });
         } else if (index === 1) {
           handleDelete(alert);
@@ -123,24 +91,14 @@ const AlertsScreen: React.FC = () => {
   };
 
   const handleStockSelect = (stock: Stock) => {
-    if (Platform.OS === "android") {
-      setSelectedStock({ symbol: stock.symbol, title: stock.title });
-    } else {
-      router.push({
-        pathname: "/alerts/form",
-        params: {
-          stockSymbol: stock.symbol,
-          stockTitle: stock.title,
-        },
-      });
-    }
+    setSelectedStock({ symbol: stock.symbol, title: stock.title });
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1">
       <FlatList
         data={alertStore}
-        contentContainerStyle={{ paddingTop: 16 }}
+        contentContainerStyle={{ padding: 20, paddingTop: 8 }}
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
         keyExtractor={(item) => item.id.toString()}
@@ -149,25 +107,16 @@ const AlertsScreen: React.FC = () => {
           <TouchableOpacity onLongPress={() => openActionSheet(item)}>
             <View style={globalCardStyles.card}>
               <View style={styles.header}>
-                {/* <Text style={styles.stock}>{item.stockSymbol}</Text> */}
                 <Text style={styles.cardName}>{item.stockTitle}</Text>
-                {Platform.OS === "ios" ? (
-                  <Switch
-                    value={Boolean(item.enabled)}
-                    onValueChange={() => toggleAlertState(item.id)}
-                  />
-                ) : (
-                  <Switch
-                    value={Boolean(item.enabled)}
-                    onValueChange={() => toggleAlertState(item.id)}
-                    trackColor={{ false: "#ccc", true: "#000" }}
-                    thumbColor={item.enabled ? "#000" : "#f4f3f4"}
-                  />
-                )}
+                <Switch
+                  value={Boolean(item.enabled)}
+                  onValueChange={() => toggleAlertState(item.id)}
+                  trackColor={{ false: "#ccc", true: "#000" }}
+                  thumbColor={item.enabled ? "#000" : "#f4f3f4"}
+                />
               </View>
 
               <View style={styles.cardContent}>
-                {/* <Text style={styles.cardName}>{item.stockSymbol}</Text> */}
                 <Text
                   style={[
                     styles.cardCondition,
@@ -207,25 +156,22 @@ const AlertsScreen: React.FC = () => {
       />
 
       {/* Floating Action Button */}
-      {Platform.OS === "android" && (
-        <Fab
-          icon="plus"
-          onPress={() => stockSelectorRef.current?.open()}
-          disabled={!userCanAddAlert}
-        />
-      )}
+      <Fab
+        icon="plus"
+        onPress={() => stockSelectorRef.current?.open()}
+        disabled={!userCanAddAlert}
+        bottomOffset={16}
+      />
 
       <StockSelector ref={stockSelectorRef} onSelectStock={handleStockSelect} />
 
-      {/* Alert form bottom sheet (Android) */}
-      {Platform.OS === "android" && (
-        <AlertFormSheet
-          stockSymbol={selectedStock?.symbol ?? null}
-          stockTitle={selectedStock?.title ?? null}
-          isVisible={selectedStock !== null}
-          onClose={() => setSelectedStock(null)}
-        />
-      )}
+      {/* Alert form bottom sheet */}
+      <AlertFormSheet
+        stockSymbol={selectedStock?.symbol ?? null}
+        stockTitle={selectedStock?.title ?? null}
+        isVisible={selectedStock !== null}
+        onClose={() => setSelectedStock(null)}
+      />
     </View>
   );
 };
@@ -233,17 +179,10 @@ const AlertsScreen: React.FC = () => {
 export default AlertsScreen;
 
 const styles = StyleSheet.create({
-  container: { padding: 20, flex: 1, paddingTop: 8 },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    // marginBottom: 10,
-  },
-  stock: {
-    fontSize: 18,
-    fontWeight: "500",
-    color: "#123456",
   },
   cardContent: {
     flexDirection: "row",

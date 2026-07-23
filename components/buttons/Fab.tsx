@@ -9,6 +9,7 @@ interface FabProps {
   disabled?: boolean;
   color?: string;
   disabledColor?: string;
+  bottomOffset?: number;
 }
 
 const Fab: React.FC<FabProps> = ({
@@ -17,6 +18,7 @@ const Fab: React.FC<FabProps> = ({
   disabled = false,
   color = "black",
   disabledColor = "#ccc",
+  bottomOffset = 0,
 }) => {
   return (
     <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
@@ -25,7 +27,7 @@ const Fab: React.FC<FabProps> = ({
         onPress={onPress}
         style={[
           styles.fab,
-          { backgroundColor: disabled ? disabledColor : color },
+          { backgroundColor: disabled ? disabledColor : color, marginBottom: bottomOffset },
         ]}
       >
         <Feather
