@@ -4,6 +4,7 @@ import HoldingListing from "@/components/holdings/HoldingListing";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { provideHapticFeedback } from "@/utils/interactionUtils";
 import { usePortfolioStore } from "@/stores/portfolioStore";
+import { Holding } from "@/types/portfolio";
 import { Stock } from "@/types/stock";
 import { useTranslation } from "react-i18next";
 import StockSelector, {
@@ -11,6 +12,7 @@ import StockSelector, {
 } from "@/components/shared/StockSelector";
 import NewTransactionSheet from "@/components/transactions/NewTransactionSheet";
 import StockDetailsSheet from "@/components/stocks/StockDetailsSheet";
+import HoldingTargetSheet from "@/components/holdings/HoldingTargetSheet";
 import Fab from "@/components/buttons/Fab";
 
 export default function HoldingsScreen() {
@@ -20,14 +22,14 @@ export default function HoldingsScreen() {
   const { portfolioId } = useLocalSearchParams();
   const navigation = useNavigation();
 
-  const { holdings, getHoldings, portfolios, setHoldingTarget } =
-    usePortfolioStore();
+  const { holdings, getHoldings, portfolios } = usePortfolioStore();
 
   const [selectedTransactionStock, setSelectedTransactionStock] = useState<{
     symbol: string;
     title: string;
   } | null>(null);
   const [stockDetailsSymbol, setStockDetailsSymbol] = useState<string | null>(null);
+  const [targetHolding, setTargetHolding] = useState<Holding | null>(null);
 
   useEffect(() => {
     getHoldings(Number(portfolioId));
@@ -44,7 +46,6 @@ export default function HoldingsScreen() {
   };
 
   const handleStockSelect = (stock: Stock) => {
-    // Show transaction sheet instead of navigating
     setSelectedTransactionStock({ symbol: stock.symbol, title: stock.title });
   };
 
@@ -53,35 +54,52 @@ export default function HoldingsScreen() {
     setStockDetailsSymbol(symbol);
   };
 
+  const handleTargetPress = (holding: Holding) => {
+    provideHapticFeedback();
+    setTargetHolding(holding);
+  };
+
   return (
-      <View className="flex-1">
-        <HoldingListing
-          holdings={holdings}
-          onHoldingLongPress={handleHoldingLongPress}
-          onSaveTarget={setHoldingTarget}
-        />
+    <View className="flex-1">
+      <HoldingListing
+        holdings={holdings}
+        onHoldingLongPress={handleHoldingLongPress}
+        onTargetPress={handleTargetPress}
+      />
 
-        <StockSelector
-          ref={stockSelectorRef}
-          onSelectStock={handleStockSelect}
-        />
+      <StockSelector
+        ref={stockSelectorRef}
+        onSelectStock={handleStockSelect}
+      />
 
-        {/* Transaction sheet */}
-        <NewTransactionSheet
-          symbol={selectedTransactionStock?.symbol ?? null}
-          isVisible={selectedTransactionStock !== null}
-          onClose={() => setSelectedTransactionStock(null)}
-        />
+      {/* Transaction sheet */}
+      <NewTransactionSheet
+        symbol={selectedTransactionStock?.symbol ?? null}
+        isVisible={selectedTransactionStock !== null}
+        onClose={() => setSelectedTransactionStock(null)}
+      />
 
-        {/* Stock details sheet on long press */}
-        <StockDetailsSheet
-          symbol={stockDetailsSymbol}
-          isVisible={stockDetailsSymbol !== null}
-          onClose={() => setStockDetailsSymbol(null)}
-        />
+      {/* Stock details sheet on long press */}
+      <StockDetailsSheet
+        symbol={stockDetailsSymbol}
+        isVisible={stockDetailsSymbol !== null}
+        onClose={() => setStockDetailsSymbol(null)}
+      />
 
-        {/* New Transaction FAB */}
-        <Fab icon="plus" onPress={handleNewTransaction} />
-      </View>
+      {/* Target price sheet */}
+      <HoldingTargetSheet
+        isVisible={targetHolding !== null}
+        onClose={() => setTargetHolding(null)}
+        portfolioId={targetHolding?.portfolioId ?? 0}
+        symbol={targetHolding?.symbol ?? ""}
+        name={targetHolding?.name ?? ""}
+        currentPrice={targetHolding?.currentPrice ?? 0}
+        existingTargetPrice={targetHolding?.targetPrice ?? null}
+        existingTargetDate={targetHolding?.targetDate ?? null}
+      />
+
+      {/* New Transaction FAB */}
+      <Fab icon="plus" onPress={handleNewTransaction} />
+    </View>
   );
 }

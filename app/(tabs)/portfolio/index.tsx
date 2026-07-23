@@ -9,7 +9,6 @@ import { provideHapticFeedback } from "@/utils/interactionUtils";
 import { usePortfolioStore } from "@/stores/portfolioStore";
 import { useNavigation } from "expo-router";
 import { Portfolio } from "@/types/portfolio";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useSettingsStore } from "@/stores/settingsStore";
 import Fab from "@/components/buttons/Fab";
@@ -74,7 +73,7 @@ export default function PortfolioScreen() {
   }, [navigation]);
 
   return (
-    <SafeAreaProvider>
+    <>
       <StatusBar style="dark" />
       <ActionSheetProvider>
         <>
@@ -105,6 +104,6 @@ export default function PortfolioScreen() {
         onPress={handleOpenDialog}
         disabled={userContraintCounts.maxPorfolio == 0}
       />
-    </SafeAreaProvider>
+    </>
   );
 }

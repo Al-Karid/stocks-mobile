@@ -9,25 +9,29 @@ import { router } from "expo-router";
 interface Props {
   holdings: Holding[];
   onHoldingLongPress: (symbol: string) => void;
-  onSaveTarget: (request: HoldingTargetRequest) => void;
+  onTargetPress?: (holding: Holding) => void;
 }
 
-export default function HoldingListing({ holdings, onHoldingLongPress }: Props) {
+export default function HoldingListing({ holdings, onHoldingLongPress, onTargetPress }: Props) {
 
   const { t } = useTranslation();
 
   const handleTargetPress = (holding: Holding) => {
-    router.push({
-      pathname: "/portfolio/target",
-      params: {
-        portfolioId: holding.portfolioId.toString(),
-        symbol: holding.symbol,
-        name: holding.name,
-        currentPrice: (holding.currentPrice ?? 0).toString(),
-        targetPrice: holding.targetPrice != null ? holding.targetPrice.toString() : "",
-        targetDate: holding.targetDate ?? "",
-      },
-    });
+    if (onTargetPress) {
+      onTargetPress(holding);
+    } else {
+      router.push({
+        pathname: "/portfolio/target",
+        params: {
+          portfolioId: holding.portfolioId.toString(),
+          symbol: holding.symbol,
+          name: holding.name,
+          currentPrice: (holding.currentPrice ?? 0).toString(),
+          targetPrice: holding.targetPrice != null ? holding.targetPrice.toString() : "",
+          targetDate: holding.targetDate ?? "",
+        },
+      });
+    }
   };
 
   return (
