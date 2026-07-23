@@ -1,28 +1,28 @@
-import { useLocalSearchParams } from "expo-router";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 import { useWatchlistStore } from "@/stores/watchlistStore";
 import { useState, useEffect } from "react";
 import { Stock } from "@/types/stock";
 import { formatCurrency, formatPercentage } from "@/utils/numberUtils";
-import { ScrollView } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
-import { globalCardStyles, globalTextStyles } from "@/styles/globalStyles";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { useTranslation } from "react-i18next";
+import StockHeroCard from "@/components/stocks/StockHeroCard";
 
 export default function StocksDetailsScreen() {
-
   const { t } = useTranslation();
+  const router = useRouter();
 
   const { symbol } = useLocalSearchParams();
-  const { addStockToWatchlist, removeStockFromWatchlist } = useWatchlistStore();
+  const { addStockToWatchlist, removeStockFromWatchlist } =
+    useWatchlistStore();
   const { findStock } = useStockRepository();
-    const { userContraintCounts, increaseUserContraintCounts, decreaseUserContraintCounts } = useSettingsStore();
+  const { userContraintCounts, decreaseUserContraintCounts, increaseUserContraintCounts } =
+    useSettingsStore();
 
   const [watchlisted, setWatchlisted] = useState(false);
   const [stock, setStock] = useState<Stock | null>(null);
-  const [isDisabled, setIsDisabled] = useState(true);
 
   const fetchStockData = async () => {
     const data = await findStock(symbol as string);
@@ -36,252 +36,179 @@ export default function StocksDetailsScreen() {
 
   const isPositive = (stock?.percentageChange ?? 0) > 0;
   const isNegative = (stock?.percentageChange ?? 0) < 0;
-  const isZero = (stock?.percentageChange ?? 0) === 0;
 
-  const addToWatchlist = (symbol: string | undefined) => {
-    addStockToWatchlist(symbol ?? "");
-    setWatchlisted(true);
-    decreaseUserContraintCounts("maxWatchlist");
+  const handleToggleWatchlist = () => {
+    if (watchlisted) {
+      removeStockFromWatchlist(stock?.symbol ?? "");
+      increaseUserContraintCounts("maxWatchlist");
+    } else {
+      addStockToWatchlist(stock?.symbol ?? "");
+      decreaseUserContraintCounts("maxWatchlist");
+    }
+    setWatchlisted(!watchlisted);
   };
 
-  const removeFromWatchlist = (symbol: string | undefined) => {
-    removeStockFromWatchlist(symbol ?? "");
-    setWatchlisted(false);
-    increaseUserContraintCounts("maxWatchlist");
-  };
+  const watchlistFull = userContraintCounts.maxWatchlist <= 0 && !watchlisted;
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Header */}
-      <View style={[globalCardStyles.card, styles.header]}>
-        <Text style={styles.headerText}>{stock?.title}</Text>
-      </View>
+    <ScrollView className="flex-1 bg-[#f2f2f2]" contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
+      {/* Hero card */}
+      <StockHeroCard stock={stock} />
 
-      {/* Price Card */}
-      <View style={globalCardStyles.card}>
-        <View style={globalTextStyles.labelValueDetailsContainer}>
-
-          <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>{t('current-price')}</Text>
-            <Text style={globalTextStyles.value}>
-              {formatCurrency(stock?.currentPrice || 0)}
-            </Text>
-          </View>
-
-          <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>{t('previous-close')}</Text>
-            <Text style={globalTextStyles.value}>
-              {formatCurrency(stock?.previousClosePrice || 0)}
-            </Text>
-          </View>
-
-          <View style={[globalTextStyles.labelValueDetailsRow, styles.rowLast]}>
-            <Text style={globalTextStyles.label}>{t('change-rate')}</Text>
-            <View
-              style={[
-                styles.percentageBox,
-                isPositive && styles.positiveBox,
-                isNegative && styles.negativeBox,
-                isZero && styles.neutralBox, // Apply neutral style for 0%
-              ]}
-            >
-              {isPositive ? (
-                <Feather name="arrow-up-right" size={20} color="white" />
-              ) : isNegative ? (
-                <Feather name="arrow-down-right" size={20} color="white" />
-              ) : (
-                <Feather name="minus" size={20} color="white" />
-              )}
-              <Text style={styles.percentageText}>
-                {isZero ? "0,00%" : formatPercentage(stock?.percentageChange!, 2)} (
-                {formatCurrency(Number(stock?.currentPrice) - Number(stock?.previousClosePrice))})
+      <View className="gap-4 mt-4">
+        {/* Price details card */}
+        <View className="rounded-2xl px-5 py-4 border border-white bg-white gap-3">
+          <DetailRow
+            label={t("current-price")}
+            value={formatCurrency(stock?.currentPrice || 0)}
+          />
+          <View className="h-px bg-gray-100" />
+          <DetailRow
+            label={t("previous-close")}
+            value={formatCurrency(stock?.previousClosePrice || 0)}
+          />
+          <View className="h-px bg-gray-100" />
+          <View className="flex-row justify-between items-center">
+            <Text className="text-sm text-[#a3a3a3]">{t("change-rate")}</Text>
+            <View className="flex-row items-center gap-1">
+              <Feather
+                name={
+                  isPositive
+                    ? "arrow-up-right"
+                    : isNegative
+                    ? "arrow-down-right"
+                    : "minus"
+                }
+                size={14}
+                color={isPositive ? "#16a34a" : isNegative ? "#dc2626" : "#6b7280"}
+              />
+              <Text
+                className={`text-sm font-semibold ${
+                  isPositive
+                    ? "text-green-600"
+                    : isNegative
+                    ? "text-red-600"
+                    : "text-gray-500"
+                }`}
+              >
+                {formatPercentage(stock?.percentageChange ?? 0, 2)}
               </Text>
             </View>
           </View>
         </View>
-      </View>
 
-      {/* Extra Info Card */}
-      <View style={[globalCardStyles.card, { marginTop: 16 }]}>
-        <View style={globalTextStyles.labelValueDetailsContainer}>
-          <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>{t('volume-titles')}</Text>
-            <Text style={globalTextStyles.value}>
-              {formatCurrency(stock?.volumeTitles || 0) || "N/A"}
-            </Text>
-          </View>
-          <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>{t('volume')}</Text>
-            <Text style={globalTextStyles.value}>
-              {formatCurrency(stock?.volumeValues || 0) || "N/A"}
-            </Text>
-          </View>
-          <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>{t('opening-price')}</Text>
-            <Text style={globalTextStyles.value}>
-              {formatCurrency(stock?.opening || 0) || "N/A"}
-            </Text>
-          </View>
-          <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>{t('high')}</Text>
-            <Text style={globalTextStyles.value}>
-              {formatCurrency(stock?.high || 0) || "N/A"}
-            </Text>
-          </View>
-          <View style={globalTextStyles.labelValueDetailsRow}>
-            <Text style={globalTextStyles.label}>{t('low')}</Text>
-            <Text style={globalTextStyles.value}>
-              {formatCurrency(stock?.low || 0) || "N/A"}
-            </Text>
-          </View>
+        {/* Market data card */}
+        <View className="rounded-2xl px-5 py-4 border border-white bg-white gap-3">
+          <DetailRow
+            label={t("volume-titles")}
+            value={stock?.volumeTitles ? String(stock.volumeTitles) : "N/A"}
+          />
+          <View className="h-px bg-gray-100" />
+          <DetailRow
+            label={t("volume")}
+            value={stock?.volumeValues ? formatCurrency(stock.volumeValues) : "N/A"}
+          />
+          <View className="h-px bg-gray-100" />
+          <DetailRow
+            label={t("opening-price")}
+            value={stock?.opening ? formatCurrency(stock.opening) : "N/A"}
+          />
+          <View className="h-px bg-gray-100" />
+          <DetailRow
+            label={t("high")}
+            value={stock?.high ? formatCurrency(stock.high) : "N/A"}
+          />
+          <View className="h-px bg-gray-100" />
+          <DetailRow
+            label={t("low")}
+            value={stock?.low ? formatCurrency(stock.low) : "N/A"}
+          />
+          <View className="h-px bg-gray-100" />
+          {stock?.rsi != null && (
+            <DetailRow
+              label={t("rsi")}
+              value={stock.rsi.toFixed(2)}
+            />
+          )}
         </View>
-      </View>
 
-      {/* Action Buttons */}
-      <View style={styles.actionsContainer}>
-        {watchlisted ? (
-          <TouchableOpacity
-            style={styles.actionButtonRemove}
-            onPress={() => removeFromWatchlist(stock?.symbol)}
-          >
-            <Text style={styles.actionButtonRemoveText}>
-              {t('remove-from-watchlist')}
-            </Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            disabled={userContraintCounts.maxWatchlist <= 0}
-            style={[styles.actionButton, (userContraintCounts.maxWatchlist <= 0) && styles.actionButtonDisabled]}
-            onPress={() => addToWatchlist(stock?.symbol)}
-          >
-            <Text style={styles.actionButtonText}>{t('add-to-watchlist')}</Text>
-          </TouchableOpacity>
-        )}
-
-        <TouchableOpacity
-          style={[styles.actionButton, isDisabled && styles.actionButtonDisabled]}
-          disabled={isDisabled}
-        >
-          <Text style={[styles.actionButtonText, isDisabled && styles.actionButtonTextDisabled]}>{t('add-to-portfolio')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.actionButton, isDisabled && styles.actionButtonDisabled]}
-          disabled={isDisabled}
-        >
-          <Text style={[styles.actionButtonText, isDisabled && styles.actionButtonTextDisabled]}>{t('add-an-alert')}</Text>
-        </TouchableOpacity>
+        {/* Action buttons */}
+        <View className="flex-row justify-evenly mt-2">
+          <ActionButton
+            icon={
+              <Feather
+                name={watchlisted ? "bookmark" : "bookmark"}
+                size={20}
+                color={watchlisted ? "#FF3B30" : "#123458"}
+              />
+            }
+            label={t("watchlist")}
+            onPress={handleToggleWatchlist}
+            disabled={watchlistFull}
+          />
+          <ActionButton
+            icon={<Feather name="briefcase" size={20} color="#123458" />}
+            label={t("portfolio")}
+            onPress={() =>
+              router.push({
+                pathname: "/transactions/new",
+                params: { symbol: stock?.symbol },
+              })
+            }
+          />
+          <ActionButton
+            icon={<Feather name="bell" size={20} color="#123458" />}
+            label={t("alerts")}
+            onPress={() =>
+              router.push({
+                pathname: "/alerts/form",
+                params: { symbol: stock?.symbol, title: stock?.title },
+              })
+            }
+          />
+        </View>
       </View>
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f2f2f2",
-    padding: 20
-  },
-  headerText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#123458",
-    textAlign: "center",
-  },
-  header: {
-    marginBottom: 20,
-  },
-  card: {
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
-    padding: 24
-  },
-  name: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 20,
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 14,
-  },
-  rowLast: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 0,
-  },
-  label: {
-    fontSize: 16,
-    color: "#777",
-  },
-  value: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#222",
-  },
-  percentageBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-  },
-  percentageText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 15,
-    marginLeft: 6,
-  },
-  positiveBox: {
-    backgroundColor: "#4CAF50",
-  },
-  negativeBox: {
-    backgroundColor: "#F44336",
-  },
-  neutralBox: {
-    backgroundColor: "#8E8E8E",
-  },
-  neutralIcon: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 18,
-    marginLeft: 6,
-  },
-  actionsContainer: {
-    marginTop: 24,
-    gap: 12,
-  },
-  actionButton: {
-    backgroundColor: "#ffffff",
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  actionButtonRemove: {
-    backgroundColor: "#F7CFD8",
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  actionButtonRemoveText: {
-    color: "#102E50",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  actionButtonText: {
-    color: "#12345",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  actionButtonDisabled: {
-    backgroundColor: "#E0E0E0",
-    opacity: 0.6, // Add opacity for a more dynamic disabled effect
-  },
-  actionButtonTextDisabled: {
-    color: "#A0A0A0",
-  },
-});
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <View className="flex-row justify-between items-center">
+      <Text className="text-sm text-gray-500">{label}</Text>
+      <Text className="text-sm font-semibold text-gray-800">{value}</Text>
+    </View>
+  );
+}
+
+function ActionButton({
+  icon,
+  label,
+  onPress,
+  disabled,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onPress: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <TouchableOpacity
+      className="items-center gap-2"
+      onPress={onPress}
+      disabled={disabled}
+      activeOpacity={0.6}
+    >
+      <View
+        className={`w-12 h-12 rounded-full items-center justify-center border border-gray-200 ${
+          disabled ? "bg-gray-100 opacity-50" : "bg-white"
+        }`}
+      >
+        {icon}
+      </View>
+      <Text className={`text-[11px] font-medium ${disabled ? "text-gray-400" : "text-[#123458]"}`}>
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
+}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, useWindowDimensions } from "react-native";
+import { View, Text, useWindowDimensions, Platform } from "react-native";
 import Svg, { Polyline, Path, Defs, LinearGradient, Stop } from "react-native-svg";
 import { BlurView } from "expo-blur";
 import { Stock, StockHistoryEntry } from "@/types/stock";
@@ -70,8 +70,13 @@ const StockHeroCard: React.FC<StockHeroCardProps> = ({ stock }) => {
       ? `M ${linePoints} L ${chartWidth},${chartHeight} L 0,${chartHeight} Z`
       : "";
 
+  const cardBackground =
+    Platform.OS === "android"
+      ? "bg-white"
+      : "bg-gray-200/30 backdrop-blur-sm";
+
   return (
-    <View className="rounded-3xl items-center border border-white bg-gray-200/30 backdrop-blur-sm overflow-hidden">
+    <View className={`rounded-3xl items-center border border-gray-200 ${cardBackground} overflow-hidden`}>
       {/* Chart layer with blur */}
       {linePoints && (
         <View
@@ -83,7 +88,7 @@ const StockHeroCard: React.FC<StockHeroCardProps> = ({ stock }) => {
             right: -horizontalPadding,
           }}
         >
-          <BlurView intensity={20} tint="light" style={{ flex: 1 }}>
+          {Platform.OS === "android" ? (
             <Svg
               height="100%"
               width="100%"
@@ -92,7 +97,7 @@ const StockHeroCard: React.FC<StockHeroCardProps> = ({ stock }) => {
             >
               <Defs>
                 <LinearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                  <Stop offset="0" stopColor={lineColor} stopOpacity={0.18} />
+                  <Stop offset="0" stopColor={lineColor} stopOpacity={0.12} />
                   <Stop offset="1" stopColor={lineColor} stopOpacity={0} />
                 </LinearGradient>
               </Defs>
@@ -104,10 +109,36 @@ const StockHeroCard: React.FC<StockHeroCardProps> = ({ stock }) => {
                 strokeWidth={1}
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                opacity={0.35}
+                opacity={0.25}
               />
             </Svg>
-          </BlurView>
+          ) : (
+            <BlurView intensity={20} tint="light" style={{ flex: 1 }}>
+              <Svg
+                height="100%"
+                width="100%"
+                viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+                preserveAspectRatio="none"
+              >
+                <Defs>
+                  <LinearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <Stop offset="0" stopColor={lineColor} stopOpacity={0.18} />
+                    <Stop offset="1" stopColor={lineColor} stopOpacity={0} />
+                  </LinearGradient>
+                </Defs>
+                <Path d={areaPath} fill="url(#areaGrad)" />
+                <Polyline
+                  points={linePoints}
+                  fill="none"
+                  stroke={lineColor}
+                  strokeWidth={1}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  opacity={0.35}
+                />
+              </Svg>
+            </BlurView>
+          )}
 
           {/* Date labels under the blurred chart */}
           {sorted.length > 0 && (
