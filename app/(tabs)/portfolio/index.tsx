@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Dialog from "react-native-dialog";
-import { Text, Pressable, SafeAreaView, Platform } from "react-native";
+import { Text, Pressable, Platform } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import PortfolioListing from "@/components/portfolio/PortfolioListing";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
@@ -16,7 +16,6 @@ import Fab from "@/components/buttons/Fab";
 import { useTranslation } from "react-i18next";
 
 export default function PortfolioScreen() {
-  
   const { t } = useTranslation();
   const navigation = useNavigation();
 
@@ -42,7 +41,7 @@ export default function PortfolioScreen() {
 
   const handleSavePortfolio = async (name: string) => {
     if (portfolioName.trim() === "") {
-      alert(t('please-enter-a-portfolio-name'));
+      alert(t("please-enter-a-portfolio-name"));
       return;
     }
     await addPortfolio(portfolioName);
@@ -76,40 +75,36 @@ export default function PortfolioScreen() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#f2f2f2" }}>
-        <StatusBar style="dark" />
-        <ActionSheetProvider>
-          <>
-            <PortfolioListing portfolios={portfolios} />
+      <StatusBar style="dark" />
+      <ActionSheetProvider>
+        <>
+          <PortfolioListing portfolios={portfolios} />
 
-            <Dialog.Container visible={isAddVisible}>
-              <Dialog.Title>
-                <Text>{t('create-portfolio')}</Text>
-              </Dialog.Title>
-              <Dialog.Input
-                placeholder={t('please-enter-a-portfolio-name')}
-                value={portfolioName}
-                onChangeText={setPortfolioName}
-              />
-              <Dialog.Button
-                label={t('cancel')}
-                onPress={() => handleCloseDialog(setAddVisible)}
-              />
-              <Dialog.Button
-                label={t('create')}
-                onPress={() => handleSavePortfolio(portfolioName)}
-              />
-            </Dialog.Container>
-          </>
-        </ActionSheetProvider>
-        {Platform.OS === "android" && (
-          <Fab
-            icon="plus"
-            onPress={handleOpenDialog}
-            disabled={userContraintCounts.maxPorfolio == 0}
-          />
-        )}
-      </SafeAreaView>
+          <Dialog.Container visible={isAddVisible}>
+            <Dialog.Title>
+              <Text>{t("create-portfolio")}</Text>
+            </Dialog.Title>
+            <Dialog.Input
+              placeholder={t("please-enter-a-portfolio-name")}
+              value={portfolioName}
+              onChangeText={setPortfolioName}
+            />
+            <Dialog.Button
+              label={t("cancel")}
+              onPress={() => handleCloseDialog(setAddVisible)}
+            />
+            <Dialog.Button
+              label={t("create")}
+              onPress={() => handleSavePortfolio(portfolioName)}
+            />
+          </Dialog.Container>
+        </>
+      </ActionSheetProvider>
+      <Fab
+        icon="plus"
+        onPress={handleOpenDialog}
+        disabled={userContraintCounts.maxPorfolio == 0}
+      />
     </SafeAreaProvider>
   );
 }

@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import StockHeroCard from "@/components/stocks/StockHeroCard";
 import AlertFormSheet from "@/components/alerts/AlertFormSheet";
 import NewTransactionSheet from "@/components/transactions/NewTransactionSheet";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface StockDetailsSheetProps {
   symbol: string | null;
@@ -26,7 +27,8 @@ interface StockDetailsSheetProps {
 const StockDetailsSheet: React.FC<StockDetailsSheetProps> = ({ symbol, isVisible, onClose }) => {
   const { t } = useTranslation();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["50%", "80%"], []);
+  const snapPoints = useMemo(() => ["50%", "81%"], []);
+  const insets = useSafeAreaInsets()
 
   const { findStock } = useStockRepository();
   const { addStockToWatchlist, removeStockFromWatchlist } = useWatchlistStore();
@@ -107,7 +109,7 @@ const StockDetailsSheet: React.FC<StockDetailsSheetProps> = ({ symbol, isVisible
 
   const renderFooter = (props: any) => (
     <BottomSheetFooter {...props} bottomInset={0}>
-      <View className="flex-row justify-evenly px-6 py-4 pb-10 bg-white border-t border-gray-100">
+      <View className="flex-row justify-evenly px-6 py-4 pb-10 bg-white border-t border-gray-100" style={{paddingBottom: insets.bottom}}>
         <ActionButton
           icon={
             <Feather

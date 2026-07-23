@@ -45,7 +45,6 @@ const styles = StyleSheet.create({
     right: 0,
   },
   fab: {
-    marginBottom: 16,
     marginRight: 20,
     width: 56,
     height: 56,

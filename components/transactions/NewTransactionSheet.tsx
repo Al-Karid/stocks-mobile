@@ -22,6 +22,7 @@ import { useTranslation } from "react-i18next";
 import TransactionTypeSelector from "@/components/transactions/TransactionTypeSelector";
 import StockHeroCard from "@/components/stocks/StockHeroCard";
 import { Stock } from "@/types/stock";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface NewTransactionSheetProps {
   symbol: string | null;
@@ -38,6 +39,7 @@ const NewTransactionSheet: React.FC<NewTransactionSheetProps> = ({
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ["50%", "80%"], []);
   const priceInputRef = useRef<any>(null);
+  const insets = useSafeAreaInsets();
 
   const { addTransaction, portfolios } = usePortfolioStore();
   const { findStock } = useStockRepository();
@@ -131,7 +133,7 @@ const NewTransactionSheet: React.FC<NewTransactionSheetProps> = ({
 
   const renderFooter = (props: any) => (
     <BottomSheetFooter {...props} bottomInset={0}>
-      <View className="flex-row gap-3 px-6 py-4 pb-10 bg-white border-t border-gray-100">
+      <View className="flex-row gap-3 px-6 py-4 pb-10 bg-white border-t border-gray-100" style={{paddingBottom: insets.bottom}}>
         <Pressable
           onPress={() => bottomSheetRef.current?.dismiss()}
           className="flex-1 bg-[#f3f4f6] py-4 rounded-2xl items-center"

@@ -118,16 +118,9 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
   const cmpChipBg = cmpToCurrentIsPositive ? "#dcfce7" : "#fce4ec";
   const cmpChipColor = cmpToCurrentIsPositive ? "#16a34a" : "#dc2626";
 
-  const handleNavigateToStockDetails = () => {
-    router.push({
-      pathname: "/stocks/details",
-      params: { symbol: symbol.trim() },
-    });
-  };
-
   return (
     <TouchableOpacity
-      onLongPress={handleNavigateToStockDetails}
+      onLongPress={() => onLongPress()}
       onPress={toggleDetails}
       activeOpacity={0.7}
       className="border border-gray-200 rounded-xl bg-white mb-2"

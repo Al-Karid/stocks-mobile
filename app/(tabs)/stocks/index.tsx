@@ -1,17 +1,15 @@
 import StockListing from "@/components/stocks/StockListing";
 import StockDetailsSheet from "@/components/stocks/StockDetailsSheet";
-import { Feather } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View } from "react-native";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 import { Stock } from "@/types/stock";
+import Fab from "@/components/buttons/Fab";
 
 export default function StocksScreen() {
   const { fetchStocks } = useStockRepository();
   const navigation = useNavigation();
-  const insets = useSafeAreaInsets();
 
   const [filterText, setFilterText] = useState("");
   const [refreshing, setRefreshing] = useState(false);
@@ -19,7 +17,7 @@ export default function StocksScreen() {
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
 
   const filteredStocks = stocks.filter((stock: Stock) =>
-    stock.title.toLowerCase().includes(filterText.toLowerCase())
+    stock.title.toLowerCase().includes(filterText.toLowerCase()),
   );
 
   const fetchStockData = async () => {
@@ -52,31 +50,12 @@ export default function StocksScreen() {
         onRefresh={fetchStockData}
         onSelectStock={setSelectedSymbol}
       />
-      {/* Palmares FAB — positioned above the native tab bar */}
-      <View
-        style={{
-          position: "absolute",
-          right: 0,
-          bottom: insets.bottom + 90,
-          zIndex: 9999,
-          elevation: 9999,
-        }}
-        pointerEvents="box-none"
-      >
-        <TouchableOpacity
-          onPress={() => router.push("/(tabs)/stocks/palmares")}
-          className="bg-black w-14 h-14 rounded-full items-center justify-center mr-5"
-          style={{
-            elevation: 6,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 3 },
-            shadowOpacity: 0.2,
-            shadowRadius: 6,
-          }}
-        >
-          <Feather name="award" size={22} color="#fff" />
-        </TouchableOpacity>
-      </View>
+
+      {/* Palmares FAB */}
+      <Fab
+        icon="award"
+        onPress={() => router.push("/(tabs)/stocks/palmares")}
+      />
 
       {/* Stock details bottom sheet */}
       <StockDetailsSheet

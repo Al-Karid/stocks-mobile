@@ -48,6 +48,7 @@ const StockListing: React.FC<StockListingProps> = ({ stocks, refreshing, onRefre
       renderItem={renderStockCard}
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
+      ItemSeparatorComponent={<View className="h-2"/>}
       initialNumToRender={20}
       maxToRenderPerBatch={5}
       windowSize={5}
@@ -76,7 +77,6 @@ const StockListing: React.FC<StockListingProps> = ({ stocks, refreshing, onRefre
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    paddingBottom: Platform.select({android: 100, default: undefined}),
     backgroundColor: "#f2f2f2",
   },
   headerText: {

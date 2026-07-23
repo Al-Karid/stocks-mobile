@@ -19,9 +19,12 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { useStockRepository } from "@/data/repositories/stockRepository";
 import { getDevicePushToken } from "@/services/pushTokenService";
 import { AlertData } from "@/types/alerts";
+import { Stock } from "@/types/stock";
 import { useTranslation } from "react-i18next";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import StockHeroCard from "@/components/stocks/StockHeroCard";
 
 interface AlertFormSheetProps {
   stockSymbol: string | null;
@@ -38,12 +41,14 @@ const AlertFormSheet: React.FC<AlertFormSheetProps> = ({
 }) => {
   const { t } = useTranslation();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["50%", "62%"], []);
+  const snapPoints = useMemo(() => ["50%", "70%"], []);
+  const insets = useSafeAreaInsets();
 
   const { addAlert, notificationChannels } = useAlertStore();
   const { decreaseUserContraintCounts } = useSettingsStore();
   const { fetchStocks } = useStockRepository();
 
+  const [stock, setStock] = useState<Stock | null>(null);
   const [currentStockPrice, setCurrentStockPrice] = useState<number | null>(null);
   const [alertType, setAlertType] = useState<"below" | "above">("above");
   const [alertThreshold, setAlertThreshold] = useState("2500");
@@ -53,12 +58,13 @@ const AlertFormSheet: React.FC<AlertFormSheetProps> = ({
   useEffect(() => {
     if (!stockSymbol) return;
     fetchStocks().then((stocks) => {
-      const stock = stocks.find(
+      const found = stocks.find(
         (s) => s.symbol.trim() === String(stockSymbol).trim()
       );
-      if (stock) {
-        setCurrentStockPrice(stock.currentPrice);
-        setAlertThreshold(String(stock.currentPrice));
+      if (found) {
+        setStock(found);
+        setCurrentStockPrice(found.currentPrice);
+        setAlertThreshold(String(found.currentPrice));
       }
     });
   }, [stockSymbol]);
@@ -113,7 +119,7 @@ const AlertFormSheet: React.FC<AlertFormSheetProps> = ({
 
   const renderFooter = (props: any) => (
     <BottomSheetFooter {...props} bottomInset={0}>
-      <View className="flex-row gap-3 px-6 py-4 pb-10 bg-white border-t border-gray-100">
+      <View className="flex-row gap-3 px-6 py-4 pb-10 bg-white border-t border-gray-100" style={{paddingBottom: insets.bottom}}>
         <Pressable
           onPress={() => bottomSheetRef.current?.dismiss()}
           className="flex-1 bg-[#f3f4f6] py-4 rounded-2xl items-center"
@@ -161,25 +167,8 @@ const AlertFormSheet: React.FC<AlertFormSheetProps> = ({
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Stock info card */}
-        <View className="rounded-2xl p-4 mb-5 border border-white bg-gray-200/30 backdrop-blur-sm">
-          <View className="flex-row items-center justify-between mb-0">
-            <View>
-              <Text className="text-[#171717] text-xl font-extrabold">
-                {stockSymbol ?? "—"}
-              </Text>
-              <Text className="text-[#404040] text-base font-semibold mt-1" numberOfLines={2}>
-                {stockTitle ?? ""}
-              </Text>
-            </View>
-            {currentStockPrice != null && (
-              <Text className="text-[#171717] text-xl font-extrabold">
-                {currentStockPrice.toLocaleString()}{" "}
-                <Text className="text-[#a3a3a3] text-sm font-normal">FCFA</Text>
-              </Text>
-            )}
-          </View>
-        </View>
+        {/* StockHeroCard header */}
+        <StockHeroCard stock={stock} />
 
         {/* Alert type */}
         <Text className="text-[15px] text-[#4b5563] mb-2">{t("alert-type")}</Text>
