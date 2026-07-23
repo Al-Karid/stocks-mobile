@@ -25,6 +25,7 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { useTranslation } from "react-i18next";
 import AlertEmptyState from "@/components/alerts/AlertEmptyState";
 import StockSelector, { StockSelectorRef } from "@/components/shared/StockSelector";
+import Fab from "@/components/buttons/Fab";
 
 const AlertsScreen: React.FC = () => {
   const { t } = useTranslation();
@@ -201,20 +202,11 @@ const AlertsScreen: React.FC = () => {
 
       {/* Floating Action Button */}
       {Platform.OS === "android" && (
-        <Pressable
-          disabled={!userCanAddAlert}
+        <Fab
+          icon="plus"
           onPress={() => stockSelectorRef.current?.open()}
-          style={[
-            styles.fab,
-            { backgroundColor: userCanAddAlert ? "black" : "#ccc" },
-          ]}
-        >
-          <Feather
-            name="plus"
-            size={24}
-            color={userCanAddAlert ? "white" : "black"}
-          />
-        </Pressable>
+          disabled={!userCanAddAlert}
+        />
       )}
 
       <StockSelector ref={stockSelectorRef} onSelectStock={handleStockSelect} />
@@ -251,21 +243,5 @@ const styles = StyleSheet.create({
   cardCondition: {
     fontSize: 16,
     color: "#4CAF50",
-  },
-  fab: {
-    position: "absolute",
-    bottom: 30,
-    right: 20,
-    backgroundColor: "black", // Purple for modern look
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5, // For Android shadow
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3.84,
   },
 });
