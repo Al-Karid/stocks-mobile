@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   Pressable,
   Alert,
   ActivityIndicator,
@@ -12,7 +11,7 @@ import {
   BottomSheetScrollView,
   BottomSheetBackdrop,
   BottomSheetFooter,
-  useBottomSheetTimingConfigs,
+  BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
 import { Feather } from "@expo/vector-icons";
 import { useAlertStore } from "@/stores/alertStore";
@@ -39,7 +38,7 @@ const AlertFormSheet: React.FC<AlertFormSheetProps> = ({
 }) => {
   const { t } = useTranslation();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["50%", "70%"], []);
+  const snapPoints = useMemo(() => ["50%", "62%"], []);
 
   const { addAlert, notificationChannels } = useAlertStore();
   const { decreaseUserContraintCounts } = useSettingsStore();
@@ -51,7 +50,6 @@ const AlertFormSheet: React.FC<AlertFormSheetProps> = ({
   const [enabled, setEnabled] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Fetch stock price
   useEffect(() => {
     if (!stockSymbol) return;
     fetchStocks().then((stocks) => {
@@ -65,7 +63,6 @@ const AlertFormSheet: React.FC<AlertFormSheetProps> = ({
     });
   }, [stockSymbol]);
 
-  // Present / dismiss based on visibility
   useEffect(() => {
     if (isVisible && stockSymbol) {
       const timeout = setTimeout(() => {
@@ -147,6 +144,8 @@ const AlertFormSheet: React.FC<AlertFormSheetProps> = ({
       enableDynamicSizing={false}
       enablePanDownToClose
       enableOverDrag={false}
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
       backdropComponent={(props) => (
         <BottomSheetBackdrop
           {...props}
@@ -160,6 +159,7 @@ const AlertFormSheet: React.FC<AlertFormSheetProps> = ({
       <BottomSheetScrollView
         contentContainerStyle={{ padding: 20 }}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         {/* Stock info card */}
         <View className="rounded-2xl p-4 mb-5 border border-white bg-gray-200/30 backdrop-blur-sm">
@@ -215,7 +215,7 @@ const AlertFormSheet: React.FC<AlertFormSheetProps> = ({
         {/* Target value */}
         <Text className="text-[15px] text-[#4b5563] mb-2">{t("target-value")}</Text>
         <View className="bg-black rounded-2xl py-4 px-5 mb-4 flex-row items-center">
-          <TextInput
+          <BottomSheetTextInput
             className="flex-1 text-white text-2xl font-extrabold"
             placeholder="—"
             placeholderTextColor="#6b7280"

@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   Pressable,
   Alert,
   ActivityIndicator,
@@ -12,6 +11,7 @@ import {
   BottomSheetScrollView,
   BottomSheetBackdrop,
   BottomSheetFooter,
+  BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
 import { TransactionType } from "@/types/portfolio";
 import { usePortfolioStore } from "@/stores/portfolioStore";
@@ -36,8 +36,8 @@ const NewTransactionSheet: React.FC<NewTransactionSheetProps> = ({
 }) => {
   const { t } = useTranslation();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["50%", "88%"], []);
-  const priceInputRef = useRef<TextInput>(null);
+  const snapPoints = useMemo(() => ["50%", "80%"], []);
+  const priceInputRef = useRef<any>(null);
 
   const { addTransaction, portfolios } = usePortfolioStore();
   const { findStock } = useStockRepository();
@@ -46,7 +46,6 @@ const NewTransactionSheet: React.FC<NewTransactionSheetProps> = ({
   const defaultPortfolio = portfolios.find((p) => p.isDefault);
   const [stock, setStock] = useState<Stock | null>(null);
   const [stockTitle, setStockTitle] = useState<string>("");
-  const [currentStockPrice, setCurrentStockPrice] = useState<number>(0);
   const [type, setType] = useState<TransactionType>("BUY");
   const [quantity, setQuantity] = useState("10");
   const [pricePerShare, setPricePerShare] = useState("1000");
@@ -62,7 +61,6 @@ const NewTransactionSheet: React.FC<NewTransactionSheetProps> = ({
       if (data) {
         setStock(data);
         setStockTitle(data.title);
-        setCurrentStockPrice(data.currentPrice);
         setPricePerShare(String(data.currentPrice));
       }
     });
@@ -164,6 +162,8 @@ const NewTransactionSheet: React.FC<NewTransactionSheetProps> = ({
       enableDynamicSizing={false}
       enablePanDownToClose
       enableOverDrag={false}
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
       backdropComponent={(props) => (
         <BottomSheetBackdrop
           {...props}
@@ -177,22 +177,23 @@ const NewTransactionSheet: React.FC<NewTransactionSheetProps> = ({
       <BottomSheetScrollView
         contentContainerStyle={{ padding: 20 }}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         {/* StockHeroCard as header */}
         <StockHeroCard stock={stock} />
 
         <View className="gap-4 mt-4">
-          {/* Transaction type — smaller buttons */}
+          {/* Transaction type */}
           <Text className="text-[15px] text-[#4b5563] mb-2">{t("transaction-type")}</Text>
           <View className="flex-row gap-3 mb-4">
-            <TransactionTypeSelector type={type} onSelect={setType} price={currentStockPrice} />
+            <TransactionTypeSelector type={type} onSelect={setType} price={stock?.currentPrice} />
           </View>
 
           {/* Quantity & Price inline */}
           <Text className="text-[15px] text-[#4b5563] mb-2">{t("quantity")} & {t("price-per-share-fcfa")}</Text>
           <View className="flex-row gap-3 mb-4">
             <View className="flex-1 bg-black rounded-2xl py-4 px-5 flex-row items-center">
-              <TextInput
+              <BottomSheetTextInput
                 className="flex-1 text-white text-2xl font-extrabold"
                 placeholder="10"
                 placeholderTextColor="#6b7280"
@@ -205,7 +206,7 @@ const NewTransactionSheet: React.FC<NewTransactionSheetProps> = ({
               />
             </View>
             <View className="flex-1 bg-black rounded-2xl py-4 px-5 flex-row items-center">
-              <TextInput
+              <BottomSheetTextInput
                 ref={priceInputRef}
                 className="flex-1 text-white text-2xl font-extrabold"
                 placeholder="1000"
