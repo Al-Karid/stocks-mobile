@@ -1,4 +1,5 @@
 import StockListing from "@/components/stocks/StockListing";
+import StockDetailsSheet from "@/components/stocks/StockDetailsSheet";
 import { Feather } from "@expo/vector-icons";
 import { router, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -15,6 +16,7 @@ export default function StocksScreen() {
   const [filterText, setFilterText] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [stocks, setStocks] = useState<Stock[]>([]);
+  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
 
   const filteredStocks = stocks.filter((stock: Stock) =>
     stock.title.toLowerCase().includes(filterText.toLowerCase())
@@ -41,12 +43,14 @@ export default function StocksScreen() {
       },
     });
   }, [navigation]);
+
   return (
     <View className="flex-1">
       <StockListing
         stocks={filteredStocks}
         refreshing={refreshing}
         onRefresh={fetchStockData}
+        onSelectStock={setSelectedSymbol}
       />
       {/* Palmares FAB — positioned above the native tab bar */}
       <View
@@ -73,6 +77,13 @@ export default function StocksScreen() {
           <Feather name="award" size={22} color="#fff" />
         </TouchableOpacity>
       </View>
+
+      {/* Stock details bottom sheet */}
+      <StockDetailsSheet
+        symbol={selectedSymbol}
+        isVisible={selectedSymbol !== null}
+        onClose={() => setSelectedSymbol(null)}
+      />
     </View>
   );
 }

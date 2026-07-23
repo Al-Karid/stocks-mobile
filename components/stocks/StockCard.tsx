@@ -17,6 +17,7 @@ interface StockCardProps {
   high: number;
   low: number;
   isInWatchlist: boolean;
+  onSelect?: (symbol: string) => void;
 }
 
 const StockCard: React.FC<StockCardProps> = ({
@@ -31,32 +32,27 @@ const StockCard: React.FC<StockCardProps> = ({
   high,
   low,
   isInWatchlist,
+  onSelect,
 }) => {
   const { t } = useTranslation();
   const isPositive = percentageChange > 0;
   const isNegative = percentageChange < 0;
 
+  const handlePress = () => {
+    if (onSelect) {
+      onSelect(symbol.trim());
+    } else {
+      router.push({
+        pathname: "/stocks/details",
+        params: { symbol: symbol.trim() },
+      });
+    }
+  };
+
   return (
     <TouchableOpacity
       className="bg-white rounded-xl p-5 mb-0 flex-row items-center border border-gray-100"
-      onPress={() =>
-        router.push({
-          pathname: "/stocks/details",
-          params: {
-            symbol: symbol.trim(),
-            name,
-            currentPrice,
-            previousClosePrice,
-            percentageChange: percentageChange.toFixed(2),
-            volumeTitles,
-            volumeValues,
-            opening,
-            high,
-            low,
-            isInWatchlist: isInWatchlist ? "1" : "0",
-          },
-        })
-      }
+      onPress={handlePress}
     >
       <View className="flex-1">
         <Text className="text-base font-bold text-[#123458] mb-2">

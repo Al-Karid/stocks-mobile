@@ -15,9 +15,10 @@ interface StockListingProps {
   stocks: Stock[];
   refreshing: boolean;
   onRefresh: () => void;
+  onSelectStock?: (symbol: string) => void;
 }
 
-const StockListing: React.FC<StockListingProps> = ({ stocks, refreshing, onRefresh }) => {
+const StockListing: React.FC<StockListingProps> = ({ stocks, refreshing, onRefresh, onSelectStock }) => {
 
   const { t } = useTranslation();
 
@@ -35,9 +36,10 @@ const StockListing: React.FC<StockListingProps> = ({ stocks, refreshing, onRefre
         high={item.high}
         low={item.low}
         isInWatchlist={item.isInWatchlist ?? false}
+        onSelect={onSelectStock}
       />
     );
-  }, []);
+  }, [onSelectStock]);
 
   return (
     <FlatList

@@ -8,7 +8,11 @@ import { useRouter } from 'expo-router';
 import { provideHapticFeedback } from '@/utils/interactionUtils';
 import { useTranslation } from 'react-i18next';
 
-const WatchlistSection: React.FC = () => {
+interface WatchlistSectionProps {
+  onSelectStock?: (symbol: string) => void;
+}
+
+const WatchlistSection: React.FC<WatchlistSectionProps> = ({ onSelectStock }) => {
   const { t } = useTranslation();
   const { watchlist: watchlistStore } = useWatchlistStore();
   const router = useRouter();
@@ -24,7 +28,7 @@ const WatchlistSection: React.FC = () => {
 
       {watchlistStore.length > 0 ? (
         watchlistStore.slice(0, 5).map((stock) => (
-          <StockRow key={stock.id} stock={stock} />
+          <StockRow key={stock.id} stock={stock} onSelect={onSelectStock} />
         ))
       ) : (
         <EmptyWatchlistCard />

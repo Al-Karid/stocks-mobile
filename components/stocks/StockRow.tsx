@@ -7,20 +7,27 @@ import { Feather } from "@expo/vector-icons";
 
 interface StockRowProps {
   stock: Stock;
+  onSelect?: (symbol: string) => void;
 }
 
-const StockRow: React.FC<StockRowProps> = ({ stock }) => {
+const StockRow: React.FC<StockRowProps> = ({ stock, onSelect }) => {
   const { title, symbol, currentPrice, previousClosePrice } = stock;
   const isPositive = isPositiveNumber(currentPrice - previousClosePrice);
   const changeRaw = ((currentPrice - previousClosePrice) / previousClosePrice) * 100;
   const change = formatPercentage(changeRaw, 2);
 
+  const handlePress = () => {
+    if (onSelect) {
+      onSelect(symbol);
+    } else {
+      router.push({ pathname: "/stocks/details", params: { symbol: stock.symbol } });
+    }
+  };
+
   return (
     <TouchableOpacity
       className="rounded-2xl p-5 mb-3 border border-white/30 bg-white"
-      onPress={() => {
-        router.push({ pathname: "/stocks/details", params: { symbol: stock.symbol } });
-      }}
+      onPress={handlePress}
       activeOpacity={0.85}
     >
       <View className="flex-row items-center">

@@ -5,6 +5,7 @@ import { useFocusEffect } from 'expo-router';
 import DashboardHeader from '@/components/views/DashboardHeader';
 import PortfolioDistribution from '@/components/views/PortfolioDistribution';
 import WatchlistSection from '@/components/views/WatchlistSection';
+import StockDetailsSheet from '@/components/stocks/StockDetailsSheet';
 import { usePortfolioStore } from '@/stores/portfolioStore';
 import { useUserStore } from '@/stores/userStore';
 import { useStockSync } from '@/data/configs/syncStocks';
@@ -26,6 +27,7 @@ const DashboardScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [lastSync, setLastSync] = useState<string>();
   const [defaultPortfolio, setDefaultPortfolio] = useState<Portfolio>();
+  const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
 
   const fetchLastSyncDate = async () => {
     const lastSyncDate = await Storage.getItem("lastSync");
@@ -96,9 +98,16 @@ const DashboardScreen = () => {
         <View style={styles.whiteBody}>
           <PortfolioDistribution portfolio={defaultPortfolio} lastSync={lastSync} />
 
-          <WatchlistSection />
+          <WatchlistSection onSelectStock={setSelectedSymbol} />
         </View>
       </ScrollView>
+
+      {/* Stock details bottom sheet */}
+      <StockDetailsSheet
+        symbol={selectedSymbol}
+        isVisible={selectedSymbol !== null}
+        onClose={() => setSelectedSymbol(null)}
+      />
     </View>
   );
 };
