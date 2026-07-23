@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { router } from "expo-router";
 import {
   BottomSheetModal,
   BottomSheetScrollView,
@@ -16,6 +15,7 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { useTranslation } from "react-i18next";
 import StockHeroCard from "@/components/stocks/StockHeroCard";
 import AlertFormSheet from "@/components/alerts/AlertFormSheet";
+import NewTransactionSheet from "@/components/transactions/NewTransactionSheet";
 
 interface StockDetailsSheetProps {
   symbol: string | null;
@@ -36,6 +36,7 @@ const StockDetailsSheet: React.FC<StockDetailsSheetProps> = ({ symbol, isVisible
   const [watchlisted, setWatchlisted] = useState(false);
   const [stock, setStock] = useState<Stock | null>(null);
   const [showAlertForm, setShowAlertForm] = useState(false);
+  const [showTransactionForm, setShowTransactionForm] = useState(false);
 
   useEffect(() => {
     if (!symbol) return;
@@ -73,11 +74,18 @@ const StockDetailsSheet: React.FC<StockDetailsSheetProps> = ({ symbol, isVisible
 
   const watchlistFull = userContraintCounts.maxWatchlist <= 0 && !watchlisted;
 
-  const handleNavigateToPortfolio = () => {
+  const handleOpenTransactionSheet = () => {
     bottomSheetRef.current?.dismiss();
     setTimeout(() => {
-      router.push({ pathname: "/transactions/new", params: { symbol: stock?.symbol } });
-    }, 300);
+      setShowTransactionForm(true);
+    }, 500);
+  };
+
+  const handleCloseTransactionSheet = () => {
+    setShowTransactionForm(false);
+    setTimeout(() => {
+      bottomSheetRef.current?.present();
+    }, 500);
   };
 
   const handleOpenAlertForm = () => {
@@ -89,8 +97,6 @@ const StockDetailsSheet: React.FC<StockDetailsSheetProps> = ({ symbol, isVisible
 
   const handleCloseAlertForm = () => {
     setShowAlertForm(false);
-    // Re-present the stock details sheet after a short delay
-    // to let the alert form finish its dismiss animation
     setTimeout(() => {
       bottomSheetRef.current?.present();
     }, 500);
@@ -117,7 +123,7 @@ const StockDetailsSheet: React.FC<StockDetailsSheetProps> = ({ symbol, isVisible
         <ActionButton
           icon={<Feather name="briefcase" size={20} color="#123458" />}
           label={t("portfolio")}
-          onPress={handleNavigateToPortfolio}
+          onPress={handleOpenTransactionSheet}
         />
         <ActionButton
           icon={<Feather name="bell" size={20} color="#123458" />}
@@ -243,6 +249,13 @@ const StockDetailsSheet: React.FC<StockDetailsSheetProps> = ({ symbol, isVisible
         stockTitle={stock.title}
         isVisible={showAlertForm}
         onClose={handleCloseAlertForm}
+      />
+
+      {/* Transaction form sheet overlay */}
+      <NewTransactionSheet
+        symbol={stock.symbol}
+        isVisible={showTransactionForm}
+        onClose={handleCloseTransactionSheet}
       />
     </>
   );

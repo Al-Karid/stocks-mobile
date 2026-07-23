@@ -1,5 +1,6 @@
 import { Stack } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { Platform } from "react-native";
 
 export default function PortfolioStackLayout() {
   const { t } = useTranslation();
@@ -16,11 +17,16 @@ export default function PortfolioStackLayout() {
         />
         <Stack.Screen
           name="holdings"
-          options={{
-            title: t("holdings"),
-            headerTransparent: true,
-            headerBackButtonDisplayMode: "minimal",
-          }}
+          options={Platform.select({
+            android: {
+              title: t("holdings"),
+            },
+            ios: {
+              title: t("holdings"),
+              headerTransparent: true,
+              headerBackButtonDisplayMode: "minimal",
+            },
+          })}
         />
       </Stack>
     </>

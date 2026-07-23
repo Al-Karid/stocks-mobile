@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { View, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import HoldingListing from "@/components/holdings/HoldingListing";
@@ -9,6 +9,7 @@ import { usePortfolioStore } from "@/stores/portfolioStore";
 import { Stock } from "@/types/stock";
 import { useTranslation } from "react-i18next";
 import StockSelector, { StockSelectorRef } from "@/components/shared/StockSelector";
+import NewTransactionSheet from "@/components/transactions/NewTransactionSheet";
 
 export default function HoldingsScreen() {
   const { t } = useTranslation();
@@ -19,6 +20,8 @@ export default function HoldingsScreen() {
   const navigation = useNavigation();
 
   const { holdings, getHoldings, portfolios, setHoldingTarget } = usePortfolioStore();
+
+  const [selectedTransactionStock, setSelectedTransactionStock] = useState<{ symbol: string; title: string } | null>(null);
 
   useEffect(() => {
     getHoldings(Number(portfolioId));
@@ -35,14 +38,8 @@ export default function HoldingsScreen() {
   };
 
   const handleStockSelect = (stock: Stock) => {
-    router.push({
-      pathname: "/transactions/new",
-      params: {
-        portfolioId,
-        symbol: stock.symbol,
-        title: stock.title,
-      },
-    });
+    // Show transaction sheet instead of navigating
+    setSelectedTransactionStock({ symbol: stock.symbol, title: stock.title });
   };
 
   const handleHoldingLongPress = (symbol: string) => {
@@ -69,6 +66,13 @@ export default function HoldingsScreen() {
       <StockSelector
         ref={stockSelectorRef}
         onSelectStock={handleStockSelect}
+      />
+
+      {/* Transaction sheet */}
+      <NewTransactionSheet
+        symbol={selectedTransactionStock?.symbol ?? null}
+        isVisible={selectedTransactionStock !== null}
+        onClose={() => setSelectedTransactionStock(null)}
       />
 
       {/* New Transaction FAB */}
