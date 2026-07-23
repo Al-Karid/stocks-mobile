@@ -12,6 +12,7 @@ import { Portfolio } from "@/types/portfolio";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useSettingsStore } from "@/stores/settingsStore";
+import Fab from "@/components/buttons/Fab";
 import { useTranslation } from "react-i18next";
 
 export default function PortfolioScreen() {
@@ -102,22 +103,11 @@ export default function PortfolioScreen() {
           </>
         </ActionSheetProvider>
         {Platform.OS === "android" && (
-          <Pressable
-            disabled={userContraintCounts.maxPorfolio == 0}
+          <Fab
+            icon="plus"
             onPress={handleOpenDialog}
-            style={{
-              position: "absolute",
-              bottom: 24,
-              right: 24,
-              backgroundColor:
-                userContraintCounts.maxPorfolio == 0 ? "#E0E0E0" : "black",
-              borderRadius: 30,
-              padding: 16,
-              elevation: 5,
-            }}
-          >
-            <AntDesign name="folder" size={24} color={userContraintCounts.maxPorfolio == 0 ? "black" : "white"} />
-          </Pressable>
+            disabled={userContraintCounts.maxPorfolio == 0}
+          />
         )}
       </SafeAreaView>
     </SafeAreaProvider>
