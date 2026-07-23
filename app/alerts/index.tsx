@@ -25,6 +25,7 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { useTranslation } from "react-i18next";
 import AlertEmptyState from "@/components/alerts/AlertEmptyState";
 import StockSelector, { StockSelectorRef } from "@/components/shared/StockSelector";
+import AlertFormSheet from "@/components/alerts/AlertFormSheet";
 import Fab from "@/components/buttons/Fab";
 
 const AlertsScreen: React.FC = () => {
@@ -47,6 +48,7 @@ const AlertsScreen: React.FC = () => {
   const navigation = useNavigation();
 
   const [userCanAddAlert, setUserCanAddAlert] = useState(true);
+  const [selectedStock, setSelectedStock] = useState<{ symbol: string; title: string } | null>(null);
   useEffect(() => {
     if (userContraintCounts.maxAlerts === 0) {
       setUserCanAddAlert(false);
@@ -121,13 +123,17 @@ const AlertsScreen: React.FC = () => {
   };
 
   const handleStockSelect = (stock: Stock) => {
-    router.push({
-      pathname: "/alerts/form",
-      params: {
-        stockSymbol: stock.symbol,
-        stockTitle: stock.title,
-      },
-    });
+    if (Platform.OS === "android") {
+      setSelectedStock({ symbol: stock.symbol, title: stock.title });
+    } else {
+      router.push({
+        pathname: "/alerts/form",
+        params: {
+          stockSymbol: stock.symbol,
+          stockTitle: stock.title,
+        },
+      });
+    }
   };
 
   return (
@@ -210,6 +216,16 @@ const AlertsScreen: React.FC = () => {
       )}
 
       <StockSelector ref={stockSelectorRef} onSelectStock={handleStockSelect} />
+
+      {/* Alert form bottom sheet (Android) */}
+      {Platform.OS === "android" && (
+        <AlertFormSheet
+          stockSymbol={selectedStock?.symbol ?? null}
+          stockTitle={selectedStock?.title ?? null}
+          isVisible={selectedStock !== null}
+          onClose={() => setSelectedStock(null)}
+        />
+      )}
     </View>
   );
 };
