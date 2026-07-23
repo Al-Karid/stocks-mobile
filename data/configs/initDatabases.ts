@@ -12,6 +12,7 @@ import { useStockStore } from '@/stores/stockStore';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { isDatabaseInitializedSetting } from '@/data/configs/databaseInitState';
+import { runMigrations } from '@/data/configs/migrationRunner';
 import * as Updates from 'expo-updates';
 
 // This function should be used inside a component to access the sync method
@@ -19,7 +20,6 @@ export const useAppInitializer = () => {
 
   const { fetchWatchlist } = useWatchlistStore();
   const { fetchPortfolios } = usePortfolioStore();
-  // const { updateWatchlist } = useStockRepository();
   const { fetchStocks } = useStockStore();
   const { fetchAlerts, getNotificationChannels, getDevicePushToken } = useAlertStore();
   const { fetchNotifications } = useNotificationStore();
@@ -30,27 +30,23 @@ export const useAppInitializer = () => {
 
   const initializeAppData = async (): Promise<void> => {
     try {
+      // 1. Ensure settings table exists (needed for migration runner)
       await initSettingsDb();
+
+      // 2. Run any pending schema migrations
+      //    (idempotent — safe on fresh install and on update)
+      await runMigrations();
 
       const dbInitializedSetting = await getSettings("databaseInitialized").catch(() => null);
       const isInitialized = isDatabaseInitializedSetting(dbInitializedSetting?.value ?? null);
 
       if (isInitialized) {
-        console.log("✅ Databases already initialized; skipping initialization");
-        console.log("🔄 Loading Stores");
-        await fetchStocks();
-        await fetchWatchlist();
-        await fetchPortfolios();
-        await fetchAlerts();
-        await fetchNotifications();
-        await fetchUserContraintCounts();
-        await fetchAutoUpdatesEnabled();
-        await getNotificationChannels();
-        await getDevicePushToken();
-        console.log("✅ Stores loaded");
+        console.log("✅ Databases already initialized; loading stores");
+        await loadStores();
         return;
       }
 
+      // 3. First launch: register push token if missing
       const devicePushToken = await getSettings("devicePushToken").catch(() => null);
       if (!devicePushToken?.value || devicePushToken.value === "" || devicePushToken.value === "null" || devicePushToken.value === "undefined" || devicePushToken.value === null) {
         console.log("🔄 Device push token not found, generating a new one...");
@@ -59,18 +55,18 @@ export const useAppInitializer = () => {
         await getNotificationChannels();
       }
 
-      console.log("🔄 Initializing databases...");
-      await initDb();
-      await initPortfolioDb();
-      await initAlertDatabase();
-      console.log("✅ Databases initialized");
+      // 4. Sync stock data from server (populates tables created by migrations v1)
+      console.log("🔄 Initial data sync...");
       await syncStockDataFromServer();
       await fetchUserContraintCounts();
       await fetchAutoUpdatesEnabled();
       console.log("🔄 Stock data synchronized");
+
+      // 5. Mark as initialized (so we skip sync on subsequent launches)
       await saveSetting({ key: "databaseInitialized", value: "true" });
       console.log("✅ Database initialization flag set");
 
+      // 6. Check for OTA updates
       const autoUpdatesEnabledSetting = await getSettings("autoUpdatesEnabled").catch(() => null);
       const shouldAutoUpdate = autoUpdatesEnabledSetting?.value !== "false";
       if (shouldAutoUpdate) {
@@ -88,6 +84,19 @@ export const useAppInitializer = () => {
       console.error("‼️ Error initializing app:", err);
       throw err;
     }
+  };
+
+  const loadStores = async () => {
+    await fetchStocks();
+    await fetchWatchlist();
+    await fetchPortfolios();
+    await fetchAlerts();
+    await fetchNotifications();
+    await fetchUserContraintCounts();
+    await fetchAutoUpdatesEnabled();
+    await getNotificationChannels();
+    await getDevicePushToken();
+    console.log("✅ Stores loaded");
   };
 
   return { initializeAppData };

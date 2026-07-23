@@ -5,63 +5,11 @@ import { Storage } from "expo-sqlite/kv-store";
 
 const { calculatePercentageChange } = useConputeService();
 
+// initDb is kept for backward compatibility (called from settings reset),
+// but schema creation is now handled by the migration system.
 export const initDb = async () => {
-  const db = await dbPromise;
-
-  try {
-    await db.runAsync(
-      `CREATE TABLE IF NOT EXISTS watchlists (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        symbol TEXT UNIQUE NOT NULL
-      );`
-    );
-    console.log("✅ Database initialized: watchlists");
-
-    await db.runAsync(
-      `CREATE TABLE IF NOT EXISTS stocks (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        code TEXT NOT NULL,
-        country TEXT,
-        symbol TEXT NOT NULL,
-        title TEXT,
-        currentPrice REAL,
-        previousClosePrice REAL,
-        percentageChange REAL,
-        volumeTitles INTEGER,
-        volumeValues REAL,
-        opening REAL,
-        high REAL,
-        low REAL,
-        updatedAt TEXT,
-        rsi REAL,
-        isInWatchlist BOOLEAN DEFAULT FALSE,
-        UNIQUE(code, symbol)
-      );`
-    );
-    console.log("✅ Database initialized: stocks");
-
-    // Add rsi column if migrating from older schema
-    try {
-      await db.runAsync("ALTER TABLE stocks ADD COLUMN rsi REAL");
-    } catch (_) {
-      // column already exists, ignore
-    }
-
-    await db.runAsync(
-      `CREATE TABLE IF NOT EXISTS stock_history (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        symbol TEXT NOT NULL,
-        date TEXT NOT NULL,
-        closing REAL NOT NULL,
-        UNIQUE(symbol, date)
-      );`
-    );
-    console.log("✅ Database initialized: stock_history");
-
-  } catch (error) {
-    console.error("⚠️ Error initializing database: ", error);
-    throw error;
-  }
+  // Migrations handle all table creation. This is a no-op.
+  console.log("✅ initDb called — migrations handle schema creation");
 };
 
 export const saveStocksToDb = async (apiStocks: APIStock[]) => {
