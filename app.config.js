@@ -7,6 +7,6 @@ module.exports = {
   runtimeVersion: packageJson.version,
   android: {
     ...appConfig.expo.android,
-    targetSdkVersion: 35,
+    targetSdkVersion: 36,
   },
 };
