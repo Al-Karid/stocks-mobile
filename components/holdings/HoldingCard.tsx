@@ -2,6 +2,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, TouchableOpacity, Animated } from "react-native";
 import { router } from "expo-router";
+import {
+  useGaugeService,
+  REACHED_BAR_COLOR,
+  REACHED_GAIN_STRONG_COLOR,
+  REACHED_GAIN_LIGHT_BG,
+  REACHED_GAIN_BADGE_BG,
+} from "@/services/gaugeService";
 import { Holding } from "@/types/portfolio";
 import { Feather } from "@expo/vector-icons";
 import { formatCurrency, formatPercentage } from "@/utils/numberUtils";
@@ -97,26 +104,26 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
 
   const toggleDetails = () => setDetailsExpanded(prev => !prev);
 
-  // Gauge calculation
-  const cmpToCurrentAbs = Math.abs(currentPrice! - averagePrice);
-  const currentToTargetAbs = hasTarget ? Math.abs(targetPrice! - currentPrice!) : 0;
-  const totalSpan = cmpToCurrentAbs + currentToTargetAbs;
-  const leftSegmentWidth = totalSpan > 0 ? (cmpToCurrentAbs / totalSpan) * 100 : 0;
-  const rightSegmentWidth = totalSpan > 0 ? (currentToTargetAbs / totalSpan) * 100 : 0;
-  const cmpToCurrentIsPositive = currentPrice! >= averagePrice;
-  const currentToTargetIsPositive = hasTarget && targetPrice! >= currentPrice!;
+  // Gauge metrics (segment widths + colors) — extracted to services/gaugeService.ts
+  const { computeGaugeMetrics } = useGaugeService();
+  const {
+    leftSegmentWidth,
+    rightSegmentWidth,
+    cmpToCurrentIsPositive,
+    isTargetReached,
+    reachedBarColor,
+    targetTrackColor,
+    targetChipBg,
+    targetChipColor,
+    cmpTrackColor,
+  } = computeGaugeMetrics(averagePrice, currentPrice ?? 0, targetPrice ?? null);
 
-  const gainColor = isGain ? "#22c55e" : "#ef4444";
-  const gainLightBg = isGain ? "#f0fdf4" : "#fef2f2";
-  const gainBadgeBg = isGain ? "#dcfce7" : "#fce4ec";
-  const gainStrongColor = isGain ? "#16a34a" : "#dc2626";
+  const reachedGain = isTargetReached && cmpToCurrentIsPositive;
 
-  const targetTrackColor = currentToTargetIsPositive ? "#9ca3af" : "#d1d5db";
-  const targetChipBg = currentToTargetIsPositive ? "#f3f4f6" : "#f9fafb";
-  const targetChipColor = currentToTargetIsPositive ? "#6b7280" : "#9ca3af";
-  const cmpTrackColor = cmpToCurrentIsPositive ? "#22c55e" : "#ef4444";
-  const cmpChipBg = cmpToCurrentIsPositive ? "#dcfce7" : "#fce4ec";
-  const cmpChipColor = cmpToCurrentIsPositive ? "#16a34a" : "#dc2626";
+  const gainColor = isGain ? (reachedGain ? REACHED_BAR_COLOR : "#22c55e") : "#ef4444";
+  const gainLightBg = isGain ? (reachedGain ? REACHED_GAIN_LIGHT_BG : "#f0fdf4") : "#fef2f2";
+  const gainBadgeBg = isGain ? (reachedGain ? REACHED_GAIN_BADGE_BG : "#dcfce7") : "#fce4ec";
+  const gainStrongColor = isGain ? (reachedGain ? REACHED_GAIN_STRONG_COLOR : "#16a34a") : "#dc2626";
 
   return (
     <TouchableOpacity
@@ -276,25 +283,31 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
                 {/* Track + target perf rate centered */}
                 <View className="flex-1 items-center pt-1.5 gap-1">
                   <View className="h-1.5 bg-gray-200 rounded-full w-full overflow-hidden flex-row">
-                    {leftSegmentWidth > 0 && (
-                      <View
-                        style={{
-                          width: `${leftSegmentWidth}%`,
-                          backgroundColor: cmpTrackColor,
-                          borderTopLeftRadius: 3,
-                          borderBottomLeftRadius: 3,
-                        }}
-                      />
-                    )}
-                    {rightSegmentWidth > 0 && (
-                      <View
-                        style={{
-                          width: `${rightSegmentWidth}%`,
-                          backgroundColor: targetTrackColor,
-                          borderTopRightRadius: 3,
-                          borderBottomRightRadius: 3,
-                        }}
-                      />
+                    {isTargetReached && cmpToCurrentIsPositive ? (
+                      <View style={{ width: "100%", backgroundColor: reachedBarColor }} />
+                    ) : (
+                      <>
+                        {leftSegmentWidth > 0 && (
+                          <View
+                            style={{
+                              width: `${leftSegmentWidth}%`,
+                              backgroundColor: cmpTrackColor,
+                              borderTopLeftRadius: 3,
+                              borderBottomLeftRadius: 3,
+                            }}
+                          />
+                        )}
+                        {rightSegmentWidth > 0 && (
+                          <View
+                            style={{
+                              width: `${rightSegmentWidth}%`,
+                              backgroundColor: targetTrackColor,
+                              borderTopRightRadius: 3,
+                              borderBottomRightRadius: 3,
+                            }}
+                          />
+                        )}
+                      </>
                     )}
                   </View>
 
@@ -309,7 +322,7 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
                       color={targetChipColor}
                     /> */}
                     <Text className="text-[10px] font-bold" style={{ color: targetChipColor }}>
-                      {formatPercentage(targetReturn!, 1)}
+                      {formatPercentage(gainLossPercentage, 1)}
                     </Text>
                   </View>
                 </View>
@@ -319,7 +332,7 @@ export default function HoldingCard({ holding, onLongPress, onTargetPress }: Pro
                   <Text className="text-[13px] font-bold text-gray-700">
                     {formatCurrency(targetPrice!, 0)}
                   </Text>
-                  <Text className="text-[9px] uppercase text-gray-400 mt-0.5 tracking-wider">{t("target")}</Text>
+                  <Text className="text-[9px] uppercase text-gray-400 mt-0.5 tracking-wider">{formatPercentage(targetReturn!, 1)}</Text>
                 </View>
               </View>
 
